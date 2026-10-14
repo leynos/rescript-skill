@@ -37,12 +37,19 @@ targets ReScript 12.3.1 and Bun 1.4.
   `throw`, `JsExn`, `JsError`, `@throws`. References: `exceptions-and-jsexn.md`,
   `result-pipelines.md`. Examples: `ConfigParsing.res`, `JsBoundary.res`.
 
+### Build and quality
+
+- `rescript-build-and-config` — `rescript.json` fields, namespaces, sources,
+  dev sources, in-source output, warnings policy, experimental features,
+  Rewatch commands, Bun workspace monorepos, and publishing. References:
+  `rescript-json-fields.md`, `warnings-policy.md`,
+  `monorepos-and-publishing.md`.
+
 ## Planned skills
 
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-build-and-config`
 - `rescript-12-migration`
 - `rescript-bun-testing`
 - `rescript-property-testing`

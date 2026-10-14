@@ -37,3 +37,5 @@ The format is based on [Common Changelog](https://common-changelog.org).
   dependencies from `pkg/lib/es6/`, which Sury's `exports` map rejects.
   `make install-skills` now copies only committed files, so generated
   `.res.mjs` files never reach an installed catalogue.
+- `rescript-build-and-config` skill covering `rescript.json`, the warnings
+  policy measured against 12.3.1 defaults, and Bun workspace monorepos.

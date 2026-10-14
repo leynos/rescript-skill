@@ -47,6 +47,18 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
 - A dev source can reference modules in another dev source of the same
   project (`tests/` referring to `skills/**`).
 
+- With no `warnings` block, 12.3.1 reports warning 109 as an error; 26, 27,
+  44, and 110 as warnings; and 4, 9, 41, and 102 not at all.
+- `@warning("-4")` and `@warning("-9")` on a binding suppress those warnings.
+- A bare `rescript format --check` includes dev sources.
+- A file in a subdirectory not covered by `sources` is not compiled; two
+  files with one module name in a package fail with "Duplicate module name".
+  Unknown and deprecated `rescript.json` fields only print a message.
+- In a Bun 1.4.3 workspace, the default isolated linker leaves no root
+  `node_modules/<workspace-package>` symlinks and Rewatch fails with "upward
+  traversal did not find". `[install] linker = "hoisted"` fixes it, and the
+  namespace for `@mono/core` is `MonoCore`.
+
 ## Tools
 
 - `rescript-tools reanalyze -config` runs the analyses named in
