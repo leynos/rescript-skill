@@ -155,3 +155,13 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
 - `RescriptBun.Bun.deepEquals` is bound as `('a, 'b, ~strict: bool=?) => bool`.
 - With the overflow branch of `RingBuffer.push` removed, the model-based
   property failed and shrank to capacity 2 with three pushes.
+
+## React
+
+- A suite named `React.test.res` failed with "The module or file React can't
+  be found"; renamed to `ShoppingList.test.res`, it compiled. A file named
+  after a dependency module shadows that module for itself.
+- `ReactDOMServer.renderToStaticMarkup` from `@rescript/react` 0.15.0 renders
+  components, `useReducer` initial state, and context providers under Bun
+  without a DOM; `className` renders as `class`, and `React.string` escapes
+  `<b>` as `&lt;b&gt;`. Evidence: `ShoppingList.test.res`.

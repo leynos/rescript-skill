@@ -1,7 +1,8 @@
 # Skill catalogue status
 
-Snapshot of what is active in `skills/` and what is planned. Every active skill
-targets ReScript 12.3.1 and Bun 1.4.
+Snapshot of what is active in `skills/`. Every skill targets ReScript 12.3.1
+and Bun 1.4, and every ReScript example under `references/examples/` is
+compiled, analysed, and exercised by `make test`.
 
 ## Active skills
 
@@ -12,21 +13,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Language
 
-- `rescript-stdlib-and-data` — the ReScript 12 standard library, `Js` and
-  Belt in new code, equality and warning 102, collection semantics, and JSON
-  decoding with `JSON.Decode` or Sury. References: `stdlib-map.md`,
-  `json-decoding.md`, `equality-and-collections.md`. Examples:
-  `JsonDecoding.res`, `SuryUser.res`, `CollectionSemantics.res`.
-- `rescript-async` — `async`/`await`, rejection handling and `exn`
-  normalization, `Promise.all` versus `allSettled`, timeouts, bounded
-  concurrency, fire-and-forget discipline, and `AbortSignal` cancellation.
-  References: `promise-patterns.md`, `timeouts-and-cancellation.md`. Example:
-  `AsyncPatterns.res`.
-- `rescript-interop` — `external` bindings, `@module`, `@send`, `@new`,
-  `@val`, `@scope`, `@variadic`, `@return(nullable)`, `@tag`, `@as`, `@unboxed`,
-  `Nullable`, dynamic import, genType, and unsafe escapes. References:
-  `binding-patterns.md`, `runtime-representation.md`, `unsafe-escapes.md`.
-  Examples: `PlatformBindings.res`, `WireShapes.res`.
 - `rescript-types-and-modules` — variants and inline records, optional
   fields, type spreads and coercion, `private` and abstract types behind
   `.resi`, module types, functors, first-class modules. References:
@@ -36,37 +22,52 @@ targets ReScript 12.3.1 and Bun 1.4.
 - `rescript-errors-and-results` — option, result, exceptions, `let?`,
   `throw`, `JsExn`, `JsError`, `@throws`. References: `exceptions-and-jsexn.md`,
   `result-pipelines.md`. Examples: `ConfigParsing.res`, `JsBoundary.res`.
+- `rescript-interop` — `external` bindings, `@module`, `@send`, `@new`,
+  `@val`, `@scope`, `@variadic`, `@return(nullable)`, `@tag`, `@as`, `@unboxed`,
+  `Nullable`, dynamic import, genType, and unsafe escapes. References:
+  `binding-patterns.md`, `runtime-representation.md`, `unsafe-escapes.md`.
+  Examples: `PlatformBindings.res`, `WireShapes.res`.
+- `rescript-async` — `async`/`await`, rejection handling and `exn`
+  normalization, `Promise.all` versus `allSettled`, timeouts, bounded
+  concurrency, fire-and-forget discipline, and `AbortSignal` cancellation.
+  References: `promise-patterns.md`, `timeouts-and-cancellation.md`. Example:
+  `AsyncPatterns.res`.
+- `rescript-stdlib-and-data` — the ReScript 12 standard library, `Js` and
+  Belt in new code, equality and warning 102, collection semantics, and JSON
+  decoding with `JSON.Decode` or Sury. References: `stdlib-map.md`,
+  `json-decoding.md`, `equality-and-collections.md`. Examples:
+  `JsonDecoding.res`, `SuryUser.res`, `CollectionSemantics.res`.
 
 ### Build and quality
 
+- `rescript-build-and-config` — `rescript.json` fields, namespaces, sources,
+  dev sources, in-source output, warnings policy, experimental features,
+  Rewatch commands, Bun workspace monorepos, and publishing. References:
+  `rescript-json-fields.md`, `warnings-policy.md`,
+  `monorepos-and-publishing.md`.
+- `rescript-12-migration` — upgrading from ReScript 11: dependencies,
+  configuration keys, `rescript-tools migrate`, API and operator renames,
+  command changes, and the 12.0.1–12.3.1 deltas. References:
+  `upgrade-checklist.md`, `api-renames.md`, `release-deltas-12x.md`. Evidence:
+  `tests/migration-tool.test.mjs`.
 - `rescript-quality-tools` — the formatter, the Markdown fence gate,
   warnings and `%todo`, reanalyze as a CI gate with `@live`, `@dead`, and
   `@throws`, `rescript-tools doc`, and Biome. References:
   `formatter-and-fences.md`, `reanalyze-gate.md`, `ci-gates.md`. Examples:
   `ReanalyzeAnnotations.res`, `check-reanalyze.mjs`, `check-codeblocks.mjs`
   (the gate scripts this repository runs).
-- `rescript-12-migration` — upgrading from ReScript 11: dependencies,
-  configuration keys, `rescript-tools migrate`, API and operator renames,
-  command changes, and the 12.0.1–12.3.1 deltas. References:
-  `upgrade-checklist.md`, `api-renames.md`, `release-deltas-12x.md`. Evidence:
-  `tests/migration-tool.test.mjs`.
-- `rescript-build-and-config` — `rescript.json` fields, namespaces, sources,
-  dev sources, in-source output, warnings policy, experimental features,
-  Rewatch commands, Bun workspace monorepos, and publishing. References:
-  `rescript-json-fields.md`, `warnings-policy.md`,
-  `monorepos-and-publishing.md`.
 
 ### Testing
 
-- `rescript-property-testing` — fast-check under Bun: relations, narrow
-  bindings, arbitraries for variants and records, model-based tests, typed
-  equality, and replay. References: `fast-check-bindings.md`,
-  `property-patterns.md`. Examples: `FastCheck.res`, `RingBuffer.res`.
 - `rescript-bun-testing` — `bun test` with `rescript-bun`: suite naming,
   explicit suite lists, matchers, case tables, `bun:test` mock bindings, clock
   control and reset, snapshots, and coverage. References:
   `suite-layout-and-runner.md`, `mocks-clocks-and-tables.md`. Examples:
   `BunMock.res`, `BunClock.res`, `OverdueNotifier.res`.
+- `rescript-property-testing` — fast-check under Bun: relations, narrow
+  bindings, arbitraries for variants and records, model-based tests, typed
+  equality, and replay. References: `fast-check-bindings.md`,
+  `property-patterns.md`. Examples: `FastCheck.res`, `RingBuffer.res`.
 
 ### Runtime and UI
 
@@ -74,13 +75,10 @@ targets ReScript 12.3.1 and Bun 1.4.
   requests and responses, files, environment, the shell, SQLite, and a portable
   core behind ports. References: `adapter-boundary.md`, `bun-apis.md`. Examples:
   `TodoCore.res`, `TodoServer.res`.
-
-## Planned skills
-
-These names already appear in the router so that routing advice is stable as
-the catalogue fills in.
-
-- `rescript-react`
+- `rescript-react` — `@rescript/react` 0.15 with JSX v4: components, props,
+  children, keys, hooks and effect dependencies, reducers, React 19 hooks, and
+  rendering in Bun tests. References: `components-and-props.md`,
+  `hooks-and-effects.md`, `testing-components.md`. Example: `ShoppingList.res`.
 
 ## Documentation
 
@@ -99,3 +97,13 @@ The catalogue is version-pinned material. Revisit it when ReScript 12.4 or 13
 ships, when `rescript-bun` changes major version, or when `LetUnwrap` leaves
 experimental status. Re-run `make all` after bumping pins: the executable
 examples and the contract suites are the regression evidence.
+
+## Open questions
+
+- Interaction tests for React components need a DOM under Bun (for example
+  happy-dom). The catalogue covers reducers and static rendering only, pending
+  a concrete need and a binding set worth maintaining.
+- Mutation testing (for example Stryker over the generated JavaScript) is not
+  covered; mapping surviving mutants back to ReScript source is unproven.
+- `LetUnwrap` is experimental. When it stabilizes, `rescript-errors-and-results`
+  should drop the library caveat and the configuration notes.

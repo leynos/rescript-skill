@@ -42,6 +42,8 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - `rescript-bun-runtime` skill with a portable `TodoCore` and a
   `TodoServer` adapter tested over real HTTP, plus a contract test that keeps
   `*Core.res` examples free of runtime bindings.
+- `rescript-react` skill with a `ShoppingList` example: a pure reducer and
+  components rendered under Bun with `ReactDOMServer.renderToStaticMarkup`.
 
 ### Changed
 

@@ -28,6 +28,25 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+## Features
+
+- One router with a routing matrix and a testing hierarchy.
+- Five language skills: types and modules, errors and results, JavaScript
+  interop, async, and the standard library and data.
+- Build and quality skills: `rescript.json` and the warnings policy, migration
+  from ReScript 11, and quality gates including reanalyze.
+- Testing skills for `bun test` with `rescript-bun` and for fast-check
+  properties, including model-based tests.
+- Runtime and UI skills for Bun servers behind a portable core, and for
+  `@rescript/react` 0.15.
+- Pitfalls established by experiment rather than recalled, such as
+  `Promise.allSettled` leaving JavaScript rejections unwrapped, warning 102
+  resisting local suppression, `bun test` silently skipping compiled suites,
+  and out-of-source builds breaking imports of packages with an `exports` map.
+  [Verified facts](docs/research/verified-facts.md) lists them with evidence.
+
+______________________________________________________________________
+
 ## Quick start
 
 ### Installation
