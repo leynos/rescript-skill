@@ -22,3 +22,6 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - `rescript-types-and-modules` skill with executable `EmailAddress`,
   `Payment`, and `KeyedStore` examples covering `private` types, variant
   spreads and coercion, and functors.
+- `rescript-interop` skill with executable `PlatformBindings` and
+  `WireShapes` examples covering class, method, variadic, and nullable bindings
+  and the `@tag`, `@as`, and `@unboxed` representations.

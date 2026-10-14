@@ -12,6 +12,11 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Language
 
+- `rescript-interop` — `external` bindings, `@module`, `@send`, `@new`,
+  `@val`, `@scope`, `@variadic`, `@return(nullable)`, `@tag`, `@as`, `@unboxed`,
+  `Nullable`, dynamic import, genType, and unsafe escapes. References:
+  `binding-patterns.md`, `runtime-representation.md`, `unsafe-escapes.md`.
+  Examples: `PlatformBindings.res`, `WireShapes.res`.
 - `rescript-types-and-modules` — variants and inline records, optional
   fields, type spreads and coercion, `private` and abstract types behind
   `.resi`, module types, functors, first-class modules. References:
@@ -27,7 +32,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-interop`
 - `rescript-async`
 - `rescript-stdlib-and-data`
 - `rescript-build-and-config`
