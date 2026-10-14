@@ -9,7 +9,7 @@ The format is based on [Common Changelog](https://common-changelog.org).
 ### Added
 
 - Bun-based repository scaffold: exact pins for ReScript 12.3.1 and
-  `rescript-bun` 2.1.0, an out-of-source namespaced build, and sequential
+  `rescript-bun` 2.1.0, an in-source namespaced build, and sequential
   `make all` gates for formatting, compiler warnings as errors, reanalyze,
   Biome, Markdown, skill manifests, tests, and spelling.
 - `scripts/check-codeblocks.mjs`: parses and formats every ReScript fence in
@@ -28,3 +28,12 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - `rescript-async` skill with an executable `AsyncPatterns` example covering
   timeouts, rejection normalization, bounded concurrency, and cooperative
   cancellation.
+- `rescript-stdlib-and-data` skill with executable `JsonDecoding`,
+  `SuryUser`, and `CollectionSemantics` examples.
+
+### Changed
+
+- Build in source. With `"in-source": false` the compiler imports
+  dependencies from `pkg/lib/es6/`, which Sury's `exports` map rejects.
+  `make install-skills` now copies only committed files, so generated
+  `.res.mjs` files never reach an installed catalogue.

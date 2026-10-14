@@ -64,8 +64,9 @@ Claims about compiler or runtime behaviour must be evidenced, not remembered.
 - Every `rescript`, `res`, and `resi` fence in Markdown must parse and be
   canonically formatted; `make fmt` rewrites fence bodies only. Use a `text`
   fence for code that is deliberately invalid.
-- Compiler output goes to `lib/es6/` and is never committed. The `skills/`
-  tree stays free of generated JavaScript so it can be copied as is.
+- Compiler output is written beside its source as `*.res.mjs`, ignored by
+  Git, and never committed. Install skills with `make install-skills`, which
+  copies only committed files.
 
 ## ReScript boundary
 

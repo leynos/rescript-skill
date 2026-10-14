@@ -26,9 +26,12 @@ explains how to get to 12 first.
 Copy the catalogue into the agent's skill directory:
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -a skills/* ~/.codex/skills/
+make install-skills
 ```
+
+The target copies the committed `skills/` tree with `git archive`, so compiler
+output from a local build is never included. Set `SKILLS_DEST` to install
+elsewhere. On a fresh checkout, `cp -a skills/* ~/.codex/skills/` is equivalent.
 
 Each `skills/<name>/` directory carries a `SKILL.md` with YAML frontmatter. A
 strict loader discovers a skill by its directory and identifies it by the

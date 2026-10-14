@@ -12,6 +12,11 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Language
 
+- `rescript-stdlib-and-data` — the ReScript 12 standard library, `Js` and
+  Belt in new code, equality and warning 102, collection semantics, and JSON
+  decoding with `JSON.Decode` or Sury. References: `stdlib-map.md`,
+  `json-decoding.md`, `equality-and-collections.md`. Examples:
+  `JsonDecoding.res`, `SuryUser.res`, `CollectionSemantics.res`.
 - `rescript-async` — `async`/`await`, rejection handling and `exn`
   normalization, `Promise.all` versus `allSettled`, timeouts, bounded
   concurrency, fire-and-forget discipline, and `AbortSignal` cancellation.
@@ -37,7 +42,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-stdlib-and-data`
 - `rescript-build-and-config`
 - `rescript-12-migration`
 - `rescript-bun-testing`

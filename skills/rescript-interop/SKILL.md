@@ -58,10 +58,10 @@ shape, or exposing ReScript to JavaScript callers.
   JavaScript call when not supplied.
 - `@unboxed` now discriminates `Set`, `Map`, `WeakSet`, and `WeakMap`
   (12.1), plus `ArrayBuffer`, `DataView`, and typed arrays (12.0).
-- `@module("./file.mjs")` is emitted verbatim. It resolves relative to the
-  generated file, which is in `lib/es6/...` when `"in-source": false`, not next
-  to your `.res` source. Use package names or in-source output for handwritten
-  JavaScript neighbours.
+- `@module("./file.mjs")` is emitted verbatim and resolves from the generated
+  file. With `"in-source": false` that file is under `lib/es6/`, not beside
+  your source, and dependency imports become `pkg/lib/es6/...`, which packages
+  with an `exports` map reject. Build in source.
 - `@meth`, `@bs.send.pipe`, and every `@bs.*` attribute are gone; use the
   unprefixed forms.
 

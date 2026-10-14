@@ -36,7 +36,7 @@ export function packageContract(metadata) {
   assert.equal(metadata.license, "ISC");
 }
 
-/** Asserts the strict, namespaced, out-of-source ReScript configuration. */
+/** Asserts the strict, namespaced, in-source ReScript configuration. */
 export function rescriptContract(config) {
   assert.equal(config.name, "rescript-skill");
   assert.equal(config.namespace, true);
@@ -57,8 +57,8 @@ export function rescriptContract(config) {
   assert.equal(config["package-specs"].module, "esmodule");
   assert.equal(
     config["package-specs"]["in-source"],
-    false,
-    "generated JavaScript must stay out of the shipped skills tree",
+    true,
+    "dependencies such as Sury export only their in-source output",
   );
   assert.deepEqual(config.reanalyze.analysis, ["dce", "exception"]);
   assert.deepEqual(config.reanalyze.suppress, []);
@@ -97,7 +97,7 @@ describe("rescript.json", () => {
     ["a global Bun open", (c) => (c["compiler-flags"] = ["-open RescriptBun"])],
     ["a legacy dependency key", (c) => (c["bs-dependencies"] = [])],
     ["relaxed warnings", (c) => (c.warnings.error = "-A")],
-    ["in-source output", (c) => (c["package-specs"]["in-source"] = true)],
+    ["out-of-source output", (c) => (c["package-specs"]["in-source"] = false)],
     ["a production source", (c) => delete c.sources[0].type],
     ["a suppressed path", (c) => (c.reanalyze.suppress = ["skills"])],
   ])("rejects %s", (_, mutate) => {

@@ -39,7 +39,11 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   can't be found". With a namespace the two compile as `Geometry-Ns` and
   `Geometry.test-Ns` and the reference resolves.
 - `"package-specs": {"module": "esmodule", "in-source": false}` writes output
-  to `lib/es6/<source path>.res.mjs`, leaving source directories clean.
+  to `lib/es6/<source path>.res.mjs`. The same setting governs imports of
+  dependencies: the compiler emitted `sury/lib/es6/src/S.res.mjs`, which Sury
+  11.0.0's `exports` map (`"./src/*"` only) does not admit, so Bun failed with
+  "Cannot find module". With `"in-source": true` it emits `sury/src/S.res.mjs`
+  and resolves. This repository therefore builds in source.
 - A dev source can reference modules in another dev source of the same
   project (`tests/` referring to `skills/**`).
 
@@ -89,3 +93,11 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   closed variant, warning 9 rejects record patterns that do not bind or close
   every label, and warning 41 flags a constructor that belongs to several
   types, as happens after a variant spread.
+- Warning 102 (polymorphic comparison) cannot be silenced locally in 12.3.1:
+  `@warning("-102")` on a binding or expression and `@@warning("-102")` at
+  module or file level all leave the error in place. Only the project-wide
+  `warnings` setting controls it.
+- `JSON.Decode.*` helpers return options, so decoders built on them stay
+  exhaustive under warning 4 without a wildcard case.
+- Sury 11.0.0 schemas compile with `eval`, report failures by throwing
+  `S.Exn`, and its documentation still names `bs-dependencies`.

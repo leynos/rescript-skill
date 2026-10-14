@@ -1,5 +1,7 @@
 /node_modules/
 /lib/
+# Compiler output sits beside its source; it is rebuilt, never committed.
+*.res.mjs
 /coverage/
 *.tgz
 /.uv-cache/

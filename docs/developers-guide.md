@@ -42,16 +42,22 @@ versions must match; `tests/package-contracts.test.mjs` enforces it.
 | `tests/support/catalogue.mjs`        | Inventory helpers private to the contract suites |
 | `scripts/check-codeblocks.mjs`       | The Markdown ReScript fence gate                 |
 | `scripts/check-reanalyze.mjs`        | The reanalyze findings gate                      |
-| `lib/es6/`                           | Compiler output; ignored, never committed        |
+| `**/*.res.mjs`                       | Compiler output beside each source; ignored      |
 
 ## The build
 
 `rescript.json` declares one namespaced project, `rescript-skill`, with two dev
 sources: `skills` (recursively) and `tests`. Everything is a dev source because
 nothing here is published and the examples need dev-only bindings such as
-`rescript-bun`. Output is ES modules written out of source to `lib/es6/`, so the
-`skills/` tree never contains generated JavaScript and can be copied directly
-into a skills directory.
+`rescript-bun`. Output is ES modules written in source, as `Foo.res.mjs` beside
+`Foo.res`, and ignored by Git.
+
+In-source output is not a preference. A consumer's `package-specs` also govern
+how it imports its dependencies: with `"in-source": false` the compiler emits
+`sury/lib/es6/src/S.res.mjs`, which Sury's `exports` map does not admit, and
+Bun refuses to resolve it. Packages publish their in-source output, so
+consumers must build in source too. `make install-skills` copies only committed
+files, so the generated `.res.mjs` files never reach an installed catalogue.
 
 The namespace matters for suite naming. Without it, a suite named
 `Foo.test.res` cannot refer to a module `Foo`; see
@@ -126,11 +132,11 @@ needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
 
 ## Coverage and auditing
 
-`make coverage` measures the compiled examples under `lib/es6/skills/` with
-Bun's text and LCOV reporters. It measures generated JavaScript, not ReScript
-source lines. `make audit` runs `bun audit`; `package.json` pins overrides for
-three development-only transitive advisories (KaTeX, smol-toml, and js-yaml
-under `markdownlint-cli`), following the dispositions recorded in `refex`.
+`make coverage` measures the compiled examples under `skills/` with Bun's text
+and LCOV reporters. It measures generated JavaScript, not ReScript source lines.
+`make audit` runs `bun audit`; `package.json` pins overrides for three
+development-only transitive advisories (KaTeX, smol-toml, and js-yaml under
+`markdownlint-cli`), following the dispositions recorded in `refex`.
 
 ## Adding a skill
 

@@ -41,10 +41,13 @@ RES_SOURCES = $(shell git ls-files --cached --others --exclude-standard -- '*.re
 # `.test.res.mjs` suffix, and a glob over build output could silently run
 # nothing on a clean checkout. The ReScript list derives from the sources, so a
 # suite whose compiled output is missing fails loudly instead of vanishing.
-RES_SUITES = $(patsubst tests/%.res,lib/es6/tests/%.res.mjs,$(wildcard tests/*.test.res))
+RES_SUITES = $(patsubst %.res,%.res.mjs,$(wildcard tests/*.test.res))
+
+# Where `make install-skills` copies the catalogue.
+SKILLS_DEST ?= $(HOME)/.codex/skills
 JS_SUITES = $(wildcard tests/*.test.mjs)
 
-.PHONY: help install build watch clean fmt check-fmt typecheck lint reanalyze \
+.PHONY: help install install-skills build watch clean fmt check-fmt typecheck lint reanalyze \
 	test coverage markdownlint docs-check spelling audit all check \
 	skill-frontmatter-lint skill-manifest-validate skill-manifest-check
 
@@ -53,6 +56,12 @@ help: ## List contributor entrypoints
 
 install: ## Install exactly the committed dependency graph
 	$(BUN) install --frozen-lockfile
+
+# `git archive` copies exactly the committed skills, never the generated
+# `.res.mjs` files that in-source compilation leaves beside the examples.
+install-skills: ## Copy the committed skills into SKILLS_DEST (default ~/.codex/skills)
+	mkdir -p "$(SKILLS_DEST)"
+	git archive --format=tar HEAD skills | tar -x -C "$(SKILLS_DEST)" --strip-components=1
 
 build: ## Compile every skill example and ReScript suite
 	$(RESCRIPT) build

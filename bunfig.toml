@@ -2,4 +2,4 @@
 # Bun does not recognize ReScript's .test.res.mjs suffix as a test pattern, so
 # the Makefile names every suite explicitly. Coverage measures the compiled
 # skill examples, not the test bodies or repository contract helpers.
-coveragePathIgnorePatterns = ["lib/es6/tests/**", "tests/**", "scripts/**"]
+coveragePathIgnorePatterns = ["tests/**", "scripts/**"]

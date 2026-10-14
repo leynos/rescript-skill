@@ -33,12 +33,13 @@ ______________________________________________________________________
 ### Installation
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -a skills/* ~/.codex/skills/
+make install-skills
 ```
 
-The `skills/` tree contains only Markdown, YAML, and ReScript source. Compiled
-JavaScript goes to `lib/`, which is never copied.
+This copies the committed `skills/` tree into `~/.codex/skills` (override with
+`SKILLS_DEST=...`). It uses `git archive`, so the `.res.mjs` files a local
+build leaves beside the examples are never copied. A plain
+`cp -a skills/* ~/.codex/skills/` also works on a fresh checkout.
 
 ### Basic usage
 
@@ -77,7 +78,7 @@ Run the gates through the Makefile rather than invoking tools directly:
 | Target                      | What it does                                         |
 | --------------------------- | ---------------------------------------------------- |
 | `make install`              | Install the frozen Bun dependency graph              |
-| `make build`                | Compile every example and suite into `lib/es6/`      |
+| `make build`                | Compile every example and suite in place             |
 | `make fmt`                  | Format ReScript, Markdown fences, JSON, and Markdown |
 | `make check-fmt`            | Check all of the above without writing               |
 | `make lint`                 | Compiler, reanalyze, Biome, Markdown, manifests      |

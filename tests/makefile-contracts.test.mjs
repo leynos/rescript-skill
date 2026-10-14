@@ -84,7 +84,7 @@ describe("suite selection", () => {
     const jsSuites = tests.filter((name) => name.endsWith(".test.mjs"));
     expect(resSuites.length).toBeGreaterThan(0);
     for (const suite of resSuites) {
-      expect(dryRun.output).toContain(`./lib/es6/tests/${suite}.mjs`);
+      expect(dryRun.output).toContain(`./tests/${suite}.mjs`);
     }
     for (const suite of jsSuites) {
       expect(dryRun.output).toContain(`./tests/${suite}`);
@@ -171,5 +171,32 @@ describe("skill manifest gate", () => {
       expect(result.exitCode).not.toBe(0);
       expect(result.output).toContain("syntax error");
     });
+  });
+});
+
+describe("skill installation", () => {
+  test("install-skills copies committed files only", () => {
+    const dryRun = make([
+      "-n",
+      "install-skills",
+      "SKILLS_DEST=/tmp/skills-dest",
+    ]);
+    expect(dryRun.exitCode).toBe(0);
+    expect(dryRun.output).toContain("git archive --format=tar HEAD skills");
+    expect(dryRun.output).toContain(
+      'tar -x -C "/tmp/skills-dest" --strip-components=1',
+    );
+  });
+
+  test("generated JavaScript is ignored and never tracked under skills/", () => {
+    const tracked = Bun.spawnSync(["git", "ls-files", "--", "*.res.mjs"], {
+      cwd: REPO_ROOT,
+    });
+    expect(tracked.stdout.toString()).toBe("");
+    const ignored = Bun.spawnSync(
+      ["git", "check-ignore", "-q", "skills/x/references/examples/X.res.mjs"],
+      { cwd: REPO_ROOT },
+    );
+    expect(ignored.exitCode).toBe(0);
   });
 });

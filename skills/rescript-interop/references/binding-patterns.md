@@ -23,8 +23,9 @@ CommonJS; prefer a named or `default` binding.
 
 Relative paths are emitted verbatim and resolve from the generated file. With
 `"in-source": false` that file lives under `lib/es6/`, so a handwritten
-`./helper.mjs` beside the source is not found. Keep in-source output, publish
-the helper as a package, or bind it by package name.
+`./helper.mjs` beside the source is not found, and imports of ReScript
+dependencies point into `pkg/lib/es6/`, which packages with an `exports` map
+(Sury, for one) do not allow. Build in source.
 
 ## Globals
 

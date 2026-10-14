@@ -16,7 +16,7 @@
   "dev-dependencies": ["rescript-bun", "@rescript/react", "sury"],
   "package-specs": {
     "module": "esmodule",
-    "in-source": false
+    "in-source": true
   },
   "suffix": ".res.mjs",
   "jsx": {
