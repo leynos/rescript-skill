@@ -41,6 +41,10 @@ RES_SOURCES = $(shell git ls-files --cached --others --exclude-standard -- '*.re
 # `.test.res.mjs` suffix, and a glob over build output could silently run
 # nothing on a clean checkout. The ReScript list derives from the sources, so a
 # suite whose compiled output is missing fails loudly instead of vanishing.
+# The gate scripts ship with the quality-tools skill; the repository runs the
+# same files a reader installs.
+GATES = skills/rescript-quality-tools/references/examples
+
 RES_SUITES = $(patsubst %.res,%.res.mjs,$(wildcard tests/*.test.res))
 
 # Where `make install-skills` copies the catalogue.
@@ -75,14 +79,14 @@ clean: ## Remove compiler output and coverage artefacts
 
 fmt: ## Apply canonical ReScript, Markdown fence, support-file, and Markdown formatting
 	$(RESCRIPT) format $(RES_SOURCES)
-	$(BUN) scripts/check-codeblocks.mjs --write
+	$(BUN) $(GATES)/check-codeblocks.mjs --write
 	$(BIOME) format --write .
 	$(MDTABLEFIX) --in-place $(MDTABLEFIX_RULES)
 	$(MDLINT) --fix "**/*.md"
 
 check-fmt: ## Check formatting without rewriting anything
 	$(RESCRIPT) format --check $(RES_SOURCES)
-	$(BUN) scripts/check-codeblocks.mjs --check
+	$(BUN) $(GATES)/check-codeblocks.mjs --check
 	$(BIOME) check --linter-enabled=false --assist-enabled=false .
 	$(MDTABLEFIX) --check $(MDTABLEFIX_RULES)
 
@@ -91,7 +95,7 @@ typecheck: ## Compile every source with all warnings promoted to errors
 
 reanalyze: ## Fail on dead code or unhandled exceptions reported by reanalyze
 	+$(MAKE) build
-	$(BUN) scripts/check-reanalyze.mjs
+	$(BUN) $(GATES)/check-reanalyze.mjs
 
 lint: ## Compiler, reanalyze, Biome, Markdown, and skill manifest checks
 	+$(MAKE) typecheck

@@ -39,6 +39,12 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Build and quality
 
+- `rescript-quality-tools` — the formatter, the Markdown fence gate,
+  warnings and `%todo`, reanalyze as a CI gate with `@live`, `@dead`, and
+  `@throws`, `rescript-tools doc`, and Biome. References:
+  `formatter-and-fences.md`, `reanalyze-gate.md`, `ci-gates.md`. Examples:
+  `ReanalyzeAnnotations.res`, `check-reanalyze.mjs`, `check-codeblocks.mjs`
+  (the gate scripts this repository runs).
 - `rescript-12-migration` — upgrading from ReScript 11: dependencies,
   configuration keys, `rescript-tools migrate`, API and operator renames,
   command changes, and the 12.0.1–12.3.1 deltas. References:
@@ -67,7 +73,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-quality-tools`
 - `rescript-bun-runtime`
 - `rescript-react`
 

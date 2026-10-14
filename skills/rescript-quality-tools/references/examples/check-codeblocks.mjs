@@ -11,7 +11,7 @@ rewritten; surrounding prose is untouched.
 12.3.1 it reprints the whole Markdown document, escaping table pipes, emphasis
 characters, and frontmatter, and it exits 0 on syntax errors.
 
-Usage: `bun scripts/check-codeblocks.mjs --check|--write [file.md ...]`. With
+Usage: `bun check-codeblocks.mjs --check|--write [file.md ...]`. With
 no files it selects the Markdown files Git tracks plus untracked files Git does
 not ignore, matching the `mdtablefix --git --include-untracked` selection.
 */

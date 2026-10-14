@@ -31,18 +31,18 @@ versions must match; `tests/package-contracts.test.mjs` enforces it.
 
 ## Layout
 
-| Path                                 | Owns                                             |
-| ------------------------------------ | ------------------------------------------------ |
-| `skills/<name>/SKILL.md`             | The skill manifest and body                      |
-| `skills/<name>/references/*.md`      | Longer comparison material                       |
-| `skills/<name>/references/examples/` | Compilable ReScript examples                     |
-| `skills/<name>/agents/openai.yaml`   | Invocation policy                                |
-| `tests/*.test.res`                   | ReScript suites exercising the examples          |
-| `tests/*.test.mjs`                   | Repository contract suites                       |
-| `tests/support/catalogue.mjs`        | Inventory helpers private to the contract suites |
-| `scripts/check-codeblocks.mjs`       | The Markdown ReScript fence gate                 |
-| `scripts/check-reanalyze.mjs`        | The reanalyze findings gate                      |
-| `**/*.res.mjs`                       | Compiler output beside each source; ignored      |
+| Path                                                                     | Owns                                             |
+| ------------------------------------------------------------------------ | ------------------------------------------------ |
+| `skills/<name>/SKILL.md`                                                 | The skill manifest and body                      |
+| `skills/<name>/references/*.md`                                          | Longer comparison material                       |
+| `skills/<name>/references/examples/`                                     | Compilable ReScript examples                     |
+| `skills/<name>/agents/openai.yaml`                                       | Invocation policy                                |
+| `tests/*.test.res`                                                       | ReScript suites exercising the examples          |
+| `tests/*.test.mjs`                                                       | Repository contract suites                       |
+| `tests/support/catalogue.mjs`                                            | Inventory helpers private to the contract suites |
+| `skills/rescript-quality-tools/references/examples/check-codeblocks.mjs` | The Markdown ReScript fence gate                 |
+| `skills/rescript-quality-tools/references/examples/check-reanalyze.mjs`  | The reanalyze findings gate                      |
+| `**/*.res.mjs`                                                           | Compiler output beside each source; ignored      |
 
 ## The build
 
@@ -85,7 +85,7 @@ fences in Markdown, never the prose around them.
 
 ### The fence gate
 
-`scripts/check-codeblocks.mjs` finds every fence whose info string starts with
+`check-codeblocks.mjs` finds every fence whose info string starts with
 `rescript`, `res`, or `resi`, pipes the body through
 `rescript format --stdin .res` (or `.resi`), and fails on a syntax error or, in
 check mode, on any formatting difference. Use a `text` fence for code that is
@@ -97,11 +97,11 @@ on syntax errors.
 
 ### The reanalyze gate
 
-`scripts/check-reanalyze.mjs` runs `rescript-tools reanalyze -config -json` and
-fails on any finding. `rescript.json` enables the `dce` and `exception`
-analyses with an empty `suppress` list, and the package contract keeps it
-empty. Fix a finding in source: use the value from a suite, annotate it with
-`@live` or `@throws(...)`, or delete it.
+`check-reanalyze.mjs` runs `rescript-tools reanalyze -config -json` and fails
+on any finding. `rescript.json` enables the `dce` and `exception` analyses with
+an empty `suppress` list, and the package contract keeps it empty. Fix a
+finding in source: use the value from a suite, annotate it with `@live` or
+`@throws(...)`, or delete it.
 
 ### The skill manifest contract
 

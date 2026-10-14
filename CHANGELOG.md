@@ -12,9 +12,9 @@ The format is based on [Common Changelog](https://common-changelog.org).
   `rescript-bun` 2.1.0, an in-source namespaced build, and sequential
   `make all` gates for formatting, compiler warnings as errors, reanalyze,
   Biome, Markdown, skill manifests, tests, and spelling.
-- `scripts/check-codeblocks.mjs`: parses and formats every ReScript fence in
+- `check-codeblocks.mjs`: parses and formats every ReScript fence in
   Markdown without touching surrounding prose.
-- `scripts/check-reanalyze.mjs`: fails the gate on any dead-code or exception
+- `check-reanalyze.mjs`: fails the gate on any dead-code or exception
   finding from `rescript-tools reanalyze`.
 - `rescript-router` skill with a routing matrix and a testing hierarchy.
 - `rescript-errors-and-results` skill with executable `ConfigParsing` and
@@ -30,13 +30,6 @@ The format is based on [Common Changelog](https://common-changelog.org).
   cancellation.
 - `rescript-stdlib-and-data` skill with executable `JsonDecoding`,
   `SuryUser`, and `CollectionSemantics` examples.
-
-### Changed
-
-- Build in source. With `"in-source": false` the compiler imports
-  dependencies from `pkg/lib/es6/`, which Sury's `exports` map rejects.
-  `make install-skills` now copies only committed files, so generated
-  `.res.mjs` files never reach an installed catalogue.
 - `rescript-build-and-config` skill covering `rescript.json`, the warnings
   policy measured against 12.3.1 defaults, and Bun workspace monorepos.
 - `rescript-12-migration` skill, with `tests/migration-tool.test.mjs`
@@ -45,3 +38,14 @@ The format is based on [Common Changelog](https://common-changelog.org).
   `OverdueNotifier` examples.
 - `rescript-property-testing` skill with `FastCheck` bindings, a
   `RingBuffer` model-based example, and properties over earlier examples.
+- `rescript-quality-tools` skill with a `ReanalyzeAnnotations` example.
+
+### Changed
+
+- Build in source. With `"in-source": false` the compiler imports
+  dependencies from `pkg/lib/es6/`, which Sury's `exports` map rejects.
+  `make install-skills` now copies only committed files, so generated
+  `.res.mjs` files never reach an installed catalogue.
+- Move the fence and reanalyze gate scripts into
+  `skills/rescript-quality-tools/references/examples/`, so the repository runs
+  exactly the scripts the skill ships.

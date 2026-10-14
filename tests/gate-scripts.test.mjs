@@ -18,11 +18,11 @@ import {
   checkDocument,
   extensionFor,
   findFences,
-} from "../scripts/check-codeblocks.mjs";
+} from "../skills/rescript-quality-tools/references/examples/check-codeblocks.mjs";
 import {
   describe as render,
   parseFindings,
-} from "../scripts/check-reanalyze.mjs";
+} from "../skills/rescript-quality-tools/references/examples/check-reanalyze.mjs";
 import { REPO_ROOT } from "./support/catalogue.mjs";
 
 const FENCE = "```";
@@ -33,7 +33,12 @@ function runCodeblocks(mode, body) {
     const path = join(directory, "doc.md");
     writeFileSync(path, body);
     const result = Bun.spawnSync(
-      [process.execPath, "scripts/check-codeblocks.mjs", mode, path],
+      [
+        process.execPath,
+        "skills/rescript-quality-tools/references/examples/check-codeblocks.mjs",
+        mode,
+        path,
+      ],
       { cwd: REPO_ROOT },
     );
     return {

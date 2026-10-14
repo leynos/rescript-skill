@@ -63,8 +63,8 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
 
 - `rescript-tools reanalyze -config` runs the analyses named in
   `rescript.json`, including `exception`, and `-json` emits a findings array.
-  It exits 0 whatever it reports. `scripts/check-reanalyze.mjs` turns findings
-  into a failing status.
+  It exits 0 whatever it reports. `check-reanalyze.mjs` (in
+  `rescript-quality-tools`) turns findings into a failing status.
 - reanalyze treats `JSON.stringifyAny` and `JsError.throwWithMessage` as
   throwing `JsExn`, and reports record labels that are constructed but never
   read.
@@ -73,6 +73,13 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   exits 0 on a fence with a syntax error. `rescript format --stdin .res` exits
   1 on a syntax error. The fence gate pipes each fence through the latter
   instead.
+- Removing `@live` from a value used only by JavaScript produces
+  `Dead Value: x is never used`; calling a `@dead` value from live code produces
+  `Incorrect Dead Annotation`. Evidence: `ReanalyzeAnnotations.res`.
+- `rescript-tools doc` reads `.resi` docstrings but prints
+  `type t = private string` as `type t = string`.
+- `%todo` compiles to `JsError.throwWithMessage` with the absolute source path
+  and location in the message.
 - `rescript-tools extract-codeblocks` reports `rescript`, `res`, and
   `res prelude` fences but not their language tag.
 
