@@ -25,9 +25,11 @@ signature matters, because they are exactly what your compiler checks against.
 - `BigInt.fromFloat` returns an option.
 - `String.charCodeAt` returns `option<int>`; `charCodeAtUnsafe` is the
   unchecked form.
-- `Date.make` takes `~day`, not `~date`.
+- `Date.makeWithYMD` and the other `Date.makeWith*` constructors take
+  `~day`, not `~date`. `Date.make()` takes no arguments.
 - Bitwise and shift operations are operators: `&&&`, `|||`, `^^^`, `~~~`,
-  `<<`, `>>`, `>>>`. `Int.Bitwise.lsl` and friends are gone.
+  `<<`, `>>`, `>>>`. `Int.Bitwise.lsl` and friends are deprecated (warning 3);
+  use the operators or `Int.shiftLeft`.
 - `**` is exponentiation and `%` is the remainder for `int` and `float`.
 - `Array.zip`, `unzip`, `zipBy`, and `partition` arrived in 12.2;
   `String.localeCompare` gained `~locales` and `~options` in 12.3.

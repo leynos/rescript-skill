@@ -103,7 +103,8 @@ schedule, or load. Use an integration test through a Bun adapter
   binding module,
 - a binding types a parameter or return as `'a` or `'b` with no constraint,
 - warnings are silenced in `rescript.json` rather than at a narrow scope with
-  a stated reason,
+  a stated reason (except warnings such as 102 that only the project setting
+  controls, and then with a recorded reason),
 - a `.resi` exposes a record or variant whose invariants callers can break,
 - `Js.*`, `Belt.*`, or `raise` appear in new ReScript 12 code,
 - reanalyze findings are suppressed by path rather than fixed or annotated,

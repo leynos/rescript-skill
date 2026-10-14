@@ -36,9 +36,9 @@ to the language skills instead.
 4. Build. Fix errors (removed APIs and syntax) until the build succeeds
    with warnings.
 5. Run `rescript-tools migrate-all .`, rebuild, and review the diff.
-6. Fix what the tool leaves: notably `lsl`, `land`, `lor`, and `lxor` (use
-   `<<`, `&&&`, `|||`, `^^^` or `Int.shiftLeft`), and behavioural changes it
-   cannot see, such as `BigInt.fromFloat` now returning an option.
+6. Fix what the tool leaves: notably the Pervasives `lsl`, `land`, `lor`, and
+   `lxor` (use `<<`, `&&&`, `|||`, `^^^` or `Int.shiftLeft`), and behavioural
+   changes it cannot see, such as `BigInt.fromFloat` now returning an option.
 7. Update scripts: `rescript build -w` becomes `rescript watch`;
    `rescript format -all` becomes `rescript format`.
 8. Only then tighten the warnings policy (`rescript-build-and-config`).
@@ -47,14 +47,14 @@ to the language skills instead.
 
 Verified against 12.3.1 by `tests/migration-tool.test.mjs`:
 
-| Rewritten automatically                    | Left for you                                   |
-| ------------------------------------------ | ---------------------------------------------- |
-| `Js.log` → `Console.log`                   | `lsl`, `land`, and the other bitwise functions |
-| `raise` → `throw`                          | `Belt.*` calls (not deprecated)                |
-| `Js.Json.parseExn` → `JSON.parseOrThrow`   | semantic changes in return types               |
-| `Option.getExn` → `Option.getOrThrow`      | configuration files                            |
-| `Js.Exn.Error(e)` → `JsExn(e)`             | removed syntax and `.ml` files                 |
-| `Bool.fromStringExn` → `fromStringOrThrow` |                                                |
+| Rewritten automatically                    | Left for you                                                                                        |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `Js.log` → `Console.log`                   | Pervasives `lsl`, `land`, and the other bitwise functions (the `Int.Bitwise.*` forms are rewritten) |
+| `raise` → `throw`                          | `Belt.*` calls (not deprecated)                                                                     |
+| `Js.Json.parseExn` → `JSON.parseOrThrow`   | semantic changes in return types                                                                    |
+| `Option.getExn` → `Option.getOrThrow`      | configuration files                                                                                 |
+| `Js.Exn.Error(e)` → `JsExn(e)`             | removed syntax and `.ml` files                                                                      |
+| `Bool.fromStringExn` → `fromStringOrThrow` |                                                                                                     |
 
 It refuses to run until the project has built:
 `build artifacts could not be found`.

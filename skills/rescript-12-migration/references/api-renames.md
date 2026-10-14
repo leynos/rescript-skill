@@ -2,20 +2,20 @@
 
 ## Standard library
 
-| ReScript 11                           | ReScript 12                                                     |
-| ------------------------------------- | --------------------------------------------------------------- |
-| `Js.log`, `Js.log2`                   | `Console.log`, `Console.log2`                                   |
-| `Js.Dict`, `Js.Array2`, `Js.String2`  | `Dict`, `Array`, `String`                                       |
-| `Js.Json.parseExn`                    | `JSON.parseOrThrow`                                             |
-| `Js.Promise2`                         | `Promise`, or `async`/`await`                                   |
-| `Js.Nullable`                         | `Nullable`                                                      |
-| `*Exn` helpers (`Option.getExn`, …)   | `*OrThrow` (`Option.getOrThrow`, …)                             |
-| `Result.getExn` throwing `Not_found`  | `Result.getOrThrow` throwing a JS `Error`                       |
-| `BigInt.fromFloat` throwing           | `BigInt.fromFloat` returning an option                          |
-| `String.charCodeAt` returning `float` | `String.charCodeAt` returning `option<int>`; `charCodeAtUnsafe` |
-| `Date.make(~date=...)`                | `Date.make(~day=...)`                                           |
-| `Int.Bitwise.lsl` and friends         | `Int.shiftLeft` and friends, or operators                       |
-| `Js.Vector`, `Js.List`                | removed                                                         |
+| ReScript 11                                               | ReScript 12                                                     |
+| --------------------------------------------------------- | --------------------------------------------------------------- |
+| `Js.log`, `Js.log2`                                       | `Console.log`, `Console.log2`                                   |
+| `Js.Dict`, `Js.Array2`, `Js.String2`                      | `Dict`, `Array`, `String`                                       |
+| `Js.Json.parseExn`                                        | `JSON.parseOrThrow`                                             |
+| `Js.Promise2`                                             | `Promise`, or `async`/`await`                                   |
+| `Js.Nullable`                                             | `Nullable`                                                      |
+| `*Exn` helpers (`Option.getExn`, …)                       | `*OrThrow` (`Option.getOrThrow`, …)                             |
+| `Result.getExn` throwing `Not_found`                      | `Result.getOrThrow` throwing a JS `Error`                       |
+| `BigInt.fromFloat` throwing                               | `BigInt.fromFloat` returning an option                          |
+| `String.charCodeAt` returning `float`                     | `String.charCodeAt` returning `option<int>`; `charCodeAtUnsafe` |
+| `Date.makeWithYMD(~date=...)` and the other `makeWith*`   | `Date.makeWithYMD(~day=...)`                                    |
+| `Int.Bitwise.lsl` and friends (deprecated, auto-migrated) | `Int.shiftLeft` and friends, or operators                       |
+| `Js.Vector`, `Js.List`                                    | removed                                                         |
 
 `Js.*` modules are deprecated in 12 and scheduled for removal in 13.
 
@@ -46,9 +46,11 @@ let power = 2 ** 10
 let remainder = 7 % 3
 ```
 
-`lnot`, `lxor`, `land`, `lor`, `lsl`, `lsr`, and `asr` are deprecated and,
-unlike most renames, `rescript-tools migrate` does not rewrite them. Integer
-multiplication now compiles to `(a * b) | 0` rather than `Math.imul`.
+The Pervasives functions `lnot`, `lxor`, `land`, `lor`, `lsl`, `lsr`, and `asr`
+are deprecated and, unlike most renames, `rescript-tools migrate` does not
+rewrite them; the `Int.Bitwise.*` forms carry migration metadata and are
+rewritten. Integer multiplication now compiles to `(a * b) | 0` rather than
+`Math.imul`.
 
 ## Attributes and syntax
 

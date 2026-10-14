@@ -17,11 +17,13 @@
 ```
 
 Install the bindings as a development dependency (`bun add -d rescript-bun`)
-and list them only under `dev-dependencies`. Production sources then cannot
-reach `RescriptBun` at all: the compiler refuses to resolve it outside dev
-sources. The `rescript-bun` README recommends `bsc-flags` with
-`-open RescriptBun`; that key is deprecated and the global open makes every
-module Bun-dependent, so do not follow it.
+and, when only tests use them, list them only under `dev-dependencies`.
+Production sources then cannot reach `RescriptBun` at all: the compiler refuses
+to resolve it outside dev sources. A package that also runs on Bun (an adapter;
+see `rescript-bun-runtime`) needs `rescript-bun` in `dependencies` instead;
+keep that package separate from a portable core. The `rescript-bun` README
+recommends `bsc-flags` with `-open RescriptBun`; that key is deprecated and the
+global open makes every module Bun-dependent, so do not follow it.
 
 Open the test module locally:
 

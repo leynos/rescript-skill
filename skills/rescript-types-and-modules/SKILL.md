@@ -55,8 +55,8 @@ does not compile.
   representations already agree. It cannot forge a `private` or abstract type:
   `("x" :> EmailAddress.t)` is a compile error.
 - Variant spreads require identical runtime configuration (`@unboxed`,
-  `@tag`, `@as`) across the spread types, and cannot appear in recursive
-  definitions.
+  `@tag`, `@as`) across the spread types, and cannot spread a type from the same
+  `type rec ... and ...` group.
 
 ## Runtime shape, briefly
 

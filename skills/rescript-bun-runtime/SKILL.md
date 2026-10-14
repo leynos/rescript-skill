@@ -28,18 +28,18 @@ work. For tests under Bun, load `rescript-bun-testing` instead.
 
 ## Decision surface
 
-| Need                        | Move                                                                 |
-| --------------------------- | -------------------------------------------------------------------- |
-| HTTP server                 | `Bun.serve({port, fetch: (request, server) => ...})`                 |
-| tests against a real server | `~port=0`, read `Bun.Server.port`, stop in `Promise.finally`         |
-| request path and method     | `URL.make(request->Request.url)->URL.pathname`, `(method :> string)` |
-| JSON request body           | `await request->Request.json` inside `try`, then decode              |
-| JSON response               | `Response.makeWithJson(json, ~options={status})`                     |
-| outbound HTTP               | `Globals.fetch(url, ~init=...)`, decode the response                 |
-| configuration               | read `Bun.env` once in the adapter into a typed record               |
-| files                       | `Bun.file(path)` to read; `Bun.write` to write                       |
-| subprocesses                | `Bun.spawn` / the `$` shell via a `@taggedTemplate` binding          |
-| enforce the boundary        | core in a package without `rescript-bun`, or a contract test         |
+| Need                        | Move                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| HTTP server                 | `Bun.serve({port, fetch: (request, server) => ...})`                                                               |
+| tests against a real server | `~port=0`, read `Bun.Server.port`, stop in `Promise.finally`                                                       |
+| request path and method     | `URL.make(request->Request.url)->URL.pathname`, `(method :> string)`                                               |
+| JSON request body           | `await request->Request.json` inside `try`, then decode                                                            |
+| JSON response               | `Response.makeWithJson(json, ~options={status})`                                                                   |
+| outbound HTTP               | `Globals.fetch(url, ~init=...)`, decode the response                                                               |
+| configuration               | read `Bun.env` once in the adapter into a typed record                                                             |
+| files                       | `Bun.file(path)` to read; `Bun.write` to write                                                                     |
+| subprocesses                | `ChildProcess.spawn` (Node compatibility; `Bun.spawn` is unbound) or the `$` shell via a `@taggedTemplate` binding |
+| enforce the boundary        | core in a package without `rescript-bun`, or a contract test                                                       |
 
 ## The boundary, concretely
 
