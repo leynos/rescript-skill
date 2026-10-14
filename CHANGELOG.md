@@ -39,3 +39,5 @@ The format is based on [Common Changelog](https://common-changelog.org).
   `.res.mjs` files never reach an installed catalogue.
 - `rescript-build-and-config` skill covering `rescript.json`, the warnings
   policy measured against 12.3.1 defaults, and Bun workspace monorepos.
+- `rescript-12-migration` skill, with `tests/migration-tool.test.mjs`
+  running the real `rescript-tools migrate` over a ReScript 11-style module.

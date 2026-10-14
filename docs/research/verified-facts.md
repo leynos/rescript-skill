@@ -113,3 +113,11 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   exhaustive under warning 4 without a wildcard case.
 - Sury 11.0.0 schemas compile with `eval`, report failures by throwing
   `S.Exn`, and its documentation still names `bs-dependencies`.
+
+## Migration tool
+
+- `rescript-tools migrate` refuses to run until the project has built
+  (`build artifacts could not be found`). It rewrites `Js.log`, `raise`,
+  `Js.Json.parseExn`, `Option.getExn`, `Js.Exn.Error`, `Js.Exn.message`, and
+  `Bool.fromStringExn`, but leaves `lsl` and `land`, which are deprecated with
+  "This will be removed in v13". Evidence: `tests/migration-tool.test.mjs`.

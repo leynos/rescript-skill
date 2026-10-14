@@ -39,6 +39,11 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Build and quality
 
+- `rescript-12-migration` — upgrading from ReScript 11: dependencies,
+  configuration keys, `rescript-tools migrate`, API and operator renames,
+  command changes, and the 12.0.1–12.3.1 deltas. References:
+  `upgrade-checklist.md`, `api-renames.md`, `release-deltas-12x.md`. Evidence:
+  `tests/migration-tool.test.mjs`.
 - `rescript-build-and-config` — `rescript.json` fields, namespaces, sources,
   dev sources, in-source output, warnings policy, experimental features,
   Rewatch commands, Bun workspace monorepos, and publishing. References:
@@ -50,7 +55,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-12-migration`
 - `rescript-bun-testing`
 - `rescript-property-testing`
 - `rescript-quality-tools`
