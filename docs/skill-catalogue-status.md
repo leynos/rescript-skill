@@ -68,12 +68,18 @@ targets ReScript 12.3.1 and Bun 1.4.
   `suite-layout-and-runner.md`, `mocks-clocks-and-tables.md`. Examples:
   `BunMock.res`, `BunClock.res`, `OverdueNotifier.res`.
 
+### Runtime and UI
+
+- `rescript-bun-runtime` — Bun through `rescript-bun`: `Bun.serve`, fetch,
+  requests and responses, files, environment, the shell, SQLite, and a portable
+  core behind ports. References: `adapter-boundary.md`, `bun-apis.md`. Examples:
+  `TodoCore.res`, `TodoServer.res`.
+
 ## Planned skills
 
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-bun-runtime`
 - `rescript-react`
 
 ## Documentation

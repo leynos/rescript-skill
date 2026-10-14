@@ -39,6 +39,9 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - `rescript-property-testing` skill with `FastCheck` bindings, a
   `RingBuffer` model-based example, and properties over earlier examples.
 - `rescript-quality-tools` skill with a `ReanalyzeAnnotations` example.
+- `rescript-bun-runtime` skill with a portable `TodoCore` and a
+  `TodoServer` adapter tested over real HTTP, plus a contract test that keeps
+  `*Core.res` examples free of runtime bindings.
 
 ### Changed
 

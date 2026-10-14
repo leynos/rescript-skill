@@ -208,6 +208,29 @@ describe("executable examples", () => {
   );
 });
 
+describe("portable cores", () => {
+  // Examples named `*Core.res` demonstrate the portable side of a runtime
+  // boundary, so they must not reach for Bun or platform bindings.
+  const cores = walk(SKILLS_ROOT, (name) => /Core\.resi?$/.test(name));
+  const PLATFORM = /RescriptBun|@module\("bun|@module\("node:|@val external/;
+
+  test("the catalogue ships at least one portable core", () => {
+    expect(cores.length).toBeGreaterThan(0);
+  });
+
+  test.each(cores.map((path) => [relative(REPO_ROOT, path), path]))(
+    "%s uses no runtime bindings",
+    (_, path) => {
+      expect(read(path)).not.toMatch(PLATFORM);
+    },
+  );
+
+  test("the platform pattern recognizes a Bun binding", () => {
+    expect('@module("bun:test") external x: int = "x"').toMatch(PLATFORM);
+    expect("open RescriptBun.Globals").toMatch(PLATFORM);
+  });
+});
+
 describe("helper negative controls", () => {
   test("frontmatter rejects a document without an opening fence", () => {
     expect(() => frontmatter("# Title\n")).toThrow(/does not open/);
