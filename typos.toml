@@ -55,6 +55,7 @@ extend-ignore-re = [
 
 [default.extend-words]
 "ASO" = "ASO"
+"Reanalyze" = "Reanalyze"
 "absolutisable" = "absolutizable"
 "absolutisably" = "absolutizably"
 "absolutisation" = "absolutization"
@@ -2130,6 +2131,7 @@ extend-ignore-re = [
 "realizers" = "realizers"
 "realizes" = "realizes"
 "realizing" = "realizing"
+"reanalyze" = "reanalyze"
 "recognisable" = "recognizable"
 "recognisably" = "recognizably"
 "recognisation" = "recognization"

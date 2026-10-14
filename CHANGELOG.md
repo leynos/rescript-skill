@@ -19,3 +19,6 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - `rescript-router` skill with a routing matrix and a testing hierarchy.
 - `rescript-errors-and-results` skill with executable `ConfigParsing` and
   `JsBoundary` examples.
+- `rescript-types-and-modules` skill with executable `EmailAddress`,
+  `Payment`, and `KeyedStore` examples covering `private` types, variant
+  spreads and coercion, and functors.

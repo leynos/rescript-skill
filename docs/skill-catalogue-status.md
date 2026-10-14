@@ -12,6 +12,12 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Language
 
+- `rescript-types-and-modules` — variants and inline records, optional
+  fields, type spreads and coercion, `private` and abstract types behind
+  `.resi`, module types, functors, first-class modules. References:
+  `variants-and-records.md`, `interfaces-and-abstraction.md`,
+  `modules-and-functors.md`. Examples: `EmailAddress.resi`, `EmailAddress.res`,
+  `Payment.res`, `KeyedStore.res`.
 - `rescript-errors-and-results` — option, result, exceptions, `let?`,
   `throw`, `JsExn`, `JsError`, `@throws`. References: `exceptions-and-jsexn.md`,
   `result-pipelines.md`. Examples: `ConfigParsing.res`, `JsBoundary.res`.
@@ -21,7 +27,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-types-and-modules`
 - `rescript-interop`
 - `rescript-async`
 - `rescript-stdlib-and-data`

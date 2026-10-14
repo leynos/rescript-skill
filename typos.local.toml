@@ -5,7 +5,10 @@ schema = 1
 stems = []
 
 [words]
-accepted = []
+accepted = [
+  "Reanalyze", # ReScript's bundled analyser, `rescript-tools reanalyze`.
+  "reanalyze",
+]
 
 [patterns]
 ignore = ['`[^`\n]+`']
