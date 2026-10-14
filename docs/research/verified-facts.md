@@ -132,3 +132,19 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   `tests/__snapshots__/Snap.test.res.mjs.snap`.
 - `Expect.toHaveBeenCalledTimes` accepts a value created by `bun:test`'s
   `mock` through a local binding.
+
+## Property testing
+
+- fast-check 4.10.2's `fc.integer()` samples the full 32-bit range, and
+  `fc.option` yields `null` for the empty case.
+- A failing `fc.assert` throws an `Error` whose message contains the
+  counterexample, `seed`, and `path`. Evidence: `PropertyTesting.test.res`.
+- `Fc.map(Int.toString)` fails to compile with "This function is expected to
+  have 1 argument, but has 2", because `Int.toString` takes an optional
+  `~radix`.
+- Type declarations are rejected inside function bodies, including `describe`
+  callbacks.
+- reanalyze reports `mod` as possibly throwing `Division_by_zero`.
+- `RescriptBun.Bun.deepEquals` is bound as `('a, 'b, ~strict: bool=?) => bool`.
+- With the overflow branch of `RingBuffer.push` removed, the model-based
+  property failed and shrank to capacity 2 with three pushes.

@@ -52,6 +52,10 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Testing
 
+- `rescript-property-testing` — fast-check under Bun: relations, narrow
+  bindings, arbitraries for variants and records, model-based tests, typed
+  equality, and replay. References: `fast-check-bindings.md`,
+  `property-patterns.md`. Examples: `FastCheck.res`, `RingBuffer.res`.
 - `rescript-bun-testing` — `bun test` with `rescript-bun`: suite naming,
   explicit suite lists, matchers, case tables, `bun:test` mock bindings, clock
   control and reset, snapshots, and coverage. References:
@@ -63,7 +67,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-property-testing`
 - `rescript-quality-tools`
 - `rescript-bun-runtime`
 - `rescript-react`

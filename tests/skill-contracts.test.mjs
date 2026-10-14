@@ -200,8 +200,10 @@ describe("executable examples", () => {
   test.each(cases.filter(([rel]) => rel.endsWith(".res")))(
     "%s is exercised by a ReScript suite",
     (_, __, path) => {
-      const module = basename(path, ".res");
-      expect(suites.some((suite) => suite.includes(`${module}.`))).toBe(true);
+      // A whole-word reference covers qualified use (`Foo.x`) and module
+      // aliases (`module F = Foo`).
+      const module = new RegExp(`\\b${basename(path, ".res")}\\b`);
+      expect(suites.some((suite) => module.test(suite))).toBe(true);
     },
   );
 });

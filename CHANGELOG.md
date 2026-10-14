@@ -43,3 +43,5 @@ The format is based on [Common Changelog](https://common-changelog.org).
   running the real `rescript-tools migrate` over a ReScript 11-style module.
 - `rescript-bun-testing` skill with executable `BunMock`, `BunClock`, and
   `OverdueNotifier` examples.
+- `rescript-property-testing` skill with `FastCheck` bindings, a
+  `RingBuffer` model-based example, and properties over earlier examples.
