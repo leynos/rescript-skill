@@ -50,12 +50,19 @@ targets ReScript 12.3.1 and Bun 1.4.
   `rescript-json-fields.md`, `warnings-policy.md`,
   `monorepos-and-publishing.md`.
 
+### Testing
+
+- `rescript-bun-testing` — `bun test` with `rescript-bun`: suite naming,
+  explicit suite lists, matchers, case tables, `bun:test` mock bindings, clock
+  control and reset, snapshots, and coverage. References:
+  `suite-layout-and-runner.md`, `mocks-clocks-and-tables.md`. Examples:
+  `BunMock.res`, `BunClock.res`, `OverdueNotifier.res`.
+
 ## Planned skills
 
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-bun-testing`
 - `rescript-property-testing`
 - `rescript-quality-tools`
 - `rescript-bun-runtime`

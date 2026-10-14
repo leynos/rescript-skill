@@ -41,3 +41,5 @@ The format is based on [Common Changelog](https://common-changelog.org).
   policy measured against 12.3.1 defaults, and Bun workspace monorepos.
 - `rescript-12-migration` skill, with `tests/migration-tool.test.mjs`
   running the real `rescript-tools migrate` over a ReScript 11-style module.
+- `rescript-bun-testing` skill with executable `BunMock`, `BunClock`, and
+  `OverdueNotifier` examples.

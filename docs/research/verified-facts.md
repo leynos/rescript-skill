@@ -121,3 +121,14 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   `Js.Json.parseExn`, `Option.getExn`, `Js.Exn.Error`, `Js.Exn.message`, and
   `Bool.fromStringExn`, but leaves `lsl` and `land`, which are deprecated with
   "This will be removed in v13". Evidence: `tests/migration-tool.test.mjs`.
+
+## Bun test runner
+
+- A bare `bun test` in this repository ran the five `*.test.mjs` suites and
+  none of the compiled `*.test.res.mjs` suites, and exited 0.
+- `@module("bun:test") external reset: unit => unit = "setSystemTime"`
+  compiles to `setSystemTime()`, which restores the real clock.
+- `Expect.toMatchSnapshot` in `tests/Snap.test.res` wrote
+  `tests/__snapshots__/Snap.test.res.mjs.snap`.
+- `Expect.toHaveBeenCalledTimes` accepts a value created by `bun:test`'s
+  `mock` through a local binding.
