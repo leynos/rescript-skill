@@ -71,7 +71,8 @@ configured for the React examples.
 2. `lint`: a full compile with warnings as errors (`typecheck`), reanalyze,
    `biome lint`, markdownlint, and the skill manifest contract.
 3. `test`: compile, then `bun test` with every suite named explicitly.
-4. `spelling`: the shared en-GB-oxendict gate.
+4. `spelling`: the shared en-GB-oxendict gate. It checks only files Git
+   tracks, so stage new files before running it.
 
 `make fmt` applies every formatter. It rewrites only the bodies of ReScript
 fences in Markdown, never the prose around them.

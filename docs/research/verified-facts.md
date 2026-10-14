@@ -68,3 +68,24 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   `// TODO: mocking etc`.
 - Its README recommends `bsc-flags` (a deprecated key) and global opens; both
   conflict with the posture this catalogue teaches.
+
+## Async
+
+- `try`/`catch` around `await` and `Promise.catch` wrap a raw JavaScript
+  rejection as `JsExn(_)` (through `internalToException` and
+  `anyToExnInternal`). `Promise.allSettled` is a plain external: its
+  `Rejected({reason})` carries the raw value, so `| JsExn(_)` does not match.
+  Evidence: `Async.test.res`.
+- A promise expression in statement position is a type error. `Promise.done`
+  is deprecated in favour of `Promise.ignore`.
+- Bun exits with status 1 on an unhandled rejection, and `bun test` fails the
+  test that produced it.
+- The losing side of `Promise.race` keeps running; its later rejection is not
+  reported as unhandled.
+
+## Warnings under `+A`
+
+- Warning 4 (fragile match) rejects a `_` case that covers constructors of a
+  closed variant, warning 9 rejects record patterns that do not bind or close
+  every label, and warning 41 flags a constructor that belongs to several
+  types, as happens after a variant spread.

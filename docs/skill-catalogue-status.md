@@ -12,6 +12,11 @@ targets ReScript 12.3.1 and Bun 1.4.
 
 ### Language
 
+- `rescript-async` — `async`/`await`, rejection handling and `exn`
+  normalization, `Promise.all` versus `allSettled`, timeouts, bounded
+  concurrency, fire-and-forget discipline, and `AbortSignal` cancellation.
+  References: `promise-patterns.md`, `timeouts-and-cancellation.md`. Example:
+  `AsyncPatterns.res`.
 - `rescript-interop` — `external` bindings, `@module`, `@send`, `@new`,
   `@val`, `@scope`, `@variadic`, `@return(nullable)`, `@tag`, `@as`, `@unboxed`,
   `Nullable`, dynamic import, genType, and unsafe escapes. References:
@@ -32,7 +37,6 @@ targets ReScript 12.3.1 and Bun 1.4.
 These names already appear in the router so that routing advice is stable as
 the catalogue fills in.
 
-- `rescript-async`
 - `rescript-stdlib-and-data`
 - `rescript-build-and-config`
 - `rescript-12-migration`

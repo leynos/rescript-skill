@@ -22,7 +22,7 @@ binds the whole module and generates different code for ES modules and
 CommonJS; prefer a named or `default` binding.
 
 Relative paths are emitted verbatim and resolve from the generated file. With
-`"in-source": false` that file lives under `lib/es6/`, so a hand-written
+`"in-source": false` that file lives under `lib/es6/`, so a handwritten
 `./helper.mjs` beside the source is not found. Keep in-source output, publish
 the helper as a package, or bind it by package name.
 

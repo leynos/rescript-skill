@@ -60,7 +60,7 @@ shape, or exposing ReScript to JavaScript callers.
   (12.1), plus `ArrayBuffer`, `DataView`, and typed arrays (12.0).
 - `@module("./file.mjs")` is emitted verbatim. It resolves relative to the
   generated file, which is in `lib/es6/...` when `"in-source": false`, not next
-  to your `.res` source. Use package names or in-source output for hand-written
+  to your `.res` source. Use package names or in-source output for handwritten
   JavaScript neighbours.
 - `@meth`, `@bs.send.pipe`, and every `@bs.*` attribute are gone; use the
   unprefixed forms.

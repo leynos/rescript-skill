@@ -25,3 +25,6 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - `rescript-interop` skill with executable `PlatformBindings` and
   `WireShapes` examples covering class, method, variadic, and nullable bindings
   and the `@tag`, `@as`, and `@unboxed` representations.
+- `rescript-async` skill with an executable `AsyncPatterns` example covering
+  timeouts, rejection normalization, bounded concurrency, and cooperative
+  cancellation.

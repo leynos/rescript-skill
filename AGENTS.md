@@ -18,6 +18,9 @@ make all
 at the first failure, even under `make -j`. `make check` is an alias. Run the
 full sequence before every commit.
 
+Stage new files (`git add`) before running the gates. The spelling gate reads
+only files Git tracks, so an unstaged new skill would pass it unchecked.
+
 ## Changes under `skills/`
 
 Every skill is a directory containing a `SKILL.md` whose YAML frontmatter is an
