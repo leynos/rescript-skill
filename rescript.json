@@ -1,0 +1,39 @@
+{
+  "name": "rescript-skill",
+  "namespace": true,
+  "sources": [
+    {
+      "dir": "skills",
+      "subdirs": true,
+      "type": "dev"
+    },
+    {
+      "dir": "tests",
+      "type": "dev"
+    }
+  ],
+  "dependencies": [],
+  "dev-dependencies": ["rescript-bun", "@rescript/react", "sury"],
+  "package-specs": {
+    "module": "esmodule",
+    "in-source": false
+  },
+  "suffix": ".res.mjs",
+  "jsx": {
+    "version": 4
+  },
+  "warnings": {
+    "number": "+A",
+    "error": "+A"
+  },
+  "experimental-features": {
+    "LetUnwrap": true
+  },
+  "compiler-flags": [],
+  "reanalyze": {
+    "analysis": ["dce", "exception"],
+    "suppress": [],
+    "unsuppress": [],
+    "transitive": false
+  }
+}

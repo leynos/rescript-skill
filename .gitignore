@@ -1,0 +1,12 @@
+/node_modules/
+/lib/
+/coverage/
+*.tgz
+/.uv-cache/
+/.uv-tools/
+/.typos-oxendict-base.json
+/.typos-oxendict-base.toml
+.bsb.lock
+.DS_Store
+.idea/
+.vscode/
