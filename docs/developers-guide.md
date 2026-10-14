@@ -119,7 +119,8 @@ needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
   allowed keys, string metadata with a `globs` hint, the line budget), the
   invocation policy, that the router, routing matrix, and catalogue status name
   every skill, that relative links resolve, that every reference is linked, and
-  that every example is linked from prose and exercised by a suite.
+  that every example is linked from prose and exercised by a suite, and that
+  every `*Core.res` example stays free of runtime bindings.
 - `tests/makefile-contracts.test.mjs` checks that `make -j8 all` runs the
   gates sequentially and stops at the first failure, that `make test` names
   every suite, that tool pins are immutable, and that the manifest gate rejects
@@ -129,6 +130,12 @@ needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
   controls built by mutating the real configuration.
 - `tests/gate-scripts.test.mjs` drives both gate scripts with fixtures that
   must fail as well as ones that must pass.
+- `tests/migration-tool.test.mjs` builds a ReScript 11-style module in a
+  scratch project (with `node_modules` symlinked from the checkout) and runs
+  the real `rescript-tools migrate` over it, pinning what
+  `rescript-12-migration` says the tool does and does not rewrite.
+- `tests/makefile-contracts.test.mjs` also checks that `make install-skills`
+  copies only committed files and that no `.res.mjs` is tracked.
 
 ## Coverage and auditing
 

@@ -115,3 +115,12 @@ benchmark.
 - Throwing a ReScript exception at a JavaScript caller, which receives a
   plain object rather than an `Error`.
 - Treating a reanalyze run that exits 0 as clean. It exits 0 with findings.
+- Running a bare `bun test`: it skips compiled `*.test.res.mjs` suites and
+  still passes. Name the suites explicitly.
+- Matching `JsExn(_)` on `Promise.allSettled` rejection reasons: they are not
+  wrapped. `try` and `Promise.catch` do wrap them.
+- Building with `"in-source": false` while depending on ReScript packages that
+  publish an `exports` map, such as Sury; the generated imports point into
+  `lib/es6/` and fail at runtime.
+- Expecting `@warning("-102")` to permit `==` on records under `+A`; warning
+  102 can only be changed project-wide.
