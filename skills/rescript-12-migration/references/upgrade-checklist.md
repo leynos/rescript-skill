@@ -11,7 +11,10 @@
 }
 ```
 
-- Remove `@rescript/core`: the standard library now ships with the compiler.
+- Remove `@rescript/core`, but only after `rescript-tools migrate-all` has
+  run on a project that builds: the standard library now ships with the
+  compiler, under the name `Stdlib` so that it can coexist with Core during the
+  upgrade, and the migration tool refuses to run without build artefacts.
 - Remove `@rescript/std`: `@rescript/runtime` replaces it.
 - `@rescript/runtime` is a dependency of `rescript`, but pin it explicitly.
   Package managers that do not hoist transitive dependencies (pnpm, or Bun
@@ -40,7 +43,9 @@ Before (ReScript 11):
 }
 ```
 
-After (ReScript 12):
+After (ReScript 12, once `migrate-all` has run and Core is removed; until then,
+keep `@rescript/core` in `dependencies` and `-open RescriptCore` in
+`compiler-flags`):
 
 ```json
 {

@@ -4,7 +4,8 @@ Use this when the router's question list does not resolve to one skill.
 
 | Symptom or task                                                 | Primary skill                     | Common pair                   |
 | --------------------------------------------------------------- | --------------------------------- | ----------------------------- |
-| Warning 3: `deprecated: Js.log` or `raise`                      | `rescript-12-migration`           | `rescript-quality-tools`      |
+| Warning 3 (`Js.log`, `raise`) while upgrading from ReScript 11  | `rescript-12-migration`           | `rescript-quality-tools`      |
+| Warning 3 in a project already on 12                            | None: apply the named replacement | None                          |
 | `bsconfig.json`, `bs-dependencies`, or `bsc-flags`              | `rescript-12-migration`           | `rescript-build-and-config`   |
 | `The module or file X can't be found`                           | `rescript-build-and-config`       | `rescript-bun-testing`        |
 | Two files with the same module name                             | `rescript-build-and-config`       | None                          |
@@ -51,7 +52,10 @@ _Table 1: Symptoms and tasks, the skill to load, and its common pair._
   JavaScript. Records, variants, and modules belong to
   `rescript-types-and-modules`.
 - Do not route an obvious single invariant through more than
-  `rescript-property-testing`; it carries its own decision surface.
+  `rescript-property-testing`; it carries its own decision surface. The
+  exception is an invariant of a pure function where a counterexample would be
+  costly (ownership, money, permissions, terminal states): that goes on to
+  `rescript-deductive-verification`, as the router's testing hierarchy says.
 - Do not load `rescript-bun-runtime` to write tests: the test bindings live
   in `rescript-bun-testing` even though both come from `rescript-bun`.
 - Do not load `rescript-quality-tools` to explain one compiler warning; load

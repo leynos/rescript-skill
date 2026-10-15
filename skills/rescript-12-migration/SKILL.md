@@ -28,20 +28,24 @@ to the language skills instead.
 
 1. Confirm the prerequisites: ReScript 11 in uncurried mode, no `.ml`
    sources, Node 20.11 or later if Node is still in the toolchain.
-2. Pin `rescript` and `@rescript/runtime` to `12.3.1`. Remove
-   `@rescript/core` and `@rescript/std`.
+2. Pin `rescript` and `@rescript/runtime` to `12.3.1`, and remove
+   `@rescript/std`. Keep `@rescript/core` for now: 12's built-in library is
+   named `Stdlib` so that the two can coexist, and the migration tool needs a
+   project that builds.
 3. Rename `bsconfig.json` to `rescript.json`; rename `bs-dependencies`,
-   `bs-dev-dependencies`, and `bsc-flags`; delete `-open RescriptCore`; set
-   `jsx.version` to 4 and drop `jsx.mode`.
+   `bs-dev-dependencies`, and `bsc-flags`; set `jsx.version` to 4 and drop
+   `jsx.mode`.
 4. Build. Fix errors (removed APIs and syntax) until the build succeeds
    with warnings.
 5. Run `rescript-tools migrate-all .`, rebuild, and review the diff.
-6. Fix what the tool leaves: notably the Pervasives `lsl`, `land`, `lor`, and
+6. Remove `@rescript/core` and `-open RescriptCore`, rebuild, and fix what
+   breaks, such as qualified `RescriptCore.` references.
+7. Fix what the tool leaves: notably the Pervasives `lsl`, `land`, `lor`, and
    `lxor` (use `<<`, `&&&`, `|||`, `^^^` or `Int.shiftLeft`), and behavioural
    changes it cannot see, such as `BigInt.fromFloat` now returning an option.
-7. Update scripts: `rescript build -w` becomes `rescript watch`;
+8. Update scripts: `rescript build -w` becomes `rescript watch`;
    `rescript format -all` becomes `rescript format`.
-8. Only then tighten the warnings policy (`rescript-build-and-config`).
+9. Only then tighten the warnings policy (`rescript-build-and-config`).
 
 ## What the tool does and does not do
 

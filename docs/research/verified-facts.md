@@ -31,6 +31,10 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
   generated `JsBoundary.res.mjs`.
 - `Int.fromString` is `parseInt` plus a range check, so `"80abc"` yields
   `Some(80)`. Evidence: `ErrorsAndResults.test.res`.
+- Coercion between a record with `name: option<string>` and one with
+  `name?: string` is refused in both directions: "The field name is not
+  optional in record required, but is optional in record optional", and the
+  converse. Evidence: a probe module built with 12.3.1, October 2026.
 
 ## Build system
 
@@ -124,15 +128,18 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
 ## Migration tool
 
 - `rescript-tools migrate` refuses to run until the project has built
-  (`build artifacts could not be found`). It rewrites `Js.log`, `raise`,
-  `Js.Json.parseExn`, `Option.getExn`, `Js.Exn.Error`, `Js.Exn.message`, and
-  `Bool.fromStringExn`, but leaves `lsl` and `land`, which are deprecated with
-  "This will be removed in v13". Evidence: `tests/migration-tool.test.mjs`.
+  (`build artifacts could not be found`). The 12.0.0 release notes name the
+  built-in library `Stdlib` so that it can coexist with `@rescript/core`, which
+  is why Core stays installed until the tool has run. It rewrites `Js.log`,
+  `raise`, `Js.Json.parseExn`, `Option.getExn`, `Js.Exn.Error`,
+  `Js.Exn.message`, and `Bool.fromStringExn`, but leaves `lsl` and `land`,
+  which are deprecated with "This will be removed in v13". Evidence:
+  `tests/migration-tool.test.mjs`.
 
 ## Bun test runner
 
-- A bare `bun test` in this repository ran the five `*.test.mjs` suites and
-  none of the compiled `*.test.res.mjs` suites, and exited 0.
+- A bare `bun test` in this repository ran the `*.test.mjs` suites and none
+  of the compiled `*.test.res.mjs` suites, and exited 0.
 - `@module("bun:test") external reset: unit => unit = "setSystemTime"`
   compiles to `setSystemTime()`, which restores the real clock.
 - `Expect.toMatchSnapshot` in `tests/Snap.test.res` wrote
