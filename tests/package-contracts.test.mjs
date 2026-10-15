@@ -1,5 +1,5 @@
 /**
-Package and compiler-configuration contracts for the example workspace.
+@file Package and compiler-configuration contracts for the example workspace.
 
 The skills teach a ReScript 12.3.1 posture: exact pins, a compiler and runtime
 at the same version, namespaced sources, strict warnings, no global opens, and
@@ -104,5 +104,32 @@ describe("rescript.json", () => {
     const mutated = clone(config);
     mutate(mutated);
     expect(() => rescriptContract(mutated)).toThrow();
+  });
+});
+
+describe("authored JavaScript modules", () => {
+  /** True when `source` opens with a `/** @file ...` documentation block. */
+  const hasFileHeader = (source) => /^\/\*\*\s*\n?@file \S/.test(source);
+
+  const authored = Bun.spawnSync(["git", "ls-files", "*.mjs"], {
+    cwd: REPO_ROOT,
+  })
+    .stdout.toString()
+    .split("\n")
+    .filter((path) => path !== "" && !path.endsWith(".res.mjs"));
+
+  test("the repository tracks authored modules", () => {
+    expect(authored.length).toBeGreaterThan(0);
+  });
+
+  test.each(authored)("%s opens with an @file header", (path) => {
+    expect(hasFileHeader(readFileSync(join(REPO_ROOT, path), "utf8"))).toBe(
+      true,
+    );
+  });
+
+  test("the header check rejects a block without @file", () => {
+    expect(hasFileHeader("/**\nGate script.\n*/\n")).toBe(false);
+    expect(hasFileHeader("// @file not a block\n")).toBe(false);
   });
 });

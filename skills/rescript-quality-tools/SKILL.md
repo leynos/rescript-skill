@@ -25,20 +25,24 @@ run, in which order, and how to make each one fail when it should.
 
 ## The gate set
 
-| Gate                  | Command                                 | Fails on                                      |
-| --------------------- | --------------------------------------- | --------------------------------------------- |
-| format                | `rescript format --check`               | any unformatted `.res`/`.resi`, dev included  |
-| Markdown fences       | `bun check-codeblocks.mjs --check`      | a fence that does not parse or is unformatted |
-| compile               | `rescript build` with `"error": "+A"`   | any enabled warning                           |
-| dead code, exceptions | `bun check-reanalyze.mjs` after a build | any reanalyze finding                         |
-| authored JS and JSON  | `biome check` excluding `**/*.res.mjs`  | Biome rules                                   |
-| tests                 | `bun test` with explicit suites         | see `rescript-bun-testing`                    |
+| Gate                  | Command                                        | Fails on                                      |
+| --------------------- | ---------------------------------------------- | --------------------------------------------- |
+| format                | `rescript format --check`                      | any unformatted `.res`/`.resi`, dev included  |
+| Markdown fences       | `bun $GATES/check-codeblocks.mjs --check`      | a fence that does not parse or is unformatted |
+| compile               | `rescript build` with `"error": "+A"`          | any enabled warning                           |
+| dead code, exceptions | `bun $GATES/check-reanalyze.mjs` after a build | any reanalyze finding                         |
+| authored JS and JSON  | `biome check` excluding `**/*.res.mjs`         | Biome rules                                   |
+| tests                 | `bun test` with explicit suites                | see `rescript-bun-testing`                    |
 
 _Table 1: The quality gates, their commands, and what fails each._
 
 [check-codeblocks.mjs](references/examples/check-codeblocks.mjs) and
 [check-reanalyze.mjs](references/examples/check-reanalyze.mjs) are the scripts
 this catalogue's own repository runs, tested against fixtures that must fail.
+`$GATES` is the directory holding them: copy them into a project's own tools
+directory, or, in this repository, use
+`skills/rescript-quality-tools/references/examples`, which the Makefile names
+`GATES`. Run both from the project root.
 
 ## Facts about the tools (12.3.1)
 

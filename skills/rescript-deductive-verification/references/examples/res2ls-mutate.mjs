@@ -1,5 +1,5 @@
 /**
-res2ls mutation check: show that each contract on a module says something, by
+@file res2ls mutation check: show that each contract on a module says something, by
 breaking the production JavaScript and requiring the proof to fail on exactly
 the contracts the break should violate.
 

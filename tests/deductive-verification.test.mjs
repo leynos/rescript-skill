@@ -1,5 +1,5 @@
 /**
-Behavioural tests for the res2ls bridge and correspondence audit shipped with
+@file Behavioural tests for the res2ls bridge and correspondence audit shipped with
 `rescript-deductive-verification`.
 
 These need no prover: they check what the bridge must get right for a proof

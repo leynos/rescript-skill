@@ -1,5 +1,5 @@
 /**
-Formatting and syntax gate for ReScript code fences in Markdown.
+@file Formatting and syntax gate for ReScript code fences in Markdown.
 
 Each fence whose info string starts with `rescript`, `res`, or `resi` is piped
 through `rescript format --stdin .res` (or `.resi`), which exits non-zero on a
@@ -69,8 +69,44 @@ export function extensionFor(info) {
   return match[1] === "resi" ? ".resi" : ".res";
 }
 
+/** How long one fence may take to format before the gate gives up. */
+export const FORMAT_TIMEOUT_MS = 30_000;
+
+/**
+ * Pipes `input` through `command` and returns `{ ok, output, error }`. A
+ * command that cannot start, or that outlives `timeout` milliseconds, is a
+ * failure with a message saying so, rather than an exception or a hang.
+ */
+export function runFormatter(command, input, timeout = FORMAT_TIMEOUT_MS) {
+  let result;
+  try {
+    result = Bun.spawnSync(command, {
+      stdin: new TextEncoder().encode(input),
+      timeout,
+    });
+  } catch (error) {
+    return {
+      ok: false,
+      output: "",
+      error: `could not start ${command[0]}: ${error.message}`,
+    };
+  }
+  if (result.exitedDueToTimeout) {
+    return {
+      ok: false,
+      output: "",
+      error: `formatter timed out after ${timeout} ms`,
+    };
+  }
+  return {
+    ok: result.exitCode === 0,
+    output: result.stdout.toString(),
+    error: result.stderr.toString(),
+  };
+}
+
 function formatSource(body, extension) {
-  const result = Bun.spawnSync(
+  return runFormatter(
     [
       process.execPath,
       "run",
@@ -80,13 +116,8 @@ function formatSource(body, extension) {
       "--stdin",
       extension,
     ],
-    { stdin: new TextEncoder().encode(`${body}\n`) },
+    `${body}\n`,
   );
-  return {
-    ok: result.exitCode === 0,
-    output: result.stdout.toString(),
-    error: result.stderr.toString(),
-  };
 }
 
 /**

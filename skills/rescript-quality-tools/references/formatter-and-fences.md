@@ -44,15 +44,18 @@ touching prose:
 3. In `--check` mode, fail on any difference; in `--write` mode, replace only
    the fence bodies.
 
+`$GATES` is the directory holding the script, as in the skill's gate table.
+
 ```bash
-bun check-codeblocks.mjs --check          # every Markdown file Git knows about
-bun check-codeblocks.mjs --write docs/*.md
+bun "$GATES/check-codeblocks.mjs" --check    # every Markdown file Git knows about
+bun "$GATES/check-codeblocks.mjs" --write docs/*.md
 ```
 
 This proves syntax, not types. Fragments that refer to undefined names still
 pass, which keeps prose examples short. For claims about behaviour, compile a
 complete example module and test it, as this catalogue does under each skill's
-`references/examples/`. Use a `text` fence for code that is meant to be wrong.
+`references/examples/`. Use a `plaintext` fence for code that is meant to be
+wrong.
 
 `rescript-tools extract-codeblocks` lists fences as JSON (`rescript`, `res`, and
 `res prelude` blocks, without their info string), which can feed a compile

@@ -1,5 +1,5 @@
 /**
-Skill catalogue contracts: manifests, routing reach, links, and examples.
+@file Skill catalogue contracts: manifests, routing reach, links, and examples.
 
 `make skill-manifest-check` validates each manifest against the Agent Skills
 schema; this suite owns the catalogue-level invariants the schema cannot see.

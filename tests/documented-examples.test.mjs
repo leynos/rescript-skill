@@ -1,5 +1,5 @@
 /**
-Every fenced example in a user-facing document is a contract.
+@file Every fenced example in a user-facing document is a contract.
 
 The README and the users' guide are loaded as published, through the shared
 loader, and each marked example is exercised by the handler registered under

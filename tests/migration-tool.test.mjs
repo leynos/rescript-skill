@@ -1,5 +1,5 @@
 /**
-Evidence for `rescript-12-migration`: what `rescript-tools migrate` rewrites.
+@file Evidence for `rescript-12-migration`: what `rescript-tools migrate` rewrites.
 
 The skill tells readers to build with deprecations as warnings, run the
 migration tool, and then fix what it leaves behind by hand. This suite runs the

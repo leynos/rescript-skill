@@ -1,5 +1,5 @@
 /**
-Translation check for VerifiedLease, run by `make prove`: the Dafny that
+@file Translation check for VerifiedLease, run by `make prove`: the Dafny that
 LemmaScript generated, compiled back to JavaScript by `dafny translate js`,
 must agree with the production `step` the ReScript compiler emitted.
 

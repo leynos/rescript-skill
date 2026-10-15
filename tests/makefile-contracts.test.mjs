@@ -1,5 +1,5 @@
 /**
-Makefile contracts: gate order, suite selection, and the manifest gate.
+@file Makefile contracts: gate order, suite selection, and the manifest gate.
 
 The `all` target must run its gates sequentially and stop at the first failure
 even under `make -j`, so a parallel run cannot hide a broken gate behind an

@@ -1,5 +1,5 @@
 /**
-Mutants of the compiled VerifiedLease.res.mjs, run by `make prove` through
+@file Mutants of the compiled VerifiedLease.res.mjs, run by `make prove` through
 res2ls-mutate.mjs. Each breaks one behaviour of `step`, and `breaks` lists a
 fragment of every contract that must then fail, and no other. A contract no
 mutant breaks would be unchecked; together these break all twelve.

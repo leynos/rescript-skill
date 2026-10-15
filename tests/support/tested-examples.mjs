@@ -1,5 +1,5 @@
 /**
-Loader for the marked examples in user-facing documents.
+@file Loader for the marked examples in user-facing documents.
 
 Every fenced block in a loaded document must be preceded by a marker comment,
 `<!-- tested-example: <identifier> -->`, with only blank lines between the

@@ -1,5 +1,5 @@
 /**
-Dead-code and exception gate over `rescript-tools reanalyze`.
+@file Dead-code and exception gate over `rescript-tools reanalyze`.
 
 ReScript 12.3.1 ships reanalyze inside `rescript-tools`, and
 `reanalyze -config` runs the analyses named in `rescript.json` (`dce` and
@@ -33,7 +33,42 @@ export function describe(finding, root) {
   return `${path}:${line + 1}:${column + 1}: ${finding.name}: ${finding.message}`;
 }
 
-function main() {
+/**
+ * Decides the gate from one finished reanalyze run, given as
+ * `{ exitCode, stdout, stderr }`. Returns the exit code and the lines to
+ * print, so every outcome can be tested without running reanalyze.
+ */
+export function gate(run, root) {
+  if (run.exitCode !== 0) {
+    return {
+      code: 1,
+      errors: [
+        `reanalyze exited with status ${run.exitCode}`,
+        run.stdout + run.stderr,
+      ],
+      out: [],
+    };
+  }
+  let findings;
+  try {
+    findings = parseFindings(run.stdout);
+  } catch (error) {
+    return { code: 1, errors: [error.message], out: [] };
+  }
+  if (findings.length > 0) {
+    return {
+      code: 1,
+      errors: [
+        ...findings.map((finding) => describe(finding, root)),
+        `reanalyze reported ${findings.length} finding(s)`,
+      ],
+      out: [],
+    };
+  }
+  return { code: 0, errors: [], out: ["reanalyze: no findings"] };
+}
+
+function runReanalyze() {
   const result = Bun.spawnSync([
     process.execPath,
     "run",
@@ -43,23 +78,20 @@ function main() {
     "-config",
     "-json",
   ]);
-  const stdout = result.stdout.toString();
-  if (result.exitCode !== 0) {
-    console.error(stdout + result.stderr.toString());
-    return 1;
-  }
-  const findings = parseFindings(stdout);
-  for (const finding of findings) {
-    console.error(describe(finding, process.cwd()));
-  }
-  if (findings.length > 0) {
-    console.error(`reanalyze reported ${findings.length} finding(s)`);
-    return 1;
-  }
-  console.log("reanalyze: no findings");
-  return 0;
+  return {
+    exitCode: result.exitCode,
+    stdout: result.stdout.toString(),
+    stderr: result.stderr.toString(),
+  };
 }
 
 if (import.meta.main) {
-  process.exit(main());
+  const { code, errors, out } = gate(runReanalyze(), process.cwd());
+  for (const line of errors) {
+    console.error(line);
+  }
+  for (const line of out) {
+    console.log(line);
+  }
+  process.exit(code);
 }

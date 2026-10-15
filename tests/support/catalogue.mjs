@@ -1,5 +1,5 @@
 /**
-Catalogue inventory helpers shared only by the repository contract suites.
+@file Catalogue inventory helpers shared only by the repository contract suites.
 
 They read the shipped skill tree the way a strict Agent Skills loader would:
 the frontmatter is parsed as YAML rather than matched as text, so assertions

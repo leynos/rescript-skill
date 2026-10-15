@@ -1,5 +1,5 @@
 /**
-Behavioural tests for the repository's own gate scripts.
+@file Behavioural tests for the repository's own gate scripts.
 
 The fence gate must reject unparsable and unformatted ReScript fences while
 leaving every byte of surrounding prose alone, which is exactly what
@@ -18,8 +18,10 @@ import {
   checkDocument,
   extensionFor,
   findFences,
+  runFormatter,
 } from "../skills/rescript-quality-tools/references/examples/check-codeblocks.mjs";
 import {
+  gate,
   describe as render,
   parseFindings,
 } from "../skills/rescript-quality-tools/references/examples/check-reanalyze.mjs";
@@ -143,6 +145,30 @@ describe("check-codeblocks", () => {
   });
 });
 
+describe("the formatter runner", () => {
+  test("passes input through a formatter that succeeds", () => {
+    expect(runFormatter(["cat"], "let x = 1\n")).toEqual({
+      ok: true,
+      output: "let x = 1\n",
+      error: "",
+    });
+  });
+
+  test("reports a formatter that outlives its timeout", () => {
+    const result = runFormatter(["sleep", "5"], "", 200);
+    expect(result.ok).toBe(false);
+    expect(result.error).toBe("formatter timed out after 200 ms");
+  });
+
+  test("reports a formatter that cannot start", () => {
+    const result = runFormatter(["/nonexistent/rescript-format"], "");
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(
+      /^could not start \/nonexistent\/rescript-format: /,
+    );
+  });
+});
+
 describe("check-reanalyze", () => {
   const finding = {
     name: "Warning Dead Value",
@@ -169,5 +195,57 @@ describe("check-reanalyze", () => {
     expect(render(finding, REPO_ROOT)).toBe(
       "skills/x/references/examples/X.res:7:1: Warning Dead Value: unused is never used",
     );
+  });
+
+  test("passes a run with no findings", () => {
+    expect(
+      gate({ exitCode: 0, stdout: "[]\n", stderr: "" }, REPO_ROOT),
+    ).toEqual({ code: 0, errors: [], out: ["reanalyze: no findings"] });
+  });
+
+  test("fails a run with findings and renders each one", () => {
+    const run = { exitCode: 0, stdout: JSON.stringify([finding]), stderr: "" };
+    expect(gate(run, REPO_ROOT)).toEqual({
+      code: 1,
+      errors: [
+        "skills/x/references/examples/X.res:7:1: Warning Dead Value: unused is never used",
+        "reanalyze reported 1 finding(s)",
+      ],
+      out: [],
+    });
+  });
+
+  test("fails a run where reanalyze itself failed, keeping its output", () => {
+    const run = { exitCode: 2, stdout: "partial", stderr: " boom" };
+    expect(gate(run, REPO_ROOT)).toEqual({
+      code: 1,
+      errors: ["reanalyze exited with status 2", "partial boom"],
+      out: [],
+    });
+  });
+
+  test("fails a run whose output carries no JSON", () => {
+    const run = {
+      exitCode: 0,
+      stdout: "Analysis reported 0 issues",
+      stderr: "",
+    };
+    const verdict = gate(run, REPO_ROOT);
+    expect(verdict.code).toBe(1);
+    expect(verdict.errors[0]).toMatch(/printed no JSON array/);
+  });
+
+  test("passes the built repository as a subprocess", () => {
+    const result = Bun.spawnSync(
+      [
+        process.execPath,
+        "skills/rescript-quality-tools/references/examples/check-reanalyze.mjs",
+      ],
+      { cwd: REPO_ROOT },
+    );
+    expect({
+      exitCode: result.exitCode,
+      stdout: result.stdout.toString(),
+    }).toEqual({ exitCode: 0, stdout: "reanalyze: no findings\n" });
   });
 });

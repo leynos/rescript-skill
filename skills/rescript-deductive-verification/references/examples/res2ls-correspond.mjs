@@ -1,5 +1,5 @@
 /**
-res2ls correspondence audit: show that a verification unit is the production
+@file res2ls correspondence audit: show that a verification unit is the production
 JavaScript the ReScript compiler emitted, not a model of it.
 
   bun res2ls-correspond.mjs <path/to/Module.res> <out-dir>

@@ -1,5 +1,5 @@
 /**
-res2ls bridge: turn one compiled ReScript module into a LemmaScript
+@file res2ls bridge: turn one compiled ReScript module into a LemmaScript
 verification unit, using only compiler output and the contracts written on the
 ReScript declarations.
 
