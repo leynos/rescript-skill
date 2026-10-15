@@ -68,7 +68,12 @@ let settleAll = (work: array<promise<'a>>): promise<array<result<'a, string>>> =
 
 // `Promise.all(items->Array.map(f))` starts every task at once. A small pool of
 // workers pulling from a shared cursor caps the number in flight.
+@throws(Invalid_argument)
 let mapWithLimit = async (items: array<'a>, ~limit: int, f: 'a => promise<'b>): array<'b> => {
+  // With no workers nothing would run and every item would silently vanish.
+  if limit < 1 {
+    throw(Invalid_argument(`mapWithLimit: limit must be at least 1, got ${limit->Int.toString}`))
+  }
   let results = Array.make(~length=items->Array.length, None)
   let cursor = ref(0)
   let worker = async () => {
@@ -100,6 +105,8 @@ type abortSignal
 @send
 external onAbort: (abortSignal, @as("abort") _, unit => unit, @as(json`{"once": true}`) _) => unit =
   "addEventListener"
+@send
+external offAbort: (abortSignal, @as("abort") _, unit => unit) => unit = "removeEventListener"
 
 type sleepOutcome = Slept | Cancelled
 
@@ -109,10 +116,18 @@ let cancellableSleep = (ms: int, signal: abortSignal): promise<sleepOutcome> =>
     if signal->aborted {
       resolve(Cancelled)
     } else {
-      let timer = setTimeout(() => resolve(Slept), ms)
-      signal->onAbort(() => {
-        clearTimeout(timer)
+      let timer = ref(None)
+      let cancel = () => {
+        timer.contents->Option.forEach(clearTimeout)
         resolve(Cancelled)
-      })
+      }
+      // `once` removes the listener only if `abort` fires. A sleep that
+      // completes must remove it, or every call on a long-lived signal leaves
+      // a closure behind.
+      timer := Some(setTimeout(() => {
+            signal->offAbort(cancel)
+            resolve(Slept)
+          }, ms))
+      signal->onAbort(cancel)
     }
   )

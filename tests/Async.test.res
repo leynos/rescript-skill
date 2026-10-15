@@ -86,13 +86,40 @@ describe("mapWithLimit", () => {
     let results = await AsyncPatterns.mapWithLimit([], ~limit=3, async n => n)
     expect(results)->Expect.toEqual([])
   })
+
+  testAsync("rejects a limit below 1 before calling f", async () => {
+    let called = ref(false)
+    let task = async n => {
+      called := true
+      n
+    }
+    let outcome = switch await AsyncPatterns.mapWithLimit([1, 2], ~limit=0, task) {
+    | results => Ok(results)
+    | exception Invalid_argument(message) => Error(message)
+    }
+    expect(outcome)->Expect.toEqual(Error("mapWithLimit: limit must be at least 1, got 0"))
+    expect(called.contents)->Expect.toBe(false)
+  })
 })
+
+@module("node:events")
+external getEventListeners: (AsyncPatterns.abortSignal, string) => array<unit => unit> =
+  "getEventListeners"
 
 describe("cancellableSleep", () => {
   testAsync("completes when not aborted", async () => {
     let controller = AsyncPatterns.makeAbortController()
     let outcome = await AsyncPatterns.cancellableSleep(1, controller->AsyncPatterns.signal)
     expect(outcome)->Expect.toBe(AsyncPatterns.Slept)
+  })
+
+  testAsync("removes its abort listener when the sleep completes", async () => {
+    let signal = AsyncPatterns.makeAbortController()->AsyncPatterns.signal
+    let pending = AsyncPatterns.cancellableSleep(1, signal)
+    expect(getEventListeners(signal, "abort")->Array.length)->Expect.toBe(1)
+    let _ = await pending
+    let _ = await AsyncPatterns.cancellableSleep(1, signal)
+    expect(getEventListeners(signal, "abort")->Array.length)->Expect.toBe(0)
   })
 
   testAsync("resolves Cancelled when aborted mid-flight", async () => {
