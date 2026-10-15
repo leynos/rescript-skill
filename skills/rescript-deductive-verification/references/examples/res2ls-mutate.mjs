@@ -107,6 +107,30 @@ export function judge(failed, breaks) {
   return problems;
 }
 
+/**
+ * Judges one finished verifier run of a mutant; returns a list of problems,
+ * empty when the mutant was killed on exactly the contracts it lists.
+ * `readDfy` is called only once the run is known to have reached Dafny.
+ */
+export function judgeRun({ status, output }, readDfy, unit, breaks, log) {
+  if (status === 0) {
+    return ["survived: the proof still passes"];
+  }
+  const errors = [...output.matchAll(/\.dfy\(\d+,\d+\): Error: (.*)/g)].map(
+    (m) => m[1],
+  );
+  if (errors.length === 0) {
+    // A crash, a timeout, or a translation failure before Dafny ran: the
+    // mutant was not judged, so it must not count as killed.
+    return [`lsc exited with status ${status} and no Dafny error; see ${log}`];
+  }
+  const foreign = errors.filter((e) => !/postcondition/.test(e));
+  if (foreign.length > 0) {
+    return foreign.map((e) => `failed for another reason: ${e}`);
+  }
+  return judge(failedContracts(output, readDfy(), unit), breaks);
+}
+
 /** Bridges, proves, and judges one mutant; returns a list of problems. */
 function runMutant(moduleName, inputs, mutant, outDir, lscPath) {
   const dir = join(outDir, mutant.name);
@@ -121,19 +145,15 @@ function runMutant(moduleName, inputs, mutant, outDir, lscPath) {
     { encoding: "utf8" },
   );
   const output = `${run.stdout}${run.stderr}`;
-  writeFileSync(join(dir, "verify.log"), output);
-  if (run.status === 0) {
-    return ["survived: the proof still passes"];
-  }
-  const errors = [...output.matchAll(/\.dfy\(\d+,\d+\): Error: (.*)/g)].map(
-    (m) => m[1],
+  const log = join(dir, "verify.log");
+  writeFileSync(log, output);
+  return judgeRun(
+    { status: run.status, output },
+    () => readFileSync(join(dir, `${moduleName}.dfy`), "utf8"),
+    unit,
+    mutant.breaks,
+    log,
   );
-  const foreign = errors.filter((e) => !/postcondition/.test(e));
-  if (foreign.length > 0) {
-    return foreign.map((e) => `failed for another reason: ${e}`);
-  }
-  const dfy = readFileSync(join(dir, `${moduleName}.dfy`), "utf8");
-  return judge(failedContracts(output, dfy, unit), mutant.breaks);
 }
 
 if (import.meta.main) {

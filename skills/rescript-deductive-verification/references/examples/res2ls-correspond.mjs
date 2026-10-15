@@ -40,6 +40,8 @@ function undoRewrites(context) {
         ts.factory.createNumericLiteral(0),
       );
     }
+    // The bridge refuses production names containing `__`, so every `__n`
+    // here is one of its own `$n` rewrites.
     if (ts.isIdentifier(node) && /__\d+$/.test(node.text)) {
       return ts.factory.createIdentifier(node.text.replace(/__(\d+)$/, "$$$1"));
     }

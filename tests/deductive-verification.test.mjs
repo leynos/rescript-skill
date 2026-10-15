@@ -25,6 +25,7 @@ import {
   bridge,
   buildUnit,
   contractsFromParsetree,
+  dollarFree,
   INT32_PRELUDE,
   ocamlString,
   readInputs,
@@ -39,6 +40,7 @@ import {
   applyEdits,
   failedContracts,
   judge,
+  judgeRun,
 } from "../skills/rescript-deductive-verification/references/examples/res2ls-mutate.mjs";
 import mutants from "../skills/rescript-deductive-verification/references/examples/VerifiedLease.mutants.mjs";
 import { REPO_ROOT } from "./support/catalogue.mjs";
@@ -106,6 +108,40 @@ describe("contract extraction", () => {
   test("decodes the compiler's escaped string literals", () => {
     expect(ocamlString('"a\\"b\\\\c\\n\\065"')).toBe('a"b\\c\nA');
     expect(() => ocamlString('"\\q"')).toThrow(/unsupported escape/);
+  });
+
+  test("decodes escaped bytes as UTF-8, as the real compiler prints them", () => {
+    const parsetree = parsetreeOf('@ensures("café") \nlet f = () => 1\n');
+    expect(contractsFromParsetree(parsetree).get("f").ensures).toEqual([
+      "café",
+    ]);
+    expect(ocamlString('"caf\\195\\169"')).toBe("café");
+  });
+
+  test.each([
+    ["a truncated decimal escape", '"\\1"'],
+    ["a decimal escape with a non-digit", '"\\1x2"'],
+    ["a decimal escape above 255", '"\\256"'],
+  ])("rejects %s", (_, literal) => {
+    expect(() => ocamlString(literal)).toThrow(/malformed decimal escape/);
+  });
+
+  test("rejects bytes that are not UTF-8", () => {
+    expect(() => ocamlString('"\\195"')).toThrow();
+  });
+});
+
+describe("identifier rewriting", () => {
+  test("rewrites only a compiler-generated trailing $n", () => {
+    expect(dollarFree("by$1")).toBe("by__1");
+    expect(dollarFree("handles")).toBe("handles");
+  });
+
+  test.each([
+    ["a production name containing __", "by__1", /reserved/],
+    ["a $ that is not a trailing number", "Foo$Bar", /trailing/],
+  ])("refuses %s, which could not be undone", (_, name, message) => {
+    expect(() => dollarFree(name)).toThrow(message);
   });
 });
 
@@ -337,6 +373,33 @@ describe("mutation check", () => {
     const output =
       "F.dfy(3,4): Related location: this is the postcondition that could not be proved";
     expect(failedContracts(output, dfy, unitText)).toEqual(["result === x"]);
+  });
+
+  test("does not count a run that never reached Dafny as a kill", () => {
+    const unreadable = () => {
+      throw new Error("no .dfy was written");
+    };
+    expect(
+      judgeRun(
+        { status: 1, output: "Error: out of memory" },
+        unreadable,
+        "",
+        ["b"],
+        "log",
+      ),
+    ).toEqual(["lsc exited with status 1 and no Dafny error; see log"]);
+    expect(
+      judgeRun({ status: 0, output: "" }, unreadable, "", ["b"], "log"),
+    ).toEqual(["survived: the proof still passes"]);
+    expect(
+      judgeRun(
+        { status: 1, output: "M.dfy(3,1): Error: index out of range" },
+        unreadable,
+        "",
+        ["b"],
+        "log",
+      ),
+    ).toEqual(["failed for another reason: index out of range"]);
   });
 
   test("judges a mutant that breaks more or less than it claims", () => {

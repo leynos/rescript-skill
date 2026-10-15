@@ -137,6 +137,11 @@ if (import.meta.main) {
   }
 
   const count = Number(countArg);
+  // Zero comparisons would print success having checked nothing.
+  if (!Number.isSafeInteger(count) || count < 1) {
+    console.error(`count must be a positive integer, got ${countArg}`);
+    process.exit(2);
+  }
   const sample = inputs();
   for (let i = 0; i < count; i++) {
     const [s, e] = sample();

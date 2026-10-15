@@ -24,7 +24,11 @@ correspondence audit:
 - `e | 0` becomes `int32(e)`, because LemmaScript lowers `|` without int32
   wrap-around. TRUSTED: the prelude's `int32` equals `| 0` on safe integers.
 - compiler-generated locals such as `by$1` become `by__1`, because `$` is not
-  a Dafny identifier character.
+  a Dafny identifier character. Names containing `__`, or a `$` that is not a
+  trailing number, are refused so that the audit's reversal is exact.
+
+Contract strings come from Printast, which prints each non-ASCII byte as a
+three-digit decimal escape; they are decoded as UTF-8, strictly.
 */
 
 import { execFileSync, spawnSync } from "node:child_process";
@@ -62,26 +66,38 @@ const OCAML_ESCAPES = {
   " ": " ",
 };
 
-/** Decodes an OCaml string literal as the compiler's Printast prints it. */
+/**
+ * Decodes an OCaml string literal as the compiler's Printast prints it.
+ * Printast escapes each non-ASCII byte as exactly three decimal digits, so
+ * the literal is a byte string: collect the bytes, then decode them as UTF-8,
+ * refusing anything malformed rather than guessing.
+ */
 export function ocamlString(literal) {
-  let out = "";
+  const bytes = [];
   for (let i = 1; i < literal.length - 1; i++) {
-    if (literal[i] !== "\\") {
-      out += literal[i];
+    const char = literal[i];
+    if (char !== "\\") {
+      bytes.push(...new TextEncoder().encode(char));
       continue;
     }
     i++;
     const escaped = literal[i];
     if (escaped in OCAML_ESCAPES) {
-      out += OCAML_ESCAPES[escaped];
+      bytes.push(OCAML_ESCAPES[escaped].charCodeAt(0));
     } else if (/[0-9]/.test(escaped)) {
-      out += String.fromCharCode(Number(literal.slice(i, i + 3)));
+      const digits = literal.slice(i, i + 3);
+      if (!/^[0-9]{3}$/.test(digits) || Number(digits) > 255) {
+        throw new Error(`malformed decimal escape \\${digits} in ${literal}`);
+      }
+      bytes.push(Number(digits));
       i += 2;
     } else {
       throw new Error(`unsupported escape \\${escaped} in ${literal}`);
     }
   }
-  return out;
+  return new TextDecoder("utf-8", { fatal: true }).decode(
+    Uint8Array.from(bytes),
+  );
 }
 
 /**
@@ -315,7 +331,25 @@ export const isPreludeName = (name) =>
 
 // ── Production bodies from the compiled JavaScript ──────────────────────
 
-export const dollarFree = (name) => name.replace(/\$/g, "__");
+/**
+ * Rewrites a compiler-generated local such as `by$1` to `by__1`, because `$`
+ * is not a Dafny identifier character. The rewrite must be exactly
+ * reversible, so the audit can undo it: a `$` anywhere but before a trailing
+ * number, and a `__` already present in production code, are refused rather
+ * than rewritten.
+ */
+export function dollarFree(name) {
+  if (name.includes("__")) {
+    throw new Error(`${name}: "__" is reserved for the bridge's $ rewrite`);
+  }
+  const rewritten = name.replace(/\$(\d+)$/, "__$1");
+  if (rewritten.includes("$")) {
+    throw new Error(
+      `${name}: only a trailing $<number>, as the compiler generates, can be rewritten`,
+    );
+  }
+  return rewritten;
+}
 
 function isOrZero(node) {
   return (
@@ -354,7 +388,7 @@ function functionEdits(st, jsSf, sig, genSf, contract, typing) {
   }
 
   const visit = (node) => {
-    if (ts.isIdentifier(node) && node.text.includes("$")) {
+    if (ts.isIdentifier(node) && /\$|__/.test(node.text)) {
       edits.push({
         pos: node.getStart(jsSf),
         end: node.end,

@@ -88,7 +88,10 @@ The bridge only inserts text and applies two reversible rewrites:
   function. The equivalence is trusted and established by testing at the
   boundaries and on random safe integers.
 - **Rewrite `x$1` to `x__1`.** The compiler names shadowed locals with `$`,
-  which Dafny identifiers cannot contain. This is an alpha-renaming.
+  which Dafny identifiers cannot contain. This is an alpha-renaming. Only a
+  trailing `$` and number is rewritten; a production name that already contains
+  `__`, or a `$` anywhere else (such as a namespaced import, `Foo$Pkg`), is
+  refused, so the audit can undo the rewrite exactly.
 
 For every contracted function, it also adds typing contracts. It requires
 `isInt32` or `int32Typed_*` of each parameter, which states ReScript's typing
