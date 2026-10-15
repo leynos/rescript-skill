@@ -9,6 +9,10 @@ in source with `@live`, `@dead`, `@@live`, or `@throws(...)`, never by
 widening the `suppress` list or by skipping this gate.
 
 Run it after `rescript build`: reanalyze reads the compiler's `.cmt` files.
+
+`REANALYZE_COMMAND`, when set, names an executable to run in place of
+`rescript-tools reanalyze -config -json`. It exists so the suites can drive
+this script end to end against controlled output; leave it unset in a gate.
 */
 
 import { relative } from "node:path";
@@ -68,17 +72,23 @@ export function gate(run, root) {
   return { code: 0, errors: [], out: ["reanalyze: no findings"] };
 }
 
-/** Runs reanalyze over the project and returns its exit code and output. */
-function runReanalyze() {
-  const result = Bun.spawnSync([
-    process.execPath,
-    "run",
-    "--bun",
-    "rescript-tools",
-    "reanalyze",
-    "-config",
-    "-json",
-  ]);
+/**
+ * Runs reanalyze over the project, or `override` in its place, and returns
+ * its exit code and output.
+ */
+function runReanalyze(override = process.env.REANALYZE_COMMAND) {
+  const command = override
+    ? [override]
+    : [
+        process.execPath,
+        "run",
+        "--bun",
+        "rescript-tools",
+        "reanalyze",
+        "-config",
+        "-json",
+      ];
+  const result = Bun.spawnSync(command);
   return {
     exitCode: result.exitCode,
     stdout: result.stdout.toString(),

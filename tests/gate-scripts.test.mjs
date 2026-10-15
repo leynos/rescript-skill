@@ -239,6 +239,68 @@ describe("check-reanalyze", () => {
     expect(verdict.errors[0]).toMatch(/printed no JSON array/);
   });
 
+  /**
+   * Runs the gate script as a subprocess with a fake reanalyze that prints
+   * `stdout` and `stderr` and exits `status`; returns what the gate did.
+   */
+  function runGate(stdout, stderr, status) {
+    const directory = mkdtempSync(join(tmpdir(), "rescript-skill-reanalyze-"));
+    try {
+      const fake = join(directory, "reanalyze");
+      writeFileSync(join(directory, "out"), stdout);
+      writeFileSync(join(directory, "err"), stderr);
+      writeFileSync(
+        fake,
+        `#!/bin/sh\ncat "${directory}/out"\ncat "${directory}/err" >&2\nexit ${status}\n`,
+        { mode: 0o755 },
+      );
+      const result = Bun.spawnSync(
+        [
+          process.execPath,
+          "skills/rescript-quality-tools/references/examples/check-reanalyze.mjs",
+        ],
+        { cwd: REPO_ROOT, env: { ...process.env, REANALYZE_COMMAND: fake } },
+      );
+      return {
+        exitCode: result.exitCode,
+        stdout: result.stdout.toString(),
+        stderr: result.stderr.toString(),
+      };
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  }
+
+  test("as a subprocess, passes a run with no findings", () => {
+    expect(runGate("[]\n", "", 0)).toEqual({
+      exitCode: 0,
+      stdout: "reanalyze: no findings\n",
+      stderr: "",
+    });
+  });
+
+  test("as a subprocess, fails a run with findings and renders them", () => {
+    const run = runGate(JSON.stringify([finding]), "", 0);
+    expect(run.exitCode).toBe(1);
+    expect(run.stderr).toBe(
+      "skills/x/references/examples/X.res:7:1: Warning Dead Value: unused is never used\n" +
+        "reanalyze reported 1 finding(s)\n",
+    );
+    expect(run.stdout).toBe("");
+  });
+
+  test("as a subprocess, fails when reanalyze fails, keeping its output", () => {
+    const run = runGate("partial", " boom", 3);
+    expect(run.exitCode).toBe(1);
+    expect(run.stderr).toBe("reanalyze exited with status 3\npartial boom\n");
+  });
+
+  test("as a subprocess, fails on output with no JSON", () => {
+    const run = runGate("Analysis reported 0 issues\n", "", 0);
+    expect(run.exitCode).toBe(1);
+    expect(run.stderr).toMatch(/^reanalyze printed no JSON array/);
+  });
+
   test("passes the built repository as a subprocess", () => {
     const result = Bun.spawnSync(
       [
