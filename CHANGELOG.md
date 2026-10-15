@@ -51,6 +51,8 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - `make prove`: bridges, audits, and proves the contracted examples with a
   pinned LemmaScript kept in `tools/verification/`. It needs Dafny 4.11 and Z3
   on `PATH`, so it is not part of `make all`.
+- Documentation contents, repository layout, and catalogue design documents,
+  following the df12 documentation style.
 
 ### Changed
 

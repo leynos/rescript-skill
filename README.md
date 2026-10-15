@@ -44,14 +44,14 @@ This copies the committed `skills/` tree into `~/.codex/skills`. Set
 
 Start with the router and describe the task:
 
-```text
+```plaintext
 Use $rescript-router to route this ReScript task, then help me replace the
 nested switches in this config loader.
 ```
 
 When you already know the pressure point, call the skill directly:
 
-```text
+```plaintext
 Use $rescript-errors-and-results to design the error variant for this
 JSON-backed settings module.
 ```
@@ -79,6 +79,8 @@ ______________________________________________________________________
 
 ## Learn more
 
+- [Documentation contents](docs/contents.md) — every document, and why to
+  open it.
 - [Users' guide](docs/users-guide.md) — installation, invocation, routing, and
   the testing hierarchy.
 - [Developers' guide](docs/developers-guide.md) — prerequisites, the Make
@@ -91,18 +93,20 @@ ______________________________________________________________________
 
 ## Acknowledgements
 
-The catalogue's structure follows [`rust-skill`][rust-skill] and
-[`python-skill`][python-skill]. It leans on the [ReScript documentation][docs],
-[`rescript-bun`][rescript-bun], [fast-check][fast-check], [Sury][sury], and
-[`@rescript/react`][rescript-react].
+The catalogue's structure follows two sibling catalogues:
 
-[rust-skill]: https://github.com/leynos/rust-skill
-[python-skill]: https://github.com/leynos/python-skill
-[docs]: https://rescript-lang.org/docs/manual/introduction
-[rescript-bun]: https://github.com/zth/rescript-bun
-[fast-check]: https://github.com/dubzzz/fast-check
-[sury]: https://github.com/DZakh/sury
-[rescript-react]: https://github.com/rescript-lang/rescript-react
+- [`rust-skill`](https://github.com/leynos/rust-skill)
+- [`python-skill`](https://github.com/leynos/python-skill)
+
+It leans on:
+
+- [ReScript documentation](https://rescript-lang.org/docs/manual/introduction)
+- [`rescript-bun`](https://github.com/zth/rescript-bun)
+- [fast-check](https://github.com/dubzzz/fast-check)
+- [Sury](https://github.com/DZakh/sury)
+- [`@rescript/react`](https://github.com/rescript-lang/rescript-react)
+- [LemmaScript](https://github.com/midspiral/LemmaScript) and
+  [Dafny](https://dafny.org/)
 
 ______________________________________________________________________
 

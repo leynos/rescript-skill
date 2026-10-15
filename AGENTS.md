@@ -62,8 +62,8 @@ Claims about compiler or runtime behaviour must be evidenced, not remembered.
   dead-code and exception analysis. Annotate a deliberate case with `@live` or
   `@throws(...)`; never add a path to the `reanalyze.suppress` list.
 - Every `rescript`, `res`, and `resi` fence in Markdown must parse and be
-  canonically formatted; `make fmt` rewrites fence bodies only. Use a `text`
-  fence for code that is deliberately invalid.
+  canonically formatted; `make fmt` rewrites fence bodies only. Use a
+  `plaintext` fence for code that is deliberately invalid.
 - Compiler output is written beside its source as `*.res.mjs`, ignored by
   Git, and never committed. Install skills with `make install-skills`, which
   copies only committed files.
@@ -87,7 +87,15 @@ Claims about compiler or runtime behaviour must be evidenced, not remembered.
 - Record notable changes in [the changelog](CHANGELOG.md), which follows
   Common Changelog.
 - Write en-GB-oxendict prose (`-ize`, `-our`), wrapped at 80 columns, with
-  sentence-case headings, dash bullets, and language-labelled fences.
+  sentence-case headings, dash bullets, and language-labelled fences. Follow
+  the df12 documentation style: no first- or second-person pronouns outside
+  `README.md`, acronyms expanded on first use in each document, a caption under
+  every table (`_Table N: …_`) and diagram (`_Figure N: …_`), a screen-reader
+  description before each diagram, and `plaintext` for fences that hold no code.
+- Keep [the contents](docs/contents.md) listing every document, and
+  [the repository layout](docs/repository-layout.md) matching the tree. Design
+  rationale belongs in [the catalogue design](docs/rescript-skill-design.md),
+  not in the guides.
 - `make spelling` regenerates `typos.toml` from the shared dictionary and
   `typos.local.toml`. Never edit `typos.toml` by hand; add narrow exceptions to
   `typos.local.toml`.

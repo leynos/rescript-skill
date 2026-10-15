@@ -93,14 +93,7 @@ compiled, analysed, and exercised by `make test`.
 
 ## Documentation
 
-- [Agent instructions](../AGENTS.md) — commit gates and the rules for
-  changes under `skills/`.
-- [README](../README.md) — installation and quick start.
-- [Users' guide](users-guide.md) — invocation and routing.
-- [Developers' guide](developers-guide.md) — prerequisites, the Make
-  gates, and what the test suites cover.
-- [Verified facts](research/verified-facts.md) — toolchain behaviour
-  established by experiment while writing the catalogue, with sources.
+[The contents](contents.md) lists every document in the repository.
 
 ## Maintenance
 
