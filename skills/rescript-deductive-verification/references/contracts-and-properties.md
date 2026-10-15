@@ -61,8 +61,20 @@ The example [VerifiedLease.res](examples/VerifiedLease.res) proves one of each:
 | Authorization                | `event.kind !== 'acquire' && !isOwner(state, event.by) ==> result.kind === 'error'` | non-owner may close                 |
 | Error-cause preservation     | release keeps `event.cause`; a refusal after release carries `state.cause`          | release drops or replaces the cause |
 | Release-state safety         | `state.kind === 'released' ==> result.kind === 'error'`                             | a released lease reopens            |
+| Exact effect                 | a successful `open` keeps the owner and adds exactly one handle                     | open keeps the count                |
+| Progress                     | the owner's `release` of a held lease succeeds                                      | release refuses the owner           |
 
 _Table 1: Property classes proved for `step`, with the mutant that breaks each._
+
+The first five classes are safety: they say what must not happen. A function
+that refuses every event, with the right failure after release, satisfies all
+of them. The exact-effect and progress clauses rule that out, by saying what a
+successful step does and which requests must succeed. Write both kinds, and
+keep a mutant that refuses everything.
+
+A contract can mention only functions. `maxHandles` is a top-level constant,
+which the unit does not contain, so the progress clause for `open` restates its
+value as `1000000`.
 
 The first proof attempt on this module failed, correctly. `Open` computed
 `handles + 1 | 0`, which wraps from 2147483647 to -2147483648, so a held lease
@@ -86,17 +98,29 @@ that leaves int32 range shows up as a failed proof rather than an assumption.
 ## Proving the contracts are not vacuous
 
 A contract can verify because it says nothing, or because a `@requires` is
-unsatisfiable. Mutation is the check. For each contract:
+unsatisfiable. Mutation is the check, and
+[res2ls-mutate.mjs](examples/res2ls-mutate.mjs) automates it. Each entry in
+[VerifiedLease.mutants.mjs](examples/VerifiedLease.mutants.mjs) edits the
+compiled JavaScript to break one behaviour and lists the contracts that must
+then fail. The harness bridges and proves each mutant, maps every failed
+postcondition back to its contract, and fails unless the failures are exactly
+the listed ones. The prover-free suite checks that every contract on `step` is
+listed by some mutant.
 
-1. copy the module and break the one behaviour the contract describes;
-2. build, bridge, and prove the copy;
-3. confirm the proof fails, and fails on that contract.
+`make prove` runs thirteen mutants against the example's twelve contracts, and
+all are killed. Three things to know when writing them:
 
-Six mutants of the example each failed on exactly their intended postcondition.
-A surviving mutant means a missing or vacuous contract, or a mutant that
-changed nothing observable. Read the compiled JavaScript before blaming the
-contract: one early mutant's arithmetic was folded at compile time into a guard
-that refuses every call, which satisfies the invariant.
+- Dafny assumes a postcondition after reporting it, so on one return path only
+  the first failing contract is reported. A mutant that reopens a released
+  lease breaks the cause clause too, but that failure is masked; another mutant
+  breaks the cause alone.
+- A surviving mutant means a missing or vacuous contract, or a mutant that
+  changed nothing observable. Read the compiled JavaScript before blaming the
+  contract: in the spike, one mutant's arithmetic was folded at compile time
+  into a guard that refuses every call, which satisfies the invariant.
+- Mutating the compiled JavaScript tests the contracts against the code the
+  proof is about. It does not show that each mutant is reachable from some
+  ReScript source.
 
 ## Proof versus conformance tests
 

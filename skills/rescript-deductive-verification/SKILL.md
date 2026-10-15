@@ -51,13 +51,17 @@ _Figure 1: The compiled-JavaScript verification route._
    `@tag` and a record payload on every constructor.
 2. Write contracts as attributes in LemmaScript's specification language.
 3. Build, then bridge, audit, and prove (below).
-4. Kill a mutant per contract to show the contracts are not vacuous.
-5. Pin the boundaries the proof found as named runtime examples.
+4. Catalogue mutants of the compiled module, and require each to fail on
+   exactly the contracts it breaks, so no contract is vacuous.
+5. Compile the Dafny back to JavaScript and compare it with production on
+   generated inputs, as evidence for the translation.
+6. Pin the boundaries the proof found as named runtime examples.
 
 ```bash
 bun res2ls-bridge.mjs src/Lease.res out
 bun res2ls-correspond.mjs src/Lease.res out
 lsc check --backend=dafny out/Lease.ts
+bun res2ls-mutate.mjs src/Lease.res src/Lease.mutants.mjs out/mutants lsc.js
 ```
 
 ## What it can prove
@@ -69,7 +73,9 @@ lsc check --backend=dafny out/Lease.ts
 | Authorization               | `!isOwner(state, event.by) ==> result.kind === 'error'`                       | proof    |
 | Error-cause preservation    | `result.failure.cause === state.cause`                                        | proof    |
 | Terminal-state safety       | `state.kind === 'released' ==> result.kind === 'error'`                       | proof    |
-| Freedom from int32 overflow | follows from the typing predicates the bridge adds                            | proof    |
+| Exact effect                | `… && result.kind === 'ok' ==> result.state.handles === state.handles + 1`    | proof    |
+| Progress                    | `state.kind === 'idle' && event.kind === 'acquire' ==> result.kind === 'ok'`  | proof    |
+| Results within int32        | the typing predicate the bridge adds on `\result`                             | proof    |
 | Abort, timeout, rejection   | none: depends on the scheduler and the platform                               | test     |
 | Stack depth of recursion    | none: the prover assumes an unbounded stack                                   | test     |
 | `float` arithmetic          | none: modelled as exact reals                                                 | test     |
@@ -77,6 +83,14 @@ lsc check --backend=dafny out/Lease.ts
 _Table 1: Properties the route proves, and those left to tests._
 
 ## Rules that surprise people
+
+- Safety contracts alone admit a function that refuses every request. Add
+  exact-effect and progress clauses, and a mutant that refuses everything.
+- The int32 typing predicate shows that results fit in int32, not that no
+  arithmetic wrapped: a wrapped value fits too. An invariant such as a
+  non-negative count is what catches the wrap.
+- Contracts see only functions. A top-level constant such as `maxHandles` is
+  not in the unit; restate its value in the contract.
 
 - ReScript `int` wraps at 32 bits and the compiler emits `e | 0`. LemmaScript
   alone treats numbers as unbounded; the bridge rewrites `e | 0` to a modelled
@@ -102,6 +116,7 @@ _Table 1: Properties the route proves, and those left to tests._
 - A handwritten Dafny, Lean, or TypeScript model of a ReScript function, with
   no audit tying it to the compiled code.
 - A contract that no mutant of the source can break.
+- Contracts with no progress clause: refusing everything satisfies them.
 - An edited verification unit; regenerate it instead.
 - A correspondence mismatch explained away rather than fixed.
 - A claim that cancellation, timeouts, or scheduling were "proved".
@@ -122,6 +137,8 @@ _Table 1: Properties the route proves, and those left to tests._
 - Executable example:
   [VerifiedLease.res](references/examples/VerifiedLease.res), proved by
   `make prove` in this repository.
-- Bridge and audit, as this repository runs them:
-  [res2ls-bridge.mjs](references/examples/res2ls-bridge.mjs) and
-  [res2ls-correspond.mjs](references/examples/res2ls-correspond.mjs).
+- Bridge, audit, and mutation check, as this repository runs them:
+  [res2ls-bridge.mjs](references/examples/res2ls-bridge.mjs), [res2ls-correspond.mjs](references/examples/res2ls-correspond.mjs),
+  and [res2ls-mutate.mjs](references/examples/res2ls-mutate.mjs), with the
+  example's [mutants](references/examples/VerifiedLease.mutants.mjs) and
+  [translation check](references/examples/VerifiedLease.differential.mjs).

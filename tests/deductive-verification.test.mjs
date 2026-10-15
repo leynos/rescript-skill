@@ -5,8 +5,9 @@ Behavioural tests for the res2ls bridge and correspondence audit shipped with
 These need no prover: they check what the bridge must get right for a proof
 to be about production code. Contracts must come from the parse tree exactly,
 the unit must differ from the compiled JavaScript only by the documented
-rewrites, the trusted `int32` model must agree with `| 0`, and the audit must
-fail on every kind of drift. `make prove` runs the prover itself.
+rewrites, the trusted `int32` model must agree with `| 0`, the audit must fail
+on every kind of drift, and every contract must be one a catalogued mutant
+breaks. `make prove` runs the prover itself.
 */
 
 import { describe, expect, test } from "bun:test";
@@ -34,6 +35,12 @@ import {
   compareUnit,
   correspond,
 } from "../skills/rescript-deductive-verification/references/examples/res2ls-correspond.mjs";
+import {
+  applyEdits,
+  failedContracts,
+  judge,
+} from "../skills/rescript-deductive-verification/references/examples/res2ls-mutate.mjs";
+import mutants from "../skills/rescript-deductive-verification/references/examples/VerifiedLease.mutants.mjs";
 import { REPO_ROOT } from "./support/catalogue.mjs";
 
 const EXAMPLES = join(
@@ -75,7 +82,7 @@ describe("contract extraction", () => {
   test("reads every contract on step, in source order", () => {
     const step = contractsFromParsetree(lease.parsetree).get("step");
     expect(step.requires).toEqual(["wellFormed(state)"]);
-    expect(step.ensures).toHaveLength(6);
+    expect(step.ensures).toHaveLength(12);
     expect(step.ensures[0]).toBe(
       "result.kind === 'ok' ==> wellFormed(result.state)",
     );
@@ -278,5 +285,63 @@ describe("correspondence audit", () => {
         "VerifiedLease.ts was edited after generation",
       ]);
     });
+  });
+});
+
+describe("mutation check", () => {
+  const contracts = contractsFromParsetree(lease.parsetree).get("step").ensures;
+
+  test.each(mutants.map((m) => [m.name, m]))(
+    "%s applies to the compiled module and names real contracts",
+    (_, mutant) => {
+      expect(applyEdits(lease.js, mutant.edits, mutant.name)).not.toBe(
+        lease.js,
+      );
+      for (const fragment of mutant.breaks) {
+        expect(contracts.filter((c) => c.includes(fragment))).toHaveLength(1);
+      }
+    },
+  );
+
+  test("every contract on step is broken by some mutant", () => {
+    const broken = contracts.filter((c) =>
+      mutants.some((m) => m.breaks.some((fragment) => c.includes(fragment))),
+    );
+    expect(broken).toEqual(contracts);
+  });
+
+  test("an edit target must occur exactly once", () => {
+    expect(() => applyEdits("a a", [{ old: "a", new: "b" }], "m")).toThrow(
+      /exactly once/,
+    );
+    expect(() => applyEdits("a", [{ old: "z", new: "b" }], "m")).toThrow(
+      /exactly once/,
+    );
+    expect(() => applyEdits("a", [{ old: "a", new: "a" }], "m")).toThrow(
+      /unchanged/,
+    );
+  });
+
+  test("maps a failing Dafny postcondition back to its contract", () => {
+    const dfy = [
+      "method f(x: int) returns (r: int)",
+      "  ensures r >= 0",
+      "  ensures r == x",
+      "{",
+    ].join("\n");
+    const unitText = [
+      "function f(x: number): number {",
+      "  //@ ensures \\result >= 0",
+      "  //@ ensures \\result === x",
+    ].join("\n");
+    const output =
+      "F.dfy(3,4): Related location: this is the postcondition that could not be proved";
+    expect(failedContracts(output, dfy, unitText)).toEqual(["result === x"]);
+  });
+
+  test("judges a mutant that breaks more or less than it claims", () => {
+    expect(judge(["a ==> b"], ["b"])).toEqual([]);
+    expect(judge(["a ==> b", "c"], ["b"])).toEqual(["unexpected failure: c"]);
+    expect(judge([], ["b"])).toEqual(['"b" matches 0 failed contracts, not 1']);
   });
 });

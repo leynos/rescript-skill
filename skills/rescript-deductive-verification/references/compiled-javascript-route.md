@@ -44,8 +44,9 @@ Dependencies:
   own lockfile. Its transitive graph carries advisories with no patched
   release, such as `braces` through `ts-morph`. Keeping it apart leaves the
   main dependency audit meaningful.
-- Dafny 4.11 and Z3 4.12.1 on `PATH`. Dafny refuses to run without a Z3 it
-  can find.
+- Dafny 4.11.0 and Z3 4.12.1 on `PATH`. Dafny refuses to run without a Z3 it
+  can find; pin both exactly, because a different Z3 can change which proofs
+  succeed.
 
 A gate in the style of this repository's `make prove`:
 
@@ -56,12 +57,20 @@ prove:
 	rm -rf .verify
 	bun res2ls-bridge.mjs src/Lease.res .verify
 	bun res2ls-correspond.mjs src/Lease.res .verify
-	bun tools/verification/node_modules/lemmascript/tools/dist/lsc.js \
-	  check --backend=dafny .verify/Lease.ts
+	bun $(LSC_JS) check --backend=dafny .verify/Lease.ts
+	bun res2ls-mutate.mjs src/Lease.res src/Lease.mutants.mjs \
+	  .verify/mutants $(LSC_JS)
+	dafny translate js --no-verify --include-runtime \
+	  --output .verify/Lease .verify/Lease.dfy
+	bun src/Lease.differential.mjs .verify/Lease.js tools/verification
 ```
 
-`lsc check` exits non-zero when any obligation fails, and so does the audit, so
-the gate needs no output parsing.
+`lsc check` exits non-zero when any obligation fails, and so do the audit, the
+mutation check, and the translation check, so the gate needs no output parsing.
+`LSC_JS` names `lsc.js` in the pinned LemmaScript package. Dafny's JavaScript
+runtime needs `bignumber.js`, pinned beside LemmaScript; without
+`--include-runtime`, the translated file refers to a runtime it does not
+contain.
 
 ## What the bridge does
 
@@ -104,8 +113,13 @@ model. It passes only if:
    identically to the compiled `.res.mjs`. Every compiled function must be
    present; one without a genType signature is reported as unverified.
 
-So the compiler and the bridge are both outside the trusted base for function
-bodies. A compiler bug, a bridge bug, or a hand edit shows up as a mismatch.
+So function bodies need no trust in the bridge: a bridge bug or a hand edit to
+a body shows up as a mismatch. The audit is a normalized textual comparison of
+function declarations, not a semantic equivalence proof of the pipeline. It
+does not check what the bridge adds around the bodies, which therefore stays in
+the trusted base (below), nor top-level code outside function declarations. The
+bodies are what the compiler emitted, so a proof about the ReScript source,
+rather than the shipped JavaScript, also trusts the compiler.
 
 ## The trusted base
 
@@ -113,15 +127,22 @@ What a passing proof still assumes:
 
 1. LemmaScript's translation from TypeScript to Dafny. Compiling the generated
    Dafny back to JavaScript (`dafny translate js`) and comparing it with the
-   production function on generated inputs gives empirical evidence. In the
-   spike behind this skill, they agreed on 200,000 inputs, and a mutant was
-   caught on the first disagreement.
-2. Dafny and Z3.
-3. The `int32` model's equivalence with `| 0` on safe integers (tested).
-4. ReScript typing: values reaching a proved function are well-typed, so
+   production function on generated inputs gives empirical evidence, not proof.
+   `make prove` runs
+   [VerifiedLease.differential.mjs](examples/VerifiedLease.differential.mjs),
+   which compares them on 200,000 inputs weighted to the boundaries; a
+   deliberately broken translation is caught on the first disagreement.
+2. The bridge's additions to the unit: the contracts it extracts and attaches
+   to each function, the TypeScript types from genType, the int32 typing
+   predicates, and the prelude. A dropped or misattached contract would weaken
+   the proof without a mismatch; the mutants, which must fail on named
+   contracts, are the check that each contract arrived.
+3. Dafny and Z3.
+4. The `int32` model's equivalence with `| 0` on safe integers (tested).
+5. ReScript typing: values reaching a proved function are well-typed, so
    `int` fields fit in int32. Untyped JavaScript callers can break this.
-5. genType's types describe the runtime representation.
-6. The contract extractor reads the compiler's debug printer (Printast). It is
+6. genType's types describe the runtime representation.
+7. The contract extractor reads the compiler's debug printer (Printast). It is
    not a stable interface, but a format change makes extraction fail loudly
    rather than drop contracts.
 
@@ -133,7 +154,8 @@ Dafny in the spike. Regenerate from an empty output directory for each run, or
 commit the `.dfy` when it carries handwritten proof additions: `lsc check`
 merges new output into an existing `.dfy` three ways.
 
-Proving the example's transition function takes about 3 seconds.
+Proving the example's transition function takes about 3 seconds; its thirteen
+mutants take about 40 more, and the translation check under a second.
 
 ## Alternatives considered
 

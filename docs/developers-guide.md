@@ -24,10 +24,10 @@ rationale. For why the catalogue takes its shape, read
 Node is not required. Make invokes every JavaScript tool through
 `bun run --bun`.
 
-`make prove` additionally needs Dafny 4.11 and Z3 on `PATH`; Dafny 4.11 expects
-Z3 4.12.1. Neither is needed for `make all`, and continuous integration (CI)
-runs neither, so the proofs are checked only when a contributor runs
-`make prove` locally (see [section 4.3](#43-the-proof-gate)).
+`make prove` additionally needs Dafny 4.11.0 and Z3 4.12.1 on `PATH`. Neither
+is needed for `make all`, and continuous integration (CI) runs neither, so the
+proofs are checked only when a contributor runs `make prove` locally (see
+[section 4.3](#43-the-proof-gate)).
 
 ```bash
 make install
@@ -99,34 +99,43 @@ it with `@live` or `@throws(...)`, or delete it.
 are system tools that the Bun toolchain does not provide. A change that breaks
 a proof therefore passes `make all` and CI. Contributors must run `make prove`
 locally before committing any change to a proved module (`PROOFS` in the
-Makefile), to `res2ls-bridge.mjs` or `res2ls-correspond.mjs`, or to the
-ReScript, TypeScript, or LemmaScript pins.
+Makefile), to its mutants or translation check, to the `res2ls-*.mjs` scripts,
+or to the ReScript, TypeScript, LemmaScript, or `bignumber.js` pins.
 
 To install the provers:
 
-- Dafny 4.11 as a .NET tool:
+- Dafny 4.11.0 as a .NET tool:
   `dotnet tool install --global dafny --version 4.11.0`.
 - Z3 4.12.1 from the
   [Z3 release page](https://github.com/Z3Prover/z3/releases/tag/z3-4.12.1),
   with its `bin/` directory on `PATH`. Dafny reports a missing Z3 as a
   resolution error, not as a missing tool.
 
-The target checks for both before doing anything else and stops with a message
-naming the missing one. For each module in `PROOFS` it:
+The target checks for both, at exactly these versions, before doing anything
+else, and stops with a message naming the missing one. For each module in
+`PROOFS` it:
 
 1. builds the project;
-2. installs the pinned LemmaScript from `tools/verification/` with a frozen
-   lockfile;
+2. installs the pinned LemmaScript and `bignumber.js` from
+   `tools/verification/` with a frozen lockfile;
 3. regenerates the verification unit into an empty `.verify/` with
    `res2ls-bridge.mjs`;
 4. runs `res2ls-correspond.mjs` to show the unit's bodies are the compiled
    JavaScript;
-5. runs `lsc check --backend=dafny`.
+5. runs `lsc check --backend=dafny`;
+6. runs `res2ls-mutate.mjs` over the module's `.mutants.mjs`, requiring each
+   mutant to fail on exactly the contracts it lists;
+7. compiles the Dafny back to JavaScript with `dafny translate js` and runs
+   the module's `.differential.mjs`, which must agree with production on
+   200,000 generated inputs.
 
-Every step fails the target on error. LemmaScript lives in its own package
-because its transitive graph carries advisories with no patched release
-(`braces` through `ts-morph`); keeping it out of the root lockfile leaves
-`make audit` meaningful.
+Every step fails the target on error, so each module in `PROOFS` must ship both
+companion files. The prover-free suite also checks that every contract is
+listed by some mutant and that every mutant applies to the compiled module, so
+`make all` catches a contract added without a mutant. LemmaScript lives in its
+own package because its transitive graph carries advisories with no patched
+release (`braces` through `ts-morph`); keeping it out of the root lockfile
+leaves `make audit` meaningful.
 
 ### 4.4. The skill manifest contract
 

@@ -194,6 +194,24 @@ Z3 4.12.1. `make prove` re-checks the example's proof.
 - Bun 1.4.3 exhausted its stack at about 50,000 frames of a recursive
   `sumTo`; with a larger Node stack, `sumTo(65536)` returned `-2147450880`.
 - `lsc check` exits 1 when an obligation fails, and runs under Bun.
+- The six original contracts on `step` are all safety properties, and a
+  `step` that refuses every event, with `AlreadyReleased` after release,
+  satisfies all six. Exact-effect and progress clauses rule it out; the example
+  now proves twelve contracts, still in about 3 seconds. Evidence: the
+  `refuses-everything` mutant in `VerifiedLease.mutants.mjs`.
+- A contract naming the top-level constant `maxHandles` fails to resolve in
+  Dafny ("unresolved identifier"): the unit carries functions only.
+- Dafny assumes a postcondition after reporting it, so a mutant that breaks
+  two contracts on one return path reports only the first; reopening a released
+  lease reports the refusal clauses but not the cause clause.
+- `make prove` kills thirteen mutants of the compiled JavaScript in about
+  40 seconds, each on exactly its listed contracts. Evidence:
+  `res2ls-mutate.mjs`.
+- `dafny translate js` omits Dafny's runtime unless given `--include-runtime`,
+  and the runtime needs `bignumber.js`. The translated `step` agrees with
+  production on 200,000 inputs; breaking its live increment is caught at the
+  first disagreement, while breaking an unreachable fall-through copy is not.
+  Evidence: `VerifiedLease.differential.mjs`.
 - `lemmascript` 0.6.4 pulls in `braces` 3.0.3 (no patched release) and
   `uuid` 9.0.1 with advisories.
 

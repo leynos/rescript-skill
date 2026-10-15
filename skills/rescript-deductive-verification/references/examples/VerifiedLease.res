@@ -78,6 +78,22 @@ let generationOf = (state: state): int =>
 @ensures(
   "event.kind === 'release' && result.kind === 'ok' ==> result.state.kind === 'released' && result.state.cause === event.cause"
 )
+@ensures(
+  "state.kind === 'held' && event.kind === 'open' && result.kind === 'ok' ==> result.state.kind === 'held' && result.state.owner === state.owner && result.state.handles === state.handles + 1"
+)
+@ensures(
+  "state.kind === 'held' && event.kind === 'close' && result.kind === 'ok' ==> result.state.kind === 'held' && result.state.owner === state.owner && result.state.handles === state.handles - 1"
+)
+@ensures("state.kind === 'idle' && event.kind === 'acquire' ==> result.kind === 'ok'")
+@ensures(
+  "state.kind === 'held' && event.kind === 'open' && event.by === state.owner && state.handles < 1000000 ==> result.kind === 'ok'"
+)
+@ensures(
+  "state.kind === 'held' && event.kind === 'close' && event.by === state.owner && state.handles > 0 ==> result.kind === 'ok'"
+)
+@ensures(
+  "state.kind === 'held' && event.kind === 'release' && event.by === state.owner ==> result.kind === 'ok'"
+)
 let step = (state: state, event: event): outcome =>
   switch state {
   | Released({cause, _}) => Error({failure: AlreadyReleased({cause: cause})})

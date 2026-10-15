@@ -5,6 +5,7 @@
   "description": "Pinned LemmaScript toolchain for `make prove`, kept out of the root dependency graph.",
   "license": "ISC",
   "devDependencies": {
+    "bignumber.js": "9.3.1",
     "lemmascript": "0.6.4"
   }
 }

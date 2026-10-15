@@ -53,9 +53,11 @@ RES_SUITES = $(patsubst %.res,%.res.mjs,$(wildcard tests/*.test.res))
 PROOFS = skills/rescript-deductive-verification/references/examples/VerifiedLease.res
 RES2LS = skills/rescript-deductive-verification/references/examples
 VERIFICATION = tools/verification
-LSC = $(BUN) $(VERIFICATION)/node_modules/lemmascript/tools/dist/lsc.js
+LSC_JS = $(VERIFICATION)/node_modules/lemmascript/tools/dist/lsc.js
+LSC = $(BUN) $(LSC_JS)
 DAFNY ?= dafny
-DAFNY_SERIES = 4.11.
+DAFNY_VERSION = 4.11.0
+Z3_VERSION = 4.12.1
 
 # Where `make install-skills` copies the catalogue.
 SKILLS_DEST ?= $(HOME)/.codex/skills
@@ -142,20 +144,32 @@ coverage: ## Measure compiled skill examples and write text plus LCOV reports
 		--coverage-dir=coverage $(addprefix ./,$(RES_SUITES))
 
 # Each proof regenerates its unit from scratch, audits that the unit is the
-# production JavaScript, then discharges it. Failure at any step fails the gate.
-prove: ## Prove contracted examples with LemmaScript and Dafny (needs dafny 4.11 and z3)
-	@$(DAFNY) --version | grep -q '^$(DAFNY_SERIES)' \
-		|| { echo "prove needs Dafny $(DAFNY_SERIES)x on PATH" >&2; exit 1; }
-	@command -v z3 >/dev/null \
-		|| { echo "prove needs z3 on PATH (Dafny 4.11 expects Z3 4.12.1)" >&2; exit 1; }
+# production JavaScript, then discharges it. Mutants of the compiled module
+# (`Module.mutants.mjs`) must each fail on exactly the contracts they claim to
+# break, and the Dafny compiled back to JavaScript must agree with production
+# on generated inputs (`Module.differential.mjs`). Failure at any step fails
+# the gate.
+prove: ## Prove contracted examples with LemmaScript and Dafny (needs dafny 4.11.0 and z3 4.12.1)
+	@$(DAFNY) --version | grep -q '^$(DAFNY_VERSION)+' \
+		|| { echo "prove needs Dafny $(DAFNY_VERSION) on PATH" >&2; exit 1; }
+	@z3 --version 2>/dev/null | grep -q '^Z3 version $(Z3_VERSION) ' \
+		|| { echo "prove needs Z3 $(Z3_VERSION) on PATH" >&2; exit 1; }
 	+$(MAKE) build
 	$(BUN) install --frozen-lockfile --cwd $(VERIFICATION)
 	rm -rf .verify
 	@set -euo pipefail; for res in $(PROOFS); do \
+		stem="$${res%.res}"; name="$$(basename "$$stem")"; \
 		echo "prove $$res"; \
 		$(BUN) $(RES2LS)/res2ls-bridge.mjs "$$res" .verify; \
 		$(BUN) $(RES2LS)/res2ls-correspond.mjs "$$res" .verify; \
-		$(LSC) check --backend=dafny ".verify/$$(basename "$$res" .res).ts"; \
+		$(LSC) check --backend=dafny ".verify/$$name.ts"; \
+		echo "mutants $$stem.mutants.mjs"; \
+		$(BUN) $(RES2LS)/res2ls-mutate.mjs "$$res" "$$stem.mutants.mjs" \
+			".verify/mutants/$$name" $(LSC_JS); \
+		echo "differential $$stem.differential.mjs"; \
+		$(DAFNY) translate js --no-verify --include-runtime \
+			--output ".verify/$$name" ".verify/$$name.dfy" >/dev/null; \
+		$(BUN) "$$stem.differential.mjs" ".verify/$$name.js" $(VERIFICATION); \
 	done
 
 markdownlint: ## Lint Markdown with the committed policy

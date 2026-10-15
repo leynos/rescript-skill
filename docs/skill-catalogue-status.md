@@ -89,7 +89,9 @@ compiled, analysed, and exercised by `make test`.
   which properties need conformance tests instead. References:
   `compiled-javascript-route.md`, `contracts-and-properties.md`,
   `limitations-and-gotchas.md`. Examples: `VerifiedLease.res` (proved by
-  `make prove`), `res2ls-bridge.mjs`, `res2ls-correspond.mjs`.
+  `make prove`), its `VerifiedLease.mutants.mjs` and
+  `VerifiedLease.differential.mjs`, `res2ls-bridge.mjs`,
+  `res2ls-correspond.mjs`, and `res2ls-mutate.mjs`.
 
 ## Documentation
 
