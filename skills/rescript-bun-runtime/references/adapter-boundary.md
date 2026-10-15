@@ -3,17 +3,17 @@
 ## Shape
 
 For screen readers: HTTP requests reach `TodoServer`, the Bun adapter, which
-reads the request and writes the response. It passes a command and a store down
-to `TodoCore`, the portable core, which routes, handles, and encodes, and owns
-the store port.
+reads the request, routes it to a command, and writes the response. It passes
+the command and a store down to `TodoCore`, the portable core, which validates,
+calls the store port, and returns an outcome or a domain error.
 
 ```plaintext
             ┌──────────────────────────┐
-HTTP  ───▶  │ TodoServer (Bun adapter) │  reads Request, writes Response
+HTTP  ───▶  │ TodoServer (Bun adapter) │  route, decode JSON, spell statuses
             └────────────┬─────────────┘
-                         │ command, store
-            ┌────────────▼─────────────┐
-            │ TodoCore (portable)      │  route, handle, encode, the store port
+                         │ command, store        ▲ result<outcome, todoError>
+            ┌────────────▼─────────────┐         │
+            │ TodoCore (portable)      │  validate, call the store port
             └──────────────────────────┘
 ```
 
@@ -21,24 +21,31 @@ _Figure 1: The Bun adapter above the portable core._
 
 The core owns:
 
-- domain types (`todo`) and their encoders and decoders;
-- the ports it needs, as records of functions (`store`);
-- decisions: which command a request means, what reply a command produces,
-  which errors exist (`NotFound`, `MethodNotAllowed`, `InvalidBody`).
+- domain types (`todo`) and the domain's own errors (`EmptyTitle`,
+  `StoreFailed`);
+- the ports it needs, as records of functions (`store`), with their failures
+  in the type;
+- decisions: what a command does, which titles are valid, and what a store
+  failure means.
 
-The adapter owns:
+The core knows nothing of HTTP or JSON: no methods, paths, status codes, or
+`JSON.t`. Those belong to the adapter, which owns:
 
-- reading the runtime's request shape (method, URL, body) into core inputs;
-- writing core replies back (status, JSON body, headers);
+- reading the runtime's request shape (method, URL, body) and routing it to a
+  core `command`;
+- decoding JSON bodies and encoding results;
+- spelling core outcomes and errors as statuses and bodies;
 - supplying real port implementations (a SQLite store, the system clock);
 - process concerns: ports, environment, signals, shutdown.
 
 ## Ports as records
 
 ```rescript
+type storeError = StoreUnavailable(string)
+
 type store = {
-  list: unit => promise<array<todo>>,
-  add: string => promise<todo>,
+  list: unit => promise<result<array<todo>, storeError>>,
+  add: string => promise<result<todo, storeError>>,
 }
 ```
 
@@ -46,38 +53,47 @@ A record of functions is simpler than a functor or first-class module when no
 types vary, and it is trivial to fake. `TodoCore.memoryStore()` is both the
 test double and a perfectly good implementation for a demo.
 
-## Routing as data
+Storage fails, so the port says so. A port typed `promise<array<todo>>` hides
+failure in a rejection that the core never sees and the compiler never checks;
+a real store's failure would then escape to `Bun.serve`.
+
+## Routing in the adapter
 
 ```rescript
 let route = (~method: string, ~path: string, ~body: option<JSON.t>): result<
-  command,
-  requestError,
+  TodoCore.command,
+  httpError,
 > =>
   switch (method, path) {
   | ("GET", "/todos") => Ok(ListTodos)
   | ("POST", "/todos") =>
-    switch body {
-    | Some(json) => json->titleFrom->Result.map(title => AddTodo(title))
-    | None => Error(InvalidBody("expected a JSON body"))
+    switch body->Option.flatMap(titleField) {
+    | Some(title) => Ok(AddTodo(title))
+    | None => Error(BadBody(`expected a JSON body {"title": string}`))
     }
   | (_, "/todos") => Error(MethodNotAllowed)
   | _ => Error(NotFound)
   }
 ```
 
-Because `route` takes strings and JSON rather than a Bun `Request`, it runs in
-any runtime and in tests without a server.
+Routing is transport, so it lives in the adapter, but it is still a pure
+function of strings and JSON rather than of a Bun `Request`. It runs in tests
+without a server, and so does `replyFor`, which spells a core result as a
+status and a body.
 
 ## Error translation
 
 Each boundary converts what can go wrong into data once:
 
 - a malformed JSON body: `Request.json` rejects, the adapter's `readBody`
-  catches `JsExn` and passes `None`, and the core replies 400;
-- an unknown route or method: the core's `requestError` variant;
-- a store failure: the store port can return `promise<result<...>>`, or the
-  adapter can catch and map to 500. Pick one, and keep exceptions from reaching
-  `Bun.serve`, which would otherwise turn them into a generic error response.
+  catches `JsExn` and passes `None`, and routing replies 400;
+- an unknown route or method: the adapter's `httpError`, as 404 or 405;
+- an invalid title: the core's `EmptyTitle`, which the adapter spells as 400;
+- a store failure: the port resolves with `Error`, the core reports
+  `StoreFailed`, and the adapter answers 503;
+- a store that breaks the port by rejecting: the adapter catches it and
+  answers 500 with its own JSON body, so no rejection reaches `Bun.serve`,
+  which would otherwise answer with a generic error page.
 
 ## Configuration
 
@@ -101,13 +117,17 @@ the core cannot be tested without mutating the process environment. (Validate
 
 ## Testing each side
 
-| Side    | Test with                                   | Example                             |
-| ------- | ------------------------------------------- | ----------------------------------- |
-| core    | plain function calls and the memory store   | `TodoCore.route`, `TodoCore.handle` |
-| adapter | a real `Bun.serve` on port 0 and `fetch`    | `TodoServer.start(~port=0, store)`  |
-| wiring  | one end-to-end test of the composed program | start, call, stop                   |
+| Side      | Test with                                       | Example                                   |
+| --------- | ----------------------------------------------- | ----------------------------------------- |
+| core      | plain function calls, memory and failing stores | `TodoCore.handle`                         |
+| transport | plain function calls over strings and JSON      | `TodoServer.route`, `TodoServer.replyFor` |
+| wiring    | a real `Bun.serve` on port 0 and `fetch`        | `TodoServer.start(~port=0, store)`        |
 
 _Table 1: Tests for each side of the adapter boundary._
+
+Exercise the wiring with a failing store and a rejecting store as well as a
+working one, and check the body as well as the status: Bun's own answer to an
+unhandled rejection is also a 500.
 
 Stop servers in `Promise.finally`, so a failing assertion does not leave a
 listener behind:

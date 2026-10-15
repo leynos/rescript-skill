@@ -45,13 +45,16 @@ _Table 1: Moves for Bun runtime work._
 
 ## The boundary, concretely
 
-[TodoCore.res](references/examples/TodoCore.res) holds the domain type, the
-`store` port, a pure `route` from method, path, and body to a `command`, and
-`handle` from command to a `reply` record. It imports nothing from Bun.
-[TodoServer.res](references/examples/TodoServer.res) is about thirty lines:
-read the request, call the core, write the response. The suite tests the core
-as functions and the adapter over real HTTP on an ephemeral port, and a
-contract test fails if a `*Core.res` example mentions `RescriptBun`.
+[TodoCore.res](references/examples/TodoCore.res) holds the domain type, a
+`store` port whose failures are in its type, and `handle` from a `command` to a
+result of a domain outcome or a domain error. It knows nothing of Bun, HTTP, or
+JSON. [TodoServer.res](references/examples/TodoServer.res) owns transport: a
+pure `route` from method, path, and body to a command, a pure `replyFor` from a
+core result to a status and a body, and a handler that turns even a rejecting
+store into a deliberate 500. The suite tests the core and the transport mapping
+as functions, and the composed adapter over real HTTP on an ephemeral port with
+working, failing, and rejecting stores. A contract test fails if a `*Core.res`
+example mentions `RescriptBun`.
 
 In a single package the compiler cannot stop `src/` from importing
 `rescript-bun` once it is a dependency. When the boundary matters, give the

@@ -1,91 +1,71 @@
 /***
-A portable core: domain types, a storage port, and request handling as data.
+A portable core: domain types, a fallible storage port, and the decisions.
 
-Nothing here mentions Bun, Node, or the DOM. The adapter translates HTTP into
-`command` values and `reply` values back into HTTP, and supplies the store.
-That keeps the core testable without a server and reusable under another
-runtime.
+Nothing here mentions Bun, Node, the DOM, HTTP, or JSON. The adapter turns
+requests into `command` values and turns `outcome` values and `todoError`
+values back into responses, and it supplies the store. That keeps the core
+testable without a server and reusable under another runtime or transport.
 */
 
 type todo = {id: int, title: string, done: bool}
 
+// Storage can fail, so the port says so: an implementation resolves with
+// `Error` rather than rejecting, and the core never sees an exception.
+type storeError = StoreUnavailable(string)
+
 // The port: whatever the adapter provides must look like this.
 type store = {
-  list: unit => promise<array<todo>>,
-  add: string => promise<todo>,
+  list: unit => promise<result<array<todo>, storeError>>,
+  add: string => promise<result<todo, storeError>>,
 }
 
 type command =
   | ListTodos
   | AddTodo(string)
 
-type reply = {status: int, body: JSON.t}
+type outcome =
+  | Listed(array<todo>)
+  | Added(todo)
 
-type requestError =
-  | NotFound
-  | MethodNotAllowed
-  | InvalidBody(string)
+type todoError =
+  | EmptyTitle
+  | StoreFailed(storeError)
 
-let encodeTodo = (todo: todo): JSON.t => JSON.Object(
-  dict{
-    "id": JSON.Number(todo.id->Int.toFloat),
-    "title": JSON.String(todo.title),
-    "done": JSON.Boolean(todo.done),
-  },
-)
-
-let titleFrom = (body: JSON.t): result<string, requestError> =>
-  switch body
-  ->JSON.Decode.object
-  ->Option.flatMap(fields => fields->Dict.get("title"))
-  ->Option.flatMap(JSON.Decode.string)
-  ->Option.map(String.trim) {
-  | Some(title) if title != "" => Ok(title)
-  | Some(_) | None => Error(InvalidBody(`expected {"title": non-empty string}`))
+/** Trims a proposed title and refuses one that is left empty. */
+let validTitle = (raw: string): result<string, todoError> =>
+  switch raw->String.trim {
+  | "" => Error(EmptyTitle)
+  | title => Ok(title)
   }
 
-// Routing is a pure function of method, path, and the decoded body.
-let route = (~method: string, ~path: string, ~body: option<JSON.t>): result<
-  command,
-  requestError,
-> =>
-  switch (method, path) {
-  | ("GET", "/todos") => Ok(ListTodos)
-  | ("POST", "/todos") =>
-    switch body {
-    | Some(json) => json->titleFrom->Result.map(title => AddTodo(title))
-    | None => Error(InvalidBody("expected a JSON body"))
-    }
-  | (_, "/todos") => Error(MethodNotAllowed)
-  | _ => Error(NotFound)
-  }
-
-let errorReply = (error: requestError): reply =>
-  switch error {
-  | NotFound => {status: 404, body: JSON.String("not found")}
-  | MethodNotAllowed => {status: 405, body: JSON.String("method not allowed")}
-  | InvalidBody(message) => {status: 400, body: JSON.String(message)}
-  }
-
-let handle = async (store: store, command: command): reply =>
+/** Runs one command against the store, with every failure in the result. */
+let handle = async (store: store, command: command): result<outcome, todoError> =>
   switch command {
   | ListTodos =>
-    let todos = await store.list()
-    {status: 200, body: JSON.Array(todos->Array.map(encodeTodo))}
-  | AddTodo(title) =>
-    let todo = await store.add(title)
-    {status: 201, body: encodeTodo(todo)}
+    switch await store.list() {
+    | Ok(todos) => Ok(Listed(todos))
+    | Error(error) => Error(StoreFailed(error))
+    }
+  | AddTodo(raw) =>
+    switch validTitle(raw) {
+    | Error(error) => Error(error)
+    | Ok(title) =>
+      switch await store.add(title) {
+      | Ok(todo) => Ok(Added(todo))
+      | Error(error) => Error(StoreFailed(error))
+      }
+    }
   }
 
-// An in-memory implementation of the port, portable and good enough for tests.
+/** An in-memory implementation of the port, portable and good enough for tests. */
 let memoryStore = (): store => {
   let todos = []
   {
-    list: async () => todos->Array.copy,
+    list: async () => Ok(todos->Array.copy),
     add: async title => {
       let todo = {id: todos->Array.length + 1, title, done: false}
       todos->Array.push(todo)
-      todo
+      Ok(todo)
     },
   }
 }

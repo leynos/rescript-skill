@@ -110,4 +110,6 @@ let db = BunSqlite.Database.make(":memory:")
 `Database.query(db, sql)` prepares a statement; `Statement.all`, `get`, and
 `run` execute it. Parameters are passed as an object (`{..}`) and rows come
 back as `JSON.t`, so decode rows into domain types in the store adapter. A
-SQLite-backed `store` is a drop-in replacement for `TodoCore.memoryStore()`.
+SQLite-backed `store` is a drop-in replacement for `TodoCore.memoryStore()`,
+provided it catches SQLite errors and resolves with
+`Error(StoreUnavailable(…))` rather than rejecting.
