@@ -2,7 +2,7 @@
 
 *ReScript 12 skills for coding agents, with every claim compiled and tested.*
 
-A router and twelve focused skills that teach agents to write current,
+A router and thirteen focused skills that teach agents to write current,
 idiomatic ReScript 12.3.1: from variants and bindings to Bun servers and React
 components. Every runtime claim is backed by an example that builds with all
 warnings as errors and runs under Bun.
@@ -68,6 +68,9 @@ ______________________________________________________________________
   properties, including model-based tests.
 - **Runtime and UI skills**: Bun servers behind a portable core, and
   `@rescript/react` 0.15.
+- **Deductive verification**: contracts on ReScript declarations, proved by
+  Dafny against the compiled JavaScript itself, with an audit tying each proof
+  to the shipped code.
 - **Pitfalls found by experiment**, such as `bun test` silently skipping
   compiled suites and warning 102 resisting local suppression. The
   [verified facts](docs/research/verified-facts.md) record the evidence.

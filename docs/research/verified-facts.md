@@ -156,6 +156,47 @@ Baseline: `rescript` and `@rescript/runtime` 12.3.1, `rescript-bun` 2.1.0, Bun
 - With the overflow branch of `RingBuffer.push` removed, the model-based
   property failed and shrank to capacity 2 with three pushes.
 
+## Deductive verification
+
+Established in a bounded spike with LemmaScript 0.6.4 (npm, git head `097f18f`,
+and main at `b7870ec`, which produced byte-identical Dafny), Dafny 4.11.0, and
+Z3 4.12.1. `make prove` re-checks the example's proof.
+
+- `@requires("…")` and `@ensures("…")` attributes compile under `+A` with no
+  warning, and `bsc -only-parse -dparsetree` prints them with their string
+  payloads. Without `-only-parse`, `bsc` type-checks the file outside the
+  project, fails for modules with dependencies, and writes a `.cmt` beside it.
+- `bsc -dtypedtree` prints only annotations written in the source, not
+  inferred types.
+- `rescript-tools doc` keeps ReScript types (`int` apart from `float`), drops
+  attributes, and fails with "try to build the project" outside a built
+  project. genType maps both `int` and `float` to `number`.
+- LemmaScript lowers `|` on numbers without int32 wrap and models `number` as
+  an unbounded integer. It passes `$` in identifiers through to Dafny, which
+  rejects them. It names `_0` payload fields correctly once the union type is
+  named, but genType inlines `result` as an anonymous union in signatures.
+- LemmaScript models `switch` fall-through by appending later case bodies;
+  with ReScript's always-returning cases, the extra code is unreachable.
+- Raw IR serialized by `lsc extract` drives resolve and the Dafny emitter to
+  output byte-identical with `lsc`'s own.
+- The lease example's first version failed its ownership invariant on `Open`:
+  `handles + 1 | 0` wraps from 2147483647 to -2147483648, and the compiled
+  `step` returned a held lease with -2147483648 handles. With a bound, all
+  obligations verify in about 3 seconds. Evidence: `VerifiedLease.res`,
+  `make prove`.
+- Six source mutants, each breaking one contract, each failed on exactly that
+  postcondition. Dafny-compiled JavaScript agreed with production `step` on
+  200,000 generated inputs and disagreed with a mutant at once.
+- The compiler folded `1000000 + 0 + 2147483647` to `-2146483649` and merged
+  two identical match arms, leaving a dead `s.TAG === "Circle";` statement.
+- `(a: int, b: int): int => a / b` compiles to `let quot = Primitive_int.div`,
+  so it has no body to verify.
+- Bun 1.4.3 exhausted its stack at about 50,000 frames of a recursive
+  `sumTo`; with a larger Node stack, `sumTo(65536)` returned `-2147450880`.
+- `lsc check` exits 1 when an obligation fails, and runs under Bun.
+- `lemmascript` 0.6.4 pulls in `braces` 3.0.3 (no patched release) and
+  `uuid` 9.0.1 with advisories.
+
 ## React
 
 - A suite named `React.test.res` failed with "The module or file React can't

@@ -1,6 +1,6 @@
 ---
 name: rescript-router
-description: Route ReScript work to the smallest useful skill. Use for ReScript 12 coding, design, type and module questions, errors and results, JavaScript interop and bindings, async code, the standard library and JSON, rescript.json and the build, migration from ReScript 11, Bun-based testing and property tests, quality tooling, Bun runtime adapters, and React.
+description: Route ReScript work to the smallest useful skill. Use for ReScript 12 coding, design, type and module questions, errors and results, JavaScript interop and bindings, async code, the standard library and JSON, rescript.json and the build, migration from ReScript 11, Bun-based testing and property tests, quality tooling, deductive verification of production code, Bun runtime adapters, and React.
 metadata:
   globs: "**/rescript.json, **/*.res, **/*.resi, **/bsconfig.json"
 ---
@@ -58,6 +58,9 @@ runner for tests and scripts.
   out of a portable core: `rescript-bun-runtime`
 - `@rescript/react` components, JSX v4, hooks, props records, refs, or
   rendering tests: `rescript-react`
+- Proving a property for every input, `@requires`/`@ensures` contracts,
+  LemmaScript, Dafny, or checking a formal model against production:
+  `rescript-deductive-verification`
 
 ## Testing hierarchy
 
@@ -83,6 +86,11 @@ Leave the hierarchy when the failure depends on a real service, process,
 schedule, or load. Use an integration test through a Bun adapter
 (`rescript-bun-runtime`) or a benchmark instead.
 
+Go beyond it when a property of a pure function must hold for every input and a
+counterexample would be costly: ownership, money, permissions, terminal states.
+Prove the compiled code with `rescript-deductive-verification`, and keep the
+rungs above for what proof cannot reach.
+
 ## Pairing rules
 
 - Binding a library usually pairs `rescript-interop` with
@@ -96,6 +104,8 @@ schedule, or load. Use an integration test through a Bun adapter
 - A suite that keeps growing rows for one invariant moves from
   `rescript-bun-testing` to `rescript-property-testing`.
 - Server or CLI code pairs `rescript-bun-runtime` with `rescript-async`.
+- A proof pairs `rescript-deductive-verification` with
+  `rescript-property-testing` for the effectful shell's conformance tests.
 
 ## Escalate when
 

@@ -19,6 +19,9 @@ gates that tie them together. For using the skills, see the
 Node is not required. Make invokes every JavaScript tool through
 `bun run --bun`.
 
+`make prove` additionally needs Dafny 4.11 and Z3 on `PATH`; Dafny 4.11 expects
+Z3 4.12.1. Neither is needed for `make all`.
+
 ```bash
 make install
 make help
@@ -31,18 +34,21 @@ versions must match; `tests/package-contracts.test.mjs` enforces it.
 
 ## Layout
 
-| Path                                                                     | Owns                                             |
-| ------------------------------------------------------------------------ | ------------------------------------------------ |
-| `skills/<name>/SKILL.md`                                                 | The skill manifest and body                      |
-| `skills/<name>/references/*.md`                                          | Longer comparison material                       |
-| `skills/<name>/references/examples/`                                     | Compilable ReScript examples                     |
-| `skills/<name>/agents/openai.yaml`                                       | Invocation policy                                |
-| `tests/*.test.res`                                                       | ReScript suites exercising the examples          |
-| `tests/*.test.mjs`                                                       | Repository contract suites                       |
-| `tests/support/catalogue.mjs`                                            | Inventory helpers private to the contract suites |
-| `skills/rescript-quality-tools/references/examples/check-codeblocks.mjs` | The Markdown ReScript fence gate                 |
-| `skills/rescript-quality-tools/references/examples/check-reanalyze.mjs`  | The reanalyze findings gate                      |
-| `**/*.res.mjs`                                                           | Compiler output beside each source; ignored      |
+| Path                                                                      | Owns                                                    |
+| ------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `skills/<name>/SKILL.md`                                                  | The skill manifest and body                             |
+| `skills/<name>/references/*.md`                                           | Longer comparison material                              |
+| `skills/<name>/references/examples/`                                      | Compilable ReScript examples                            |
+| `skills/<name>/agents/openai.yaml`                                        | Invocation policy                                       |
+| `tests/*.test.res`                                                        | ReScript suites exercising the examples                 |
+| `tests/*.test.mjs`                                                        | Repository contract suites                              |
+| `tests/support/catalogue.mjs`                                             | Inventory helpers private to the contract suites        |
+| `skills/rescript-quality-tools/references/examples/check-codeblocks.mjs`  | The Markdown ReScript fence gate                        |
+| `skills/rescript-quality-tools/references/examples/check-reanalyze.mjs`   | The reanalyze findings gate                             |
+| `skills/rescript-deductive-verification/references/examples/res2ls-*.mjs` | The verification bridge and correspondence audit        |
+| `tools/verification/`                                                     | The pinned LemmaScript toolchain for `make prove`       |
+| `**/*.res.mjs`, `**/*.gen.ts`                                             | Compiler and genType output; ignored                    |
+| `.verify/`                                                                | Verification units and Dafny from `make prove`; ignored |
 
 ## The build
 
@@ -65,7 +71,8 @@ The namespace matters for suite naming. Without it, a suite named
 
 Warnings are `+A` with `error: +A`. The `LetUnwrap` experimental feature is
 enabled because `rescript-errors-and-results` teaches `let?`. JSX version 4 is
-configured for the React examples.
+configured for the React examples. genType is configured so that `@genType`
+declarations get a `.gen.ts` beside them; the verification bridge reads it.
 
 ## The gates
 
@@ -103,6 +110,26 @@ an empty `suppress` list, and the package contract keeps it empty. Fix a
 finding in source: use the value from a suite, annotate it with `@live` or
 `@throws(...)`, or delete it.
 
+### The proof gate
+
+`make prove` is separate from `make all`, because Dafny and Z3 are system
+tools. For each module in `PROOFS` it:
+
+1. builds the project;
+2. installs the pinned LemmaScript from `tools/verification/` with a frozen
+   lockfile;
+3. regenerates the verification unit into an empty `.verify/` with
+   `res2ls-bridge.mjs`;
+4. runs `res2ls-correspond.mjs` to show the unit's bodies are the compiled
+   JavaScript;
+5. runs `lsc check --backend=dafny`.
+
+Every step fails the target on error. LemmaScript lives in its own package
+because its transitive graph carries advisories with no patched release
+(`braces` through `ts-morph`); keeping it out of the root lockfile leaves
+`make audit` meaningful. Run `make prove` after changing a proved module or
+bumping ReScript, TypeScript, or LemmaScript.
+
 ### The skill manifest contract
 
 `skill-manifest-check` runs two pinned tools over each `SKILL_DIRS` entry:
@@ -130,6 +157,11 @@ needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
   controls built by mutating the real configuration.
 - `tests/gate-scripts.test.mjs` drives both gate scripts with fixtures that
   must fail as well as ones that must pass.
+- `tests/deductive-verification.test.mjs` drives the verification bridge and
+  audit without a prover: contract extraction from the real parse tree,
+  signature parsing, the typing contracts the unit carries, the trusted `int32`
+  model against `| 0`, and audit failures for drifted bodies, unverified
+  functions, changed inputs, and edited units.
 - `tests/migration-tool.test.mjs` builds a ReScript 11-style module in a
   scratch project (with `node_modules` symlinked from the checkout) and runs
   the real `rescript-tools migrate` over it, pinning what

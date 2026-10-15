@@ -47,12 +47,22 @@ GATES = skills/rescript-quality-tools/references/examples
 
 RES_SUITES = $(patsubst %.res,%.res.mjs,$(wildcard tests/*.test.res))
 
+# Deductive proofs of contracted examples. Not part of `all`: Dafny and Z3 are
+# system tools the Bun toolchain does not provide. LemmaScript lives in its own
+# pinned package so its transitive advisories stay out of the root audit.
+PROOFS = skills/rescript-deductive-verification/references/examples/VerifiedLease.res
+RES2LS = skills/rescript-deductive-verification/references/examples
+VERIFICATION = tools/verification
+LSC = $(BUN) $(VERIFICATION)/node_modules/lemmascript/tools/dist/lsc.js
+DAFNY ?= dafny
+DAFNY_SERIES = 4.11.
+
 # Where `make install-skills` copies the catalogue.
 SKILLS_DEST ?= $(HOME)/.codex/skills
 JS_SUITES = $(wildcard tests/*.test.mjs)
 
 .PHONY: help install install-skills build watch clean fmt check-fmt typecheck lint reanalyze \
-	test coverage markdownlint docs-check spelling audit all check \
+	test coverage prove markdownlint docs-check spelling audit all check \
 	skill-frontmatter-lint skill-manifest-validate skill-manifest-check
 
 help: ## List contributor entrypoints
@@ -130,6 +140,23 @@ coverage: ## Measure compiled skill examples and write text plus LCOV reports
 	+$(MAKE) build
 	$(BUN) test --coverage --coverage-reporter=text --coverage-reporter=lcov \
 		--coverage-dir=coverage $(addprefix ./,$(RES_SUITES))
+
+# Each proof regenerates its unit from scratch, audits that the unit is the
+# production JavaScript, then discharges it. Failure at any step fails the gate.
+prove: ## Prove contracted examples with LemmaScript and Dafny (needs dafny 4.11 and z3)
+	@$(DAFNY) --version | grep -q '^$(DAFNY_SERIES)' \
+		|| { echo "prove needs Dafny $(DAFNY_SERIES)x on PATH" >&2; exit 1; }
+	@command -v z3 >/dev/null \
+		|| { echo "prove needs z3 on PATH (Dafny 4.11 expects Z3 4.12.1)" >&2; exit 1; }
+	+$(MAKE) build
+	$(BUN) install --frozen-lockfile --cwd $(VERIFICATION)
+	rm -rf .verify
+	@set -euo pipefail; for res in $(PROOFS); do \
+		echo "prove $$res"; \
+		$(BUN) $(RES2LS)/res2ls-bridge.mjs "$$res" .verify; \
+		$(BUN) $(RES2LS)/res2ls-correspond.mjs "$$res" .verify; \
+		$(LSC) check --backend=dafny ".verify/$$(basename "$$res" .res).ts"; \
+	done
 
 markdownlint: ## Lint Markdown with the committed policy
 	$(MDLINT) "**/*.md"

@@ -80,6 +80,17 @@ compiled, analysed, and exercised by `make test`.
   rendering in Bun tests. References: `components-and-props.md`,
   `hooks-and-effects.md`, `testing-components.md`. Example: `ShoppingList.res`.
 
+### Verification
+
+- `rescript-deductive-verification` — proving properties of production code:
+  `@requires`/`@ensures` contracts on ReScript declarations, a bridge from the
+  compiled JavaScript and genType output to LemmaScript and Dafny, the
+  correspondence audit, int32 typing predicates, mutants for non-vacuity, and
+  which properties need conformance tests instead. References:
+  `compiled-javascript-route.md`, `contracts-and-properties.md`,
+  `limitations-and-gotchas.md`. Examples: `VerifiedLease.res` (proved by
+  `make prove`), `res2ls-bridge.mjs`, `res2ls-correspond.mjs`.
+
 ## Documentation
 
 - [Agent instructions](../AGENTS.md) — commit gates and the rules for
@@ -105,5 +116,10 @@ examples and the contract suites are the regression evidence.
   a concrete need and a binding set worth maintaining.
 - Mutation testing (for example Stryker over the generated JavaScript) is not
   covered; mapping surviving mutants back to ReScript source is unproven.
+- The verification bridge has no route for loop invariants, no specified
+  externs for `@rescript/runtime` helpers, and has not been exercised with
+  LemmaScript's Lean backend. A native ReScript frontend would need OCaml
+  access to `.cmt` typed trees; it is deferred until the compiled-JavaScript
+  route's syntax limits bind.
 - `LetUnwrap` is experimental. When it stabilizes, `rescript-errors-and-results`
   should drop the library caveat and the configuration notes.

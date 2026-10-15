@@ -22,6 +22,10 @@
   "jsx": {
     "version": 4
   },
+  "gentypeconfig": {
+    "language": "typescript",
+    "generatedFileExtension": ".gen.ts"
+  },
   "warnings": {
     "number": "+A",
     "error": "+A"

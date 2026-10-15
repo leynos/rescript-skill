@@ -1,0 +1,10 @@
+{
+  "name": "rescript-skill-verification",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pinned LemmaScript toolchain for `make prove`, kept out of the root dependency graph.",
+  "license": "ISC",
+  "devDependencies": {
+    "lemmascript": "0.6.4"
+  }
+}

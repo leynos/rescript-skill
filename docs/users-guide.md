@@ -82,6 +82,8 @@ variant the HTTP layer can match on.
 - *Servers, files, processes, and the Bun boundary* →
   `rescript-bun-runtime`.
 - *React components and hooks* → `rescript-react`.
+- *Proving a property for every input* →
+  `rescript-deductive-verification`.
 
 [docs/skill-catalogue-status.md](skill-catalogue-status.md) records which of
 these are active.
@@ -105,6 +107,11 @@ Leave the hierarchy for failures that depend on real services, processes,
 schedules, or load; those need an integration test through a Bun adapter or a
 benchmark.
 
+Go beyond it when a property of a pure function must hold for every input and a
+counterexample would be costly. `rescript-deductive-verification` proves
+contracts against the compiled JavaScript; it needs Dafny 4.11 and Z3 on
+`PATH`, and genType enabled in the project.
+
 ## Common pitfalls
 
 - Following ReScript 11 advice: `Js.log`, `raise`, `Js.Exn.Error`,
@@ -124,3 +131,5 @@ benchmark.
   `lib/es6/` and fail at runtime.
 - Expecting `@warning("-102")` to permit `==` on records under `+A`; warning
   102 can only be changed project-wide.
+- Proving a model of ReScript code that assumes unbounded integers. ReScript
+  `int` wraps at 32 bits, and such a model can certify code that overflows.

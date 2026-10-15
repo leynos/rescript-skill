@@ -44,6 +44,13 @@ The format is based on [Common Changelog](https://common-changelog.org).
   `*Core.res` examples free of runtime bindings.
 - `rescript-react` skill with a `ShoppingList` example: a pure reducer and
   components rendered under Bun with `ReactDOMServer.renderToStaticMarkup`.
+- `rescript-deductive-verification` skill with a `VerifiedLease` example whose
+  contracts Dafny proves against the compiled JavaScript, and the
+  `res2ls-bridge.mjs` and `res2ls-correspond.mjs` scripts that build and audit
+  the verification unit.
+- `make prove`: bridges, audits, and proves the contracted examples with a
+  pinned LemmaScript kept in `tools/verification/`. It needs Dafny 4.11 and Z3
+  on `PATH`, so it is not part of `make all`.
 
 ### Changed
 
