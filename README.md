@@ -30,6 +30,8 @@ ______________________________________________________________________
 
 ### Installation
 
+<!-- tested-example: install-from-clone -->
+
 ```bash
 git clone https://github.com/leynos/rescript-skill.git
 cd rescript-skill
@@ -44,12 +46,16 @@ This copies the committed `skills/` tree into `~/.codex/skills`. Set
 
 Start with the router and describe the task:
 
+<!-- tested-example: prompt-router -->
+
 ```plaintext
 Use $rescript-router to route this ReScript task, then help me replace the
 nested switches in this config loader.
 ```
 
 When you already know the pressure point, call the skill directly:
+
+<!-- tested-example: prompt-direct -->
 
 ```plaintext
 Use $rescript-errors-and-results to design the error variant for this

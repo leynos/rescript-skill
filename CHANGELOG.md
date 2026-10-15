@@ -53,6 +53,9 @@ The format is based on [Common Changelog](https://common-changelog.org).
   on `PATH`, so it is not part of `make all`.
 - Documentation contents, repository layout, and catalogue design documents,
   following the df12 documentation style.
+- Tested examples: every fence in the README and the users' guide carries a
+  `tested-example` marker and is exercised by
+  `tests/documented-examples.test.mjs`.
 
 ### Changed
 

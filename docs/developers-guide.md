@@ -162,6 +162,12 @@ needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
   signature parsing, the typing contracts the unit carries, the trusted `int32`
   model against `| 0`, and audit failures for drifted bodies, unverified
   functions, changed inputs, and edited units.
+- `tests/documented-examples.test.mjs` loads the README and the users' guide
+  as published and exercises every marked example: install commands run against
+  a scratch home directory and must install every committed skill, and agent
+  prompts must name shipped skills. Its loader,
+  `tests/support/tested-examples.mjs`, rejects unmarked and unterminated
+  fences, missing and duplicate identifiers, and markers with no fence.
 - `tests/migration-tool.test.mjs` builds a ReScript 11-style module in a
   scratch project (with `node_modules` symlinked from the checkout) and runs
   the real `rescript-tools migrate` over it, pinning what
@@ -180,8 +186,11 @@ development-only transitive advisories (KaTeX, smol-toml, and js-yaml under
 Prose follows the df12 documentation style: en-GB-oxendict spelling, sentence
 case headings, no first- or second-person pronouns outside `README.md`,
 acronyms expanded on first use, a caption under every table and diagram, and
-`plaintext` for fences that hold no code. Update [the contents](contents.md)
-when adding, renaming, or removing a document, and
+`plaintext` for fences that hold no code. Every fence in `README.md` and
+`docs/users-guide.md` is a tested example: precede it with
+`<!-- tested-example: <identifier> -->` and a blank line, and add a handler for
+the identifier in `tests/documented-examples.test.mjs`. Update
+[the contents](contents.md) when adding, renaming, or removing a document, and
 [the repository layout](repository-layout.md) when the tree changes shape.
 
 ## 8. Adding a skill

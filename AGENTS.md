@@ -92,6 +92,9 @@ Claims about compiler or runtime behaviour must be evidenced, not remembered.
   `README.md`, acronyms expanded on first use in each document, a caption under
   every table (`_Table N: …_`) and diagram (`_Figure N: …_`), a screen-reader
   description before each diagram, and `plaintext` for fences that hold no code.
+- Every fence in `README.md` and `docs/users-guide.md` must be a tested
+  example: a `<!-- tested-example: <identifier> -->` marker, a blank line, the
+  fence, and a handler in `tests/documented-examples.test.mjs`.
 - Keep [the contents](docs/contents.md) listing every document, and
   [the repository layout](docs/repository-layout.md) matching the tree. Design
   rationale belongs in [the catalogue design](docs/rescript-skill-design.md),

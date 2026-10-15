@@ -31,6 +31,8 @@ explains how to get to 12 first.
 Installation needs Git, GNU Make, and `tar`; it does not need Bun. From a clone
 of the repository, copy the catalogue into the agent's skill directory:
 
+<!-- tested-example: install-default -->
+
 ```bash
 make install-skills
 ```
@@ -38,6 +40,8 @@ make install-skills
 The default destination is `~/.codex/skills`, where Codex looks. For Claude
 Code, or any other agent that reads Agent Skills from a different directory, set
 `SKILLS_DEST`:
+
+<!-- tested-example: install-elsewhere -->
 
 ```bash
 make install-skills SKILLS_DEST=~/.claude/skills
@@ -61,6 +65,8 @@ into a project as a starting point.
 
 The router is the default entry point:
 
+<!-- tested-example: prompt-router -->
+
 ```plaintext
 Use $rescript-router to plan this ReScript task.
 ```
@@ -71,6 +77,8 @@ it loads only when named or routed to. Avoid loading more than one language
 skill and one domain or quality skill in the same turn.
 
 For a known pressure point, call the skill directly:
+
+<!-- tested-example: prompt-direct -->
 
 ```plaintext
 Use $rescript-errors-and-results to replace these string errors with a
