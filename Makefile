@@ -46,6 +46,10 @@ RES_SOURCES = $(shell git ls-files --cached --others --exclude-standard -- '*.re
 GATES = skills/rescript-quality-tools/references/examples
 
 RES_SUITES = $(patsubst %.res,%.res.mjs,$(wildcard tests/*.test.res))
+# Suites that need a DOM run in their own process with happy-dom preloaded,
+# because registering it replaces globals such as `fetch` for everything else.
+DOM_SUITES = $(patsubst %.res,%.res.mjs,$(wildcard tests/dom/*.test.res))
+DOM_PRELOAD = tests/support/happy-dom.mjs
 
 # Deductive proofs of contracted examples. Not part of `all`: Dafny and Z3 are
 # system tools the Bun toolchain does not provide. LemmaScript lives in its own
@@ -141,6 +145,7 @@ skill-manifest-check: ## Verify every skill manifest
 test: ## Compile, then run the ReScript example suites and repository contracts
 	+$(MAKE) build
 	$(BUN) test $(addprefix ./,$(RES_SUITES)) $(addprefix ./,$(JS_SUITES))
+	$(BUN) test --preload ./$(DOM_PRELOAD) $(addprefix ./,$(DOM_SUITES))
 
 coverage: ## Measure compiled skill examples and write text plus LCOV reports
 	+$(MAKE) build

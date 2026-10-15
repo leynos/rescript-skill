@@ -3,6 +3,7 @@ Executable evidence for the `rescript-errors-and-results` examples.
 */
 open RescriptBun.Test
 
+/** Builds a string dictionary from key-value pairs. */
 let env = pairs => Dict.fromArray(pairs)
 
 describe("ConfigParsing", () => {

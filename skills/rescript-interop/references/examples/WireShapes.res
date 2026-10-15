@@ -13,6 +13,7 @@ type uiEvent =
   | @as("click") Click({x: int, y: int})
   | @as("key") Key({key: string})
 
+/** Describes a UI event in words. */
 let describeEvent = (event: uiEvent): string =>
   switch event {
   | Click({x, y}) => `click at ${x->Int.toString},${y->Int.toString}`
@@ -27,6 +28,10 @@ type padding =
 
 @send external padStartRaw: (string, int, padding) => string = "padStart"
 
+/**
+Pads `text` on the left to `width`. `Spaces(count)` pads with `count` spaces,
+and `Text(s)` pads with `s`.
+*/
 let padLeft = (text: string, width: int, padding: padding): string =>
   switch padding {
   | Spaces(count) => text->padStartRaw(width, Text(" "->String.repeat(count)))
@@ -41,8 +46,13 @@ type plan =
   | @as("team") Team
   | Other(string)
 
+/**
+Wraps a plan name from an external API. Names other than `free` and `team` are
+kept as `Other`, so unknown values stay representable.
+*/
 let planFromString = (raw: string): plan => (raw :> plan)
 
+/** Returns the seat count of a plan, or `None` when the plan is unknown. */
 let seats = (plan: plan): option<int> =>
   switch plan {
   | Free => Some(1)

@@ -15,7 +15,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { REPO_ROOT } from "./support/catalogue.mjs";
 
+/** Reads and parses a JSON file at the repository root. */
 const load = (name) => JSON.parse(readFileSync(join(REPO_ROOT, name), "utf8"));
+/** Returns a deep copy of `value`. */
 const clone = (value) => structuredClone(value);
 
 /** Asserts exact pins, a matched compiler and runtime, and a private package. */

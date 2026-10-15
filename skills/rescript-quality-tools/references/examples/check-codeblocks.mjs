@@ -105,6 +105,10 @@ export function runFormatter(command, input, timeout = FORMAT_TIMEOUT_MS) {
   };
 }
 
+/**
+ * Formats one fence body with `rescript format --stdin`, using `extension`
+ * (`.res` or `.resi`) to select the parser.
+ */
 function formatSource(body, extension) {
   return runFormatter(
     [
@@ -170,6 +174,10 @@ export function checkDocument(path, text, format = formatSource) {
   return { problems: problems.reverse(), formatted: lines.join("\n"), path };
 }
 
+/**
+ * Lists the Markdown files Git tracks, plus untracked files that Git does not
+ * ignore.
+ */
 function selectMarkdown() {
   const listed = Bun.spawnSync([
     "git",
@@ -190,6 +198,10 @@ function selectMarkdown() {
     .filter((path) => path !== "");
 }
 
+/**
+ * Runs the fence gate in `--check` or `--write` mode over the given files, or
+ * over the selected Markdown files when none are given. Returns the exit code.
+ */
 function main(argv) {
   const mode = argv[0];
   if (mode !== "--check" && mode !== "--write") {

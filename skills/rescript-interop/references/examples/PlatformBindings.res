@@ -18,8 +18,11 @@ type url
 @get external hostname: url => string = "hostname"
 @get external protocol: url => string = "protocol"
 
-// The URL constructor throws a TypeError on invalid input. Convert that to an
-// option here so no caller ever sees the exception.
+/**
+Parses `raw` as a URL, or returns `None` when it is invalid. The URL
+constructor throws a TypeError on invalid input. Convert that to an option here
+so no caller ever sees the exception.
+*/
 let parseUrl = (raw: string): option<url> =>
   try Some(makeUrl(raw)) catch {
   | JsExn(_) => None
@@ -30,6 +33,7 @@ let parseUrl = (raw: string): option<url> =>
 @send @return(nullable)
 external matchOnce: (string, RegExp.t) => option<array<string>> = "match"
 
+/** Returns the first run of ASCII digits in `text`, if there is one. */
 let firstDigits = (text: string): option<string> =>
   text->matchOnce(/[0-9]+/)->Option.flatMap(matches => matches[0])
 
@@ -39,4 +43,7 @@ let firstDigits = (text: string): option<string> =>
 // A global that may be missing, `null`, or a string: `Nullable.t` covers all three.
 @val @scope("globalThis") external configuredRegion: Nullable.t<string> = "APP_REGION"
 
+/**
+Returns the `APP_REGION` global, or `eu-west-2` when it is missing or `null`.
+*/
 let region = (): string => configuredRegion->Nullable.toOption->Option.getOr("eu-west-2")

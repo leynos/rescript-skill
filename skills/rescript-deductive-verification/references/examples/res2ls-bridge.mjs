@@ -40,6 +40,7 @@ import ts from "typescript";
 
 export const BRIDGE_VERSION = "1";
 
+/** Returns the hex SHA-256 digest of `text`. */
 const sha256 = (text) => createHash("sha256").update(text).digest("hex");
 
 /** Directory holding `bsc.exe` and `rescript-tools.exe` for this host. */
@@ -132,12 +133,19 @@ export function contractsFromParsetree(text) {
   return contracts;
 }
 
-// Contracts use `result` for the return value; `\result` would need `\\result`
-// inside a ReScript string.
+/**
+ * Spells the return value of a contract as `\result`. Contracts use `result`
+ * for the return value; `\result` would need `\\result` inside a ReScript
+ * string.
+ */
 const toLemmaScript = (spec) => spec.replace(/\bresult\b/g, "\\result");
 
 // ── Types from genType and rescript-tools doc ───────────────────────────
 
+/**
+ * Parses genType output, returning its type aliases and the function-typed
+ * signatures keyed by name.
+ */
 function genTypeDeclarations(genTs) {
   const sf = ts.createSourceFile("gen.ts", genTs, ts.ScriptTarget.Latest, true);
   const types = [];
@@ -157,6 +165,10 @@ function genTypeDeclarations(genTs) {
   return { sf, types, signatures };
 }
 
+/**
+ * Splits `text` at each `separator` outside brackets, trimming the parts and
+ * dropping an empty tail. A `=>` is not read as a closing bracket.
+ */
 function splitTopLevel(text, separator) {
   const parts = [];
   let depth = 0;
@@ -326,6 +338,7 @@ function isInt32(x: number): boolean {
   return -2147483648 <= x && x <= 2147483647;
 }`;
 
+/** Reports whether `name` is one of the bridge's own prelude helpers. */
 export const isPreludeName = (name) =>
   name === "int32" || name === "isInt32" || name.startsWith("int32Typed_");
 
@@ -351,6 +364,7 @@ export function dollarFree(name) {
   return rewritten;
 }
 
+/** Reports whether `node` is an expression of the form `e | 0`. */
 function isOrZero(node) {
   return (
     ts.isBinaryExpression(node) &&
@@ -360,6 +374,11 @@ function isOrZero(node) {
   );
 }
 
+/**
+ * Returns the text edits that give a compiled function its genType parameter
+ * and result types, its contract comments, `$`-free local names, and `int32`
+ * calls in place of `e | 0`.
+ */
 function functionEdits(st, jsSf, sig, genSf, contract, typing) {
   const edits = [];
   const name = st.name.text;
@@ -409,6 +428,11 @@ function functionEdits(st, jsSf, sig, genSf, contract, typing) {
   return edits;
 }
 
+/**
+ * Returns the `requires` and `ensures` predicates that a function's ReScript
+ * types imply: `int` values are 32-bit, and predicated types hold their
+ * `int32Typed_` predicate.
+ */
 function typingContracts(name, sig, genSf, doc, predicates) {
   const { params, ret } = signatureTypes(doc, name);
   const requires = sig.parameters.flatMap((p, i) => {

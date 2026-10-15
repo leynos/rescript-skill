@@ -14,6 +14,7 @@ type action =
   | Toggle(string)
   | ClearBought
 
+/** The next list after one action; blank labels are ignored. */
 let reducer = (items: array<item>, action: action): array<item> =>
   switch action {
   | Add({id, label}) =>
@@ -24,6 +25,7 @@ let reducer = (items: array<item>, action: action): array<item> =>
   | ClearBought => items->Array.filter(item => !item.bought)
   }
 
+/** How many items are still to buy. */
 let remaining = (items: array<item>): int => items->Array.filter(item => !item.bought)->Array.length
 
 module Row = {
@@ -51,6 +53,7 @@ module Summary = {
     </header>
 }
 
+/** The whole list: a summary with a clear button, then one row per item. */
 @react.component
 let make = (~initial: array<item>) => {
   let (items, dispatch) = React.useReducer(reducer, initial)

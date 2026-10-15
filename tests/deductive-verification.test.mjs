@@ -52,6 +52,7 @@ const EXAMPLES = join(
 const LEASE = join(EXAMPLES, "VerifiedLease.res");
 const BIN = rescriptBin(REPO_ROOT);
 
+/** Calls `run` with a fresh temporary directory, then removes the directory. */
 function withTempDir(run) {
   const dir = mkdtempSync(join(tmpdir(), "rescript-skill-res2ls-"));
   try {

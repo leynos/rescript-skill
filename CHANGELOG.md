@@ -59,6 +59,10 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - Tested examples: every fence in the README and the users' guide carries a
   `tested-example` marker and is exercised by
   `tests/documented-examples.test.mjs`.
+- Document Object Model (DOM) interaction tests: `tests/dom/` suites run in a
+  separate `bun test` process with happy-dom preloaded
+  (`@happy-dom/global-registrator` 20.14.5), and drive `ShoppingList` through
+  real clicks.
 
 ### Changed
 

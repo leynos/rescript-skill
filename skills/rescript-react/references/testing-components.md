@@ -41,15 +41,31 @@ module from `@rescript/react`.
 
 ## Interaction tests
 
-Clicks, typing, and effects need a DOM and React's test act loop. Options:
+Clicks, typing, and effects need a DOM and React's `act` loop. This repository's
+`tests/dom/ShoppingListDom.test.res` does it under Bun:
 
-- Register a DOM implementation for Bun (for example happy-dom through
-  `@happy-dom/global-registrator` in a `bunfig.toml` preload), render with
-  `ReactDOM.Client`, and drive events; wrap updates in `React.act`, which
-  `@rescript/react` 0.15 binds.
-- Or run component tests in a browser-based runner and keep Bun for logic
-  and static rendering.
+- Preload happy-dom with `bun test --preload ./tests/support/happy-dom.mjs`,
+  a module that calls `GlobalRegistrator.register()` from
+  `@happy-dom/global-registrator` and sets
+  `globalThis.IS_REACT_ACT_ENVIRONMENT = true`. A preload runs before any suite
+  imports React DOM, which decides at import time whether it is in a browser.
+- Run DOM suites in their own `bun test` process. Registration replaces
+  globals such as `fetch`, `Request`, and `Response`, which breaks suites that
+  talk to a real `Bun.serve`.
+- Mount with `ReactDOM.Client.createRoot` into a fresh container, and wrap the
+  render, every event, and the unmount in `React.act`, which `@rescript/react`
+  0.15 binds. An unmount outside `act` draws React's "not wrapped in act"
+  warning.
+- Bind the few DOM members the suite uses (`querySelector`, `click`,
+  `textContent`, `checked`) locally in the suite, as narrowly as the `bun:test`
+  mocks in `rescript-bun-testing`.
 
-Either way, bind the testing library calls in use as narrowly as the `bun:test`
-mocks in `rescript-bun-testing`. Most of the value is usually in reducer and
-static-render tests, which cost nothing to set up.
+```rescript
+let clickOn = element => React.act(async () => element->click)
+
+await clickOn(container->find("button"))
+expect(container->texts("li"))->Expect.toEqual(["milk", "bread"])
+```
+
+Most of the value is still in reducer and static-render tests, which cost
+nothing to set up; add DOM tests for the wiring between events and state.

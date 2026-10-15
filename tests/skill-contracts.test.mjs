@@ -49,9 +49,16 @@ const ALLOWED_KEYS = new Set([
 // stay well inside this so references carry the long comparison material.
 const SKILL_LINE_BUDGET = 160;
 
+/** Reads a file as UTF-8 text. */
 const read = (path) => readFileSync(path, "utf8");
+/** Reads the SKILL.md of `skill` as text. */
 const skillDoc = (skill) => read(join(SKILLS_ROOT, skill, "SKILL.md"));
 
+/**
+ * Lists the Markdown files the documentation contracts check: those under the
+ * skills and docs trees, plus the root README, AGENTS, and CHANGELOG files when
+ * present.
+ */
 function markdownFiles() {
   const roots = [SKILLS_ROOT, join(REPO_ROOT, "docs")];
   const files = roots
@@ -66,6 +73,10 @@ function markdownFiles() {
   return files;
 }
 
+/**
+ * Lists the ReScript example sources of `skill`, or an empty list when it has
+ * none.
+ */
 function examplesOf(skill) {
   const dir = join(SKILLS_ROOT, skill, "references", "examples");
   return existsSync(dir)

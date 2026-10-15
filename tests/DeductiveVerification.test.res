@@ -7,6 +7,7 @@ up, so a regression shows here even where Dafny is not installed.
 */
 open RescriptBun.Test
 
+/** Builds a lease held by "ana" in generation 7 with `handles` open. */
 let held = (~handles) => VerifiedLease.Held({generation: 7, owner: "ana", handles})
 let released = VerifiedLease.Released({generation: 7, cause: Failed({message: "disk full"})})
 

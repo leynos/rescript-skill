@@ -24,8 +24,13 @@ import { basename, dirname, join } from "node:path";
 import ts from "typescript";
 import { isPreludeName } from "./res2ls-bridge.mjs";
 
+/** Returns the hex SHA-256 digest of `text`. */
 const sha256 = (text) => createHash("sha256").update(text).digest("hex");
 
+/**
+ * Returns a transform that reverses the bridge's two rewrites: `int32(e)` back
+ * to `e | 0`, and `x__n` back to `x$n`.
+ */
 function undoRewrites(context) {
   const visit = (node) => {
     if (
@@ -102,6 +107,10 @@ export function compareUnit(unitText, productionJs) {
   return { identical, problems };
 }
 
+/**
+ * Checks a generated unit against its manifest and the production JavaScript.
+ * Returns the functions that match production and any problems found.
+ */
 export function correspond(resPath, outDir) {
   const moduleName = basename(resPath, ".res");
   const sourceDir = dirname(resPath);

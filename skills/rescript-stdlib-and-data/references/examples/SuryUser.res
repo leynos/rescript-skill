@@ -29,12 +29,16 @@ let userSchema = S.object(s => {
   nickname: s.field("nickname", S.option(S.string)),
 })
 
-// Sury reports failure by throwing `S.Exn`; convert it to a result here.
+/**
+Parses `input` as a user, returning the error message on failure. Sury reports
+failure by throwing `S.Exn`; convert it to a result here.
+*/
 let parse = (input: JSON.t): result<user, string> =>
   try Ok(input->S.parseOrThrow(~to=userSchema)) catch {
   | S.Exn(error) => Error(error.message)
   }
 
+/** Encodes a user as JSON, or returns the error message on failure. */
 let encode = (value: user): result<JSON.t, string> =>
   try Ok(value->S.convertOrThrow(~from=userSchema, ~to=S.json)) catch {
   | S.Exn(error) => Error(error.message)

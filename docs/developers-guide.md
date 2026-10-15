@@ -146,6 +146,10 @@ needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
 
 ## 5. What the suites cover
 
+- `tests/dom/*.test.res` exercise components through a Document Object Model
+  (DOM). `make test` runs them in a second `bun test` process with happy-dom
+  preloaded from `tests/support/happy-dom.mjs`, because registering it replaces
+  globals, such as `fetch`, that other suites use.
 - `tests/*.test.res` exercise each skill's examples. They open
   `RescriptBun.Test` locally and assert behaviour, not generated JavaScript
   text.

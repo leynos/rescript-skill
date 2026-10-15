@@ -43,6 +43,7 @@ let route = (~method: string, ~path: string, ~body: option<JSON.t>): result<
   | _ => Error(NotFound)
   }
 
+/** Encodes a todo as a JSON object with `id`, `title`, and `done` fields. */
 let encodeTodo = (todo: TodoCore.todo): JSON.t => JSON.Object(
   dict{
     "id": JSON.Number(todo.id->Int.toFloat),
@@ -51,6 +52,7 @@ let encodeTodo = (todo: TodoCore.todo): JSON.t => JSON.Object(
   },
 )
 
+/** Builds a reply whose body is the JSON string `text`. */
 let message = (status, text) => {status, body: JSON.String(text)}
 
 /** Spells a core result as an HTTP status and a JSON body. */
@@ -72,16 +74,23 @@ let errorReply = (error: httpError): reply =>
 
 // --- Bun ----------------------------------------------------------------------
 
-// `Globals.method` is a payloadless variant whose runtime values are the
-// method names, so coercion to `string` is free and checked.
+/**
+Returns the name of an HTTP method. `Globals.method` is a payloadless variant
+whose runtime values are the method names, so coercion to `string` is free and
+checked.
+*/
 let methodName = (method: method): string => (method :> string)
 
-// `Request.json` rejects on a malformed body; turn that into `None` here.
+/**
+Reads a request body as JSON, or returns `None` when the body is malformed.
+`Request.json` rejects on a malformed body; turn that into `None` here.
+*/
 let readBody = async (request: Request.t): option<JSON.t> =>
   try Some(await request->Request.json) catch {
   | JsExn(_) => None
   }
 
+/** Turns a reply into a `Response` with its status and JSON body. */
 let respond = ({status, body}: reply): Response.t =>
   Response.makeWithJson(body, ~options={status: status})
 
@@ -104,14 +113,20 @@ let fetchHandler = async (store: TodoCore.store, request: Request.t): Response.t
   }
 }
 
-// `port: 0` asks the operating system for a free port, which tests rely on.
+/**
+Starts a server on `port` that answers requests with `store`.
+
+`port: 0` asks the operating system for a free port, which tests rely on.
+*/
 let start = (~port: int, store: TodoCore.store): Bun.Server.t =>
   Bun.serve({
     port,
     fetch: (request, _server) => fetchHandler(store, request),
   })
 
+/** Returns the `http://localhost` URL of a running server. */
 let baseUrl = (server: Bun.Server.t): string =>
   `http://localhost:${server->Bun.Server.port->Int.toString}`
 
+/** Stops a server, closing its active connections. */
 let stop = (server: Bun.Server.t): unit => server->Bun.Server.stop(~closeActiveConnections=true)

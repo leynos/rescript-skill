@@ -52,11 +52,16 @@ function namedSkills(body) {
   return names;
 }
 
+/** Asserts a plaintext prompt names only the router skill. */
 const routerPrompt = (example) => {
   expect(example.info).toBe("plaintext");
   expect(namedSkills(example.body)).toEqual([ROUTER]);
 };
 
+/**
+ * Asserts a plaintext prompt names exactly one shipped skill, which is not the
+ * router.
+ */
 const directPrompt = (example) => {
   expect(example.info).toBe("plaintext");
   const names = namedSkills(example.body);

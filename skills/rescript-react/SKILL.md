@@ -43,6 +43,7 @@ JavaScript, `rescript-interop`.
 | Document Object Model (DOM) attribute named like a keyword | `type_`; `ariaLabel` for `aria-label`                          |
 | form actions (React 19)                                    | `React.useActionState`, `React.useOptimistic`                  |
 | render in a test without a DOM                             | `ReactDOMServer.renderToStaticMarkup(<C />)`                   |
+| click or type in a test                                    | happy-dom preload, `ReactDOM.Client`, and `React.act`          |
 
 _Table 1: Moves for React components and hooks._
 

@@ -106,9 +106,6 @@ examples and the contract suites are the regression evidence.
 
 ## Open questions
 
-- Interaction tests for React components need a Document Object Model (DOM)
-  under Bun (for example happy-dom). The catalogue covers reducers and static
-  rendering only, pending a concrete need and a binding set worth maintaining.
 - Mutation testing (for example Stryker over the generated JavaScript) is not
   covered; mapping surviving mutants back to ReScript source is unproven.
 - The verification bridge has no route for loop invariants, no specified

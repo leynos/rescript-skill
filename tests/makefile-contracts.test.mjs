@@ -4,8 +4,10 @@
 The `all` target must run its gates sequentially and stop at the first failure
 even under `make -j`, so a parallel run cannot hide a broken gate behind an
 unrelated success. No target may list two prerequisites, which `make -j` would
-run at once against the shared build and tool caches. The test target must name every ReScript suite from its
-source, so a suite cannot silently drop out of the run. The manifest gate must
+run at once against the shared build and tool caches. The test target must
+name every ReScript suite from its source, so a suite cannot silently drop out
+of the run, and must run the DOM suites in a separate process with happy-dom
+preloaded. The manifest gate must
 reject unusable manifests, including one that a conformant skill sorted after
 it would otherwise mask in a shell loop.
 
@@ -28,6 +30,10 @@ import { REPO_ROOT } from "./support/catalogue.mjs";
 
 const makefile = readFileSync(join(REPO_ROOT, "Makefile"), "utf8");
 
+/**
+ * Runs `make` with `args` in the repository, with `env` added to the
+ * environment, and returns its exit code and output.
+ */
 function make(args, env = {}) {
   const result = Bun.spawnSync(["make", "--no-print-directory", ...args], {
     cwd: REPO_ROOT,
@@ -39,6 +45,10 @@ function make(args, env = {}) {
   };
 }
 
+/**
+ * Calls `body` with a fresh scratch directory, then removes the directory and
+ * returns what `body` returned.
+ */
 function withScratch(prefix, body) {
   const directory = mkdtempSync(join(tmpdir(), prefix));
   try {
@@ -137,6 +147,18 @@ describe("suite selection", () => {
     }
     for (const suite of jsSuites) {
       expect(dryRun.output).toContain(`./tests/${suite}`);
+    }
+    const domSuites = readdirSync(join(REPO_ROOT, "tests", "dom")).filter(
+      (name) => name.endsWith(".test.res"),
+    );
+    expect(domSuites.length).toBeGreaterThan(0);
+    const domRun = dryRun.output
+      .split("\n")
+      .find((line) => line.includes("--preload ./tests/support/happy-dom.mjs"));
+    expect(domRun).toBeDefined();
+    for (const suite of domSuites) {
+      expect(domRun).toContain(`./tests/dom/${suite}.mjs`);
+      expect(dryRun.output.split(`./tests/dom/${suite}.mjs`)).toHaveLength(2);
     }
   });
 });

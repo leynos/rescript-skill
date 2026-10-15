@@ -161,8 +161,6 @@ contracts against the compiled JavaScript; it needs Dafny 4.11 and Z3 on
 
 These are not covered yet, and the catalogue says so rather than guessing:
 
-- React interaction tests that need a Document Object Model (DOM) under Bun;
-  `rescript-react` covers reducers and static rendering only.
 - Mutation testing of ReScript code.
 - Proofs of functions with loops or calls into `@rescript/runtime` helpers,
   and LemmaScript's Lean backend; `rescript-deductive-verification` lists the

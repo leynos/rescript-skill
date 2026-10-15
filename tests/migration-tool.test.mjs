@@ -35,6 +35,10 @@ let bool = Bool.fromStringExn("true")
 
 let project;
 
+/**
+ * Runs `bun run --bun` with `args` in the scratch project and returns its exit
+ * code and output streams.
+ */
 function run(args) {
   const result = Bun.spawnSync([process.execPath, "run", "--bun", ...args], {
     cwd: project,

@@ -68,6 +68,7 @@ export function gate(run, root) {
   return { code: 0, errors: [], out: ["reanalyze: no findings"] };
 }
 
+/** Runs reanalyze over the project and returns its exit code and output. */
 function runReanalyze() {
   const result = Bun.spawnSync([
     process.execPath,

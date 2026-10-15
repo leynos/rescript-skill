@@ -30,6 +30,7 @@ the call. The binding is single-argument, so slot 0 is the argument.
 let calls = (mock: t<'arg, 'ret>): array<'arg> =>
   mock->state->(state => state.calls)->Array.map(args => args->Array.getUnsafe(0))
 
+/** The number of calls recorded so far. */
 let callCount = (mock: t<'arg, 'ret>): int => (mock->state).calls->Array.length
 
 @send external clear: t<'arg, 'ret> => unit = "mockClear"

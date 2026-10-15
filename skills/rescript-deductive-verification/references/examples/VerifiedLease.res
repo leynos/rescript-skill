@@ -1,7 +1,14 @@
-// A resource lease whose transition function is proved in place: the
-// contracts below are discharged by Dafny against the compiled JavaScript.
-// `make prove` runs the proof; tests/DeductiveVerification.test.res checks
-// the same properties at runtime on chosen examples.
+/***
+A resource lease as a pure state machine, proved in place.
+
+`step` moves a lease between idle, held, and released on acquire, open, close,
+and release events. The `@requires` and `@ensures` attributes on it are proved
+by Dafny against the compiled `VerifiedLease.res.mjs`, through the bridge and
+correspondence audit in this directory: `make prove` runs the proof, the
+mutants in `VerifiedLease.mutants.mjs`, and the translation check in
+`VerifiedLease.differential.mjs`. `tests/DeductiveVerification.test.res`
+checks the same properties at runtime on chosen examples.
+*/
 
 // `@tag` with a payload on every constructor compiles to objects with a
 // string discriminant, which the verifier models as a datatype. A constant
@@ -44,8 +51,10 @@ type outcome =
 // not have.
 let maxHandles = 1_000_000
 
-// Predicates named in contracts must be pure functions the verifier can
-// translate; switch-and-return bodies qualify.
+/**
+Whether `who` holds the lease. Predicates named in contracts must be pure
+functions the verifier can translate; switch-and-return bodies qualify.
+*/
 @genType
 let isOwner = (state: state, who: string): bool =>
   switch state {
@@ -53,6 +62,7 @@ let isOwner = (state: state, who: string): bool =>
   | Idle(_) | Released(_) => false
   }
 
+/** The lease invariant: a held lease never has a negative handle count. */
 @genType
 let wellFormed = (state: state): bool =>
   switch state {
@@ -60,12 +70,17 @@ let wellFormed = (state: state): bool =>
   | Idle(_) | Released(_) => true
   }
 
+/** The generation of a lease in any state. */
 @genType
 let generationOf = (state: state): int =>
   switch state {
   | Idle({generation}) | Held({generation, _}) | Released({generation, _}) => generation
   }
 
+/**
+Applies one event to a well-formed lease, returning the next state or the
+reason the event was refused. Its contracts are the proof's subject.
+*/
 @genType
 @requires("wellFormed(state)")
 @ensures("result.kind === 'ok' ==> wellFormed(result.state)")

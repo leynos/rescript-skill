@@ -232,3 +232,8 @@ Z3 4.12.1. `make prove` re-checks the example's proof.
   without a Document Object Model (DOM); `className` renders as `class`, and
   `React.string` escapes `<b>` as `&lt;b&gt;`. Evidence:
   `ShoppingList.test.res`.
+- With `@happy-dom/global-registrator` 20.14.5 preloaded and
+  `IS_REACT_ACT_ENVIRONMENT` set, React DOM 19.3.0's `createRoot` renders under
+  Bun 1.4.3, and `click()` inside `React.act` runs the component's handlers.
+  Unmounting outside `act` draws the "not wrapped in act" warning. Evidence:
+  `tests/dom/ShoppingListDom.test.res`.

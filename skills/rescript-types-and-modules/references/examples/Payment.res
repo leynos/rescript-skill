@@ -13,9 +13,13 @@ type payment =
   | ...cash
   | Voucher({code: string})
 
-// Coercion is free at runtime and checked at compile time.
+/**
+Widens a `card` to a `payment`. Coercion is free at runtime and checked at
+compile time.
+*/
 let fromCard = (c: card): payment => (c :> payment)
 
+/** Returns the amount of a payment in pence, or 0 for a voucher. */
 let amountInPence = (p: payment): int =>
   switch p {
   // `+A` enables warning 9: name every label or close the pattern with `_`.
@@ -26,11 +30,16 @@ let amountInPence = (p: payment): int =>
 // Payloadless constructors are strings at runtime and coerce to `string`.
 type status = Pending | Settled | Refunded
 
+/** Returns the constructor name of a status as a string. */
 let statusLabel = (s: status): string => (s :> string)
 
+/** Summarizes a card by its last four digits. */
 let cardSummary = (Card({last4, _}): card) => `ending ${last4}`
 
-// Matching on a spread type selects the constructors it contributes.
+/**
+Describes a payment in words. Matching on a spread type selects the constructors
+it contributes.
+*/
 let describe = (p: payment): string =>
   switch p {
   | ...card as c => `card ${c->cardSummary}`

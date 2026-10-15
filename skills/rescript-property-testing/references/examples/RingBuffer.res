@@ -12,21 +12,28 @@ type t<'a> = {
   mutable length: int,
 }
 
+/** Creates an empty buffer that holds up to `capacity` items. */
 let make = (~capacity: int): t<'a> => {
   items: Array.make(~length=capacity, None),
   start: 0,
   length: 0,
 }
 
+/** Returns the most items the buffer can hold. */
 let capacity = (buffer: t<'a>): int => buffer.items->Array.length
 
+/** Returns the number of items the buffer currently holds. */
 let size = (buffer: t<'a>): int => buffer.length
 
-// Indices wrap by subtraction rather than `mod`: `start < capacity` and
-// `offset <= capacity` always hold, and `mod` would make every caller "might
-// throw Division_by_zero" for reanalyze's exception analysis.
+/**
+Wraps `index` into `0..<capacity`, for an index below twice `capacity`.
+Indices wrap by subtraction rather than `mod`: `start < capacity` and
+`offset <= capacity` always hold, and `mod` would make every caller "might
+throw Division_by_zero" for reanalyze's exception analysis.
+*/
 let wrap = (index: int, ~capacity: int): int => index >= capacity ? index - capacity : index
 
+/** Appends `value`, dropping the oldest item when the buffer is full. */
 let push = (buffer: t<'a>, value: 'a): unit => {
   let cap = buffer->capacity
   if cap > 0 {
@@ -40,6 +47,7 @@ let push = (buffer: t<'a>, value: 'a): unit => {
   }
 }
 
+/** Removes and returns the oldest item, or `None` when the buffer is empty. */
 let pop = (buffer: t<'a>): option<'a> =>
   if buffer.length == 0 {
     None
@@ -51,6 +59,7 @@ let pop = (buffer: t<'a>): option<'a> =>
     value
   }
 
+/** Returns the held items, oldest first. */
 let toArray = (buffer: t<'a>): array<'a> =>
   Array.fromInitializer(~length=buffer.length, offset =>
     buffer.items->Array.getUnsafe(wrap(buffer.start + offset, ~capacity=buffer->capacity))

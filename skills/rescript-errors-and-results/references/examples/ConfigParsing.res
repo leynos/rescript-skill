@@ -14,25 +14,31 @@ type configError =
 
 type config = {host: string, port: int}
 
+/** Returns the value stored under `key`, or `MissingKey` when it is absent. */
 let lookup = (env: dict<string>, key: string): result<string, configError> =>
   switch env->Dict.get(key) {
   | Some(value) => Ok(value)
   | None => Error(MissingKey(key))
   }
 
+/** Trims `raw`, rejecting an empty result as `InvalidHost`. */
 let parseHost = (raw: string): result<string, configError> => {
   let host = raw->String.trim
   host->String.isEmpty ? Error(InvalidHost(raw)) : Ok(host)
 }
 
-// `Int.fromString` wraps `parseInt`, so "80abc" and "8.5" both parse. Check
-// the whole string first when the input format is strict.
+/**
+Parses `raw` as a port from 1 to 65535. `Int.fromString` wraps `parseInt`, so
+"80abc" and "8.5" both parse. Check the whole string first when the input
+format is strict.
+*/
 let parsePort = (raw: string): result<int, configError> =>
   switch /^[0-9]+$/->RegExp.test(raw) ? Int.fromString(raw) : None {
   | Some(port) if port > 0 && port < 65536 => Ok(port)
   | _ => Error(InvalidPort(raw))
   }
 
+/** Reads `HOST` and `PORT` from `env`, stopping at the first error. */
 let fromEnv = (env: dict<string>): result<config, configError> => {
   let? Ok(rawHost) = env->lookup("HOST")
   let? Ok(host) = parseHost(rawHost)
@@ -41,6 +47,9 @@ let fromEnv = (env: dict<string>): result<config, configError> => {
   Ok({host, port})
 }
 
+/**
+Reads `HOST` and `PORT` from `env` with `Result.flatMap` instead of `let?`.
+*/
 let fromEnvWithFlatMap = (env: dict<string>): result<config, configError> =>
   env
   ->lookup("HOST")
@@ -52,7 +61,10 @@ let fromEnvWithFlatMap = (env: dict<string>): result<config, configError> =>
     ->Result.map(port => {host, port})
   )
 
-// Render at the edge; keep the variant everywhere else so callers can match.
+/**
+Renders an error as a message. Render at the edge; keep the variant everywhere
+else so callers can match.
+*/
 let describe = (error: configError): string =>
   switch error {
   | MissingKey(key) => `missing ${key}`
@@ -60,4 +72,5 @@ let describe = (error: configError): string =>
   | InvalidPort(raw) => `invalid port "${raw}"`
   }
 
+/** Formats a config as `host:port`. */
 let address = ({host, port}: config): string => `${host}:${port->Int.toString}`

@@ -12,6 +12,7 @@
   "packageManager": "bun@1.4.3",
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
+    "@happy-dom/global-registrator": "20.14.5",
     "@rescript/react": "0.15.0",
     "@rescript/runtime": "12.3.1",
     "fast-check": "4.10.2",

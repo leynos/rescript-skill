@@ -14,7 +14,10 @@ let unavailable: TodoCore.store = {
   add: async _ => Error(TodoCore.StoreUnavailable("disk full")),
 }
 
-// Breaks the port's contract by rejecting instead of resolving with `Error`.
+/**
+Returns a promise that rejects with a JavaScript error. Breaks the port's
+contract by rejecting instead of resolving with `Error`.
+*/
 let reset = () => Promise.make((_resolve, reject) => reject(JsError.make("connection reset")))
 let rejecting: TodoCore.store = {list: reset, add: _ => reset()}
 
@@ -71,9 +74,11 @@ describe("TodoServer transport mapping", () => {
   })
 })
 
+/** Sends `body` to `url` as a POST request. */
 let post = (url, body) =>
   fetch(url, ~init={method: "POST", body: Null.make(BodyInit.makeFromString(body))})
 
+/** Checks the HTTP API of `server` against the expected statuses and bodies. */
 let exercise = async (server: RescriptBun.Bun.Server.t): unit => {
   let url = `${server->TodoServer.baseUrl}/todos`
 

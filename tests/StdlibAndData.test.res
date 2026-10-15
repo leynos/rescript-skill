@@ -5,6 +5,7 @@ open RescriptBun.Test
 
 let ada: JsonDecoding.user = {id: 1, name: "Ada", role: Admin, nickname: Some("countess")}
 
+/** Parses `text` as JSON, returning `null` instead of throwing. */
 let parse = text =>
   switch JSON.parseOrThrow(text) {
   | json => json

@@ -29,6 +29,10 @@ import { REPO_ROOT } from "./support/catalogue.mjs";
 
 const FENCE = "```";
 
+/**
+ * Runs check-codeblocks.mjs in `mode` on a temporary Markdown file holding
+ * `body`, and returns its exit code, stderr, and the file's final text.
+ */
 function runCodeblocks(mode, body) {
   const directory = mkdtempSync(join(tmpdir(), "rescript-skill-fences-"));
   try {
