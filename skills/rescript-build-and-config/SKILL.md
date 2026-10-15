@@ -5,7 +5,7 @@ metadata:
   globs: "**/rescript.json, **/bsconfig.json, **/package.json, **/bunfig.toml"
 ---
 
-# ReScript Build and Configuration
+# ReScript build and configuration
 
 Use this when the question is about `rescript.json`, the `rescript` command, or
 how packages fit together, rather than about the code inside them.
@@ -17,7 +17,7 @@ how packages fit together, rather than about the code inside them.
   carries on, so read the build output.
 - Turn `namespace` on. Module names are global within a project and leak
   into consumers without it.
-- Build in source (`"in-source": true`) with a `.res.mjs` suffix. Your
+- Build in source (`"in-source": true`) with a `.res.mjs` suffix. A project's
   `package-specs` also decide how dependencies are imported, and published
   packages ship in-source output.
 - Mark test and tooling directories `"type": "dev"`; only dev sources can
@@ -29,19 +29,21 @@ how packages fit together, rather than about the code inside them.
 
 ## Decision surface
 
-| Need                                    | Setting                                                      |
-| --------------------------------------- | ------------------------------------------------------------ |
-| consumers see `MyLib.Util`, not `Util`  | `"namespace": true` (name from `"name"`, camel-cased)        |
-| test-only code and bindings             | `{"dir": "tests", "type": "dev"}` plus `dev-dependencies`    |
-| nested directories                      | `{"dir": "src", "subdirs": true}`                            |
-| one public entry module                 | `{"dir": "src", "public": ["MyLib"]}`                        |
-| ES modules beside the source            | `"package-specs": {"module": "esmodule", "in-source": true}` |
-| strict compilation                      | `"warnings": {"number": "+A", "error": "+A"}`                |
-| stricter rules only in CI               | `rescript build --warn-error "+110"`                         |
-| `let?`                                  | `"experimental-features": {"LetUnwrap": true}`               |
-| React                                   | `"jsx": {"version": 4}`                                      |
-| TypeScript types for exports            | `"gentypeconfig": {...}`                                     |
-| a post-processing step per emitted file | `"js-post-build"` (slow; avoid)                              |
+| Need                                               | Setting                                                      |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| consumers see `MyLib.Util`, not `Util`             | `"namespace": true` (name from `"name"`, camel-cased)        |
+| test-only code and bindings                        | `{"dir": "tests", "type": "dev"}` plus `dev-dependencies`    |
+| nested directories                                 | `{"dir": "src", "subdirs": true}`                            |
+| one public entry module                            | `{"dir": "src", "public": ["MyLib"]}`                        |
+| ES modules beside the source                       | `"package-specs": {"module": "esmodule", "in-source": true}` |
+| strict compilation                                 | `"warnings": {"number": "+A", "error": "+A"}`                |
+| stricter rules only in continuous integration (CI) | `rescript build --warn-error "+110"`                         |
+| `let?`                                             | `"experimental-features": {"LetUnwrap": true}`               |
+| React                                              | `"jsx": {"version": 4}`                                      |
+| TypeScript types for exports                       | `"gentypeconfig": {...}`                                     |
+| a post-processing step per emitted file            | `"js-post-build"` (slow; avoid)                              |
+
+_Table 1: Configuration settings for common needs._
 
 ## Commands (Rewatch, 12.x)
 
@@ -55,6 +57,8 @@ how packages fit together, rather than about the code inside them.
 | one package in a monorepo  | `rescript build packages/name`     |
 | debug project discovery    | `rescript build -v`                |
 | the pre-12 Ninja builder   | `rescript-legacy` (avoid)          |
+
+_Table 2: Rewatch commands in ReScript 12._
 
 There is no separate type-check command: a build is the type check.
 

@@ -56,7 +56,7 @@ is fast, but the indirection costs readers more than the CPU.
 
 ## First-class modules
 
-A module can be packed into a value and unpacked later, which lets you choose
+A module can be packed into a value and unpacked later, which allows choosing
 an implementation at runtime while keeping its types:
 
 ```rescript

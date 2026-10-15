@@ -70,7 +70,8 @@ other workers carry on; wrap `f` with `attempt` when partial results matter.
 
 Promises have no cancellation. The platform convention is `AbortController`:
 the owner calls `abort()`, and operations that were handed its `signal` stop.
-The standard library does not bind it, so bind the handful of members you use:
+The standard library does not bind it, so bind only the handful of members the
+code needs:
 
 ```rescript
 type abortController

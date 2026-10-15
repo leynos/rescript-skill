@@ -23,7 +23,8 @@ Principles:
 
 - **One external per arity.** fast-check's `property` and `tuple` are
   variadic and heterogeneous; ReScript types each arity separately (`property1`,
-  `property2`, `tuple2`, `tuple3`). Add the next arity when you need it.
+  `property2`, `tuple2`, `tuple3`). Add the next arity when a property needs
+  it.
 - **`@variadic` only for homogeneous arrays**: `constantFrom` and `oneof`
   take `array<'a>` and spread it.
 - **Option records** use optional fields (`{min?: int, max?: int}`), so
@@ -63,7 +64,7 @@ test as failed and prints the message.
 
 A failure message looks like:
 
-```text
+```plaintext
 Property failed after 3 tests
 { seed: 42, path: "6:1:0:0:2:0:0:1", endOnFailure: true }
 Counterexample: [2,[{"TAG":"Push","_0":0},{"TAG":"Push","_0":0},{"TAG":"Push","_0":-1}]]
@@ -84,6 +85,7 @@ named regression test.
 ## CI cadence
 
 Properties with a few hundred runs cost milliseconds here and belong in every
-test run. fast-check picks a fresh seed each run, so CI explores new inputs
-over time; that is a feature, provided failures are reported with their seed.
-Raise `numRuns` locally or in a scheduled job when hunting, not on every commit.
+test run. fast-check picks a fresh seed each run, so continuous integration
+(CI) explores new inputs over time; that is a feature, provided failures are
+reported with their seed. Raise `numRuns` locally or in a scheduled job when
+hunting, not on every commit.

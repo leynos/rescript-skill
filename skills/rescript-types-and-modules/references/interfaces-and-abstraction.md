@@ -8,16 +8,18 @@ recompilation: if an implementation change leaves the `.resi` untouched,
 dependants do not recompile.
 
 Write one for every module another module depends on for something more than
-plain data: validation, invariants, or a representation you may change.
+plain data: validation, invariants, or a representation that may change.
 
 ## Abstract, private, or transparent
 
-| Interface declaration       | Callers can read     | Callers can construct | Use for                                  |
-| --------------------------- | -------------------- | --------------------- | ---------------------------------------- |
-| `type t`                    | no, only via API     | no                    | handles, representations you will change |
-| `type t = private string`   | yes, `(x :> string)` | no                    | validated primitives (emails, IDs)       |
-| `type t = private {a: int}` | yes, field access    | no                    | validated records                        |
-| `type t = {a: int}`         | yes                  | yes                   | plain data with no invariant             |
+| Interface declaration       | Callers can read     | Callers can construct | Use for                                |
+| --------------------------- | -------------------- | --------------------- | -------------------------------------- |
+| `type t`                    | no, only via API     | no                    | handles, representations due to change |
+| `type t = private string`   | yes, `(x :> string)` | no                    | validated primitives (emails, IDs)     |
+| `type t = private {a: int}` | yes, field access    | no                    | validated records                      |
+| `type t = {a: int}`         | yes                  | yes                   | plain data with no invariant           |
+
+_Table 1: What each interface declaration lets callers do._
 
 `private` gives callers ergonomic read access while keeping construction in one
 place. Abstract types keep every option open, at the cost of accessor functions.

@@ -37,13 +37,15 @@ calls whose values must change together.
 
 ## Effects
 
-| Call                              | Runs                             |
-| --------------------------------- | -------------------------------- |
-| `React.useEffectOnEveryRender(f)` | after every render               |
-| `React.useEffect(f, [])`          | once after mount                 |
-| `React.useEffect(f, [a])`         | when `a` changes                 |
-| `React.useEffect(f, (a, b))`      | when `a` or `b` changes          |
-| `React.useLayoutEffect(f, deps)`  | synchronously after DOM mutation |
+| Call                              | Runs                                                     |
+| --------------------------------- | -------------------------------------------------------- |
+| `React.useEffectOnEveryRender(f)` | after every render                                       |
+| `React.useEffect(f, [])`          | once after mount                                         |
+| `React.useEffect(f, [a])`         | when `a` changes                                         |
+| `React.useEffect(f, (a, b))`      | when `a` or `b` changes                                  |
+| `React.useLayoutEffect(f, deps)`  | synchronously after Document Object Model (DOM) mutation |
+
+_Table 1: When each effect hook runs._
 
 The effect returns `option<unit => unit>`: `None`, or `Some(cleanup)`.
 

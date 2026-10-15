@@ -39,6 +39,8 @@ Three ways in, with different normalization:
 | `p->Promise.catch(e => ...)`                | `JsExn(value)`                      |
 | `Promise.allSettled` → `Rejected({reason})` | the raw value, unwrapped            |
 
+_Table 1: What each catching mechanism receives for a raw JavaScript rejection._
+
 The compiler wraps caught values with
 `Primitive_exceptions.internalToException` and `Promise.catch` calls
 `anyToExnInternal`; `allSettled` is a plain external. So when every outcome

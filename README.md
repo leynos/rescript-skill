@@ -1,6 +1,6 @@
 # rescript-skill
 
-*ReScript 12 skills for coding agents, with every claim compiled and tested.*
+_ReScript 12 skills for coding agents, with every claim compiled and tested._
 
 A router and thirteen focused skills that teach agents to write current,
 idiomatic ReScript 12.3.1: from variants and bindings to Bun servers and React

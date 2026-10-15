@@ -17,6 +17,8 @@
 | `Int.Bitwise.lsl` and friends (deprecated, auto-migrated) | `Int.shiftLeft` and friends, or operators                       |
 | `Js.Vector`, `Js.List`                                    | removed                                                         |
 
+_Table 1: Standard-library renames from ReScript 11 to 12._
+
 `Js.*` modules are deprecated in 12 and scheduled for removal in 13.
 
 ## Exceptions and errors
@@ -29,6 +31,8 @@
 | `Error.t`, `Error.make`        | `JsError.t`, `JsError.make` |
 | `Error.raise`                  | `JsError.throw`             |
 | `@raises(E)`                   | `@throws(E)`                |
+
+_Table 2: Exception and error renames from ReScript 11 to 12._
 
 ## Operators
 
@@ -64,6 +68,8 @@ rewritten. Integer multiplication now compiles to `(a * b) | 0` rather than
 | `<div> ...children </div>`         | `<div> children </div>`           |
 | JSX v3, `-bs-jsx-mode`             | JSX v4 only                       |
 | `.ml` source files                 | removed; convert before upgrading |
+
+_Table 3: Attribute and syntax changes from ReScript 11 to 12._
 
 ## New in 12, worth adopting while migrating
 

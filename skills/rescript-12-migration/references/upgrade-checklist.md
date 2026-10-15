@@ -13,7 +13,7 @@
 
 - Remove `@rescript/core`: the standard library now ships with the compiler.
 - Remove `@rescript/std`: `@rescript/runtime` replaces it.
-- `@rescript/runtime` is a dependency of `rescript`, but pin it yourself.
+- `@rescript/runtime` is a dependency of `rescript`, but pin it explicitly.
   Package managers that do not hoist transitive dependencies (pnpm, or Bun
   workspaces under the isolated linker) need it as a direct dependency for
   generated imports such as `@rescript/runtime/lib/es6/Stdlib_Array.js` to
@@ -77,8 +77,10 @@ After (ReScript 12):
 | `--compiler-args`        | `rescript compiler-args <file>`         |
 | `rescript build --dev`   | no-op; dev sources always build locally |
 
+_Table 1: Command changes from ReScript 11 to 12._
+
 The Ninja builder survives as `rescript-legacy`, mainly for projects blocked on
-PPX tooling. Prefer fixing the blocker.
+preprocessor extension (PPX) tooling. Prefer fixing the blocker.
 
 ## Migration commands
 
@@ -89,7 +91,7 @@ rescript-tools migrate-all .
 rescript-tools migrate src/Config.res --stdout
 ```
 
-## CI
+## Continuous integration
 
 - Pin Bun or Node and the compiler exactly; regenerate the lockfile once.
 - Run `rescript format --check` (dev sources included in 12.3.1).

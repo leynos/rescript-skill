@@ -23,6 +23,8 @@ compiler's `.cmt` files, so it runs after a build.
 | `unsuppress` | re-enables paths inside a suppressed area                                                                            |
 | `transitive` | `false` reports only code dead in itself, which is the incremental-cleanup setting                                   |
 
+_Table 1: The reanalyze configuration fields._
+
 `rescript-tools reanalyze -config` runs what the file lists; `-json` prints an
 array of findings with `name`, `file`, `range` (zero-based), and `message`.
 12.1 added `-reactive` caching and a `reanalyze-server` that `-json` uses
@@ -30,8 +32,9 @@ transparently.
 
 ## Making it a gate
 
-The command exits 0 whatever it finds, so a CI step that only runs it can never
-fail. [check-reanalyze.mjs](examples/check-reanalyze.mjs) runs it with
+The command exits 0 whatever it finds, so a continuous integration (CI) step
+that only runs it can never fail.
+[check-reanalyze.mjs](examples/check-reanalyze.mjs) runs it with
 `-config -json`, prints each finding as `path:line:column: name: message`, and
 exits 1 if there are any. Its tests feed it a findings array and an empty one,
 so a version that always succeeded would fail them.
@@ -46,6 +49,8 @@ so a version that always succeeded would fail them.
 | `Dead Value With Side Effects`                                | the binding exists only for its effect; restructure              |
 | `might throw X ... not annotated with @throws(X)`             | handle it, return a `result`, or annotate `@throws(X)`           |
 | `Incorrect Dead Annotation: x is annotated @dead but is live` | remove `@dead`; the code is used again                           |
+
+_Table 2: Findings reanalyze reports, and the usual fix for each._
 
 Tests in the same project count as uses, so test-only helpers are live. A value
 used only by a dead value is itself reported only when `transitive` is `true`.

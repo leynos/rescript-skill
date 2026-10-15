@@ -52,6 +52,8 @@ shows up in React DevTools.
 | callback                     | `~onToggle: string => unit` | `onToggle={id => ...}`         |
 | children                     | `~children: React.element`  | nested elements                |
 
+_Table 1: Kinds of prop, their declarations, and their use in JSX._
+
 Expressions in attribute position need braces unless they are a simple
 identifier or literal: `count={remaining(items)}`, `key=item.id`.
 
@@ -112,4 +114,4 @@ module Confetti = {
 }
 ```
 
-Bind only the props you use, with precise types, as with any binding.
+Bind only the props in use, with precise types, as with any binding.

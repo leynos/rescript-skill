@@ -10,8 +10,8 @@ type card = Card({amount: int, last4: string})
 ```
 
 compiles a value to `{TAG: "Card", amount: 250, last4: "4242"}`. An inline
-record exists only inside its constructor: you cannot pass the payload around
-as a standalone record, so extract the fields you need in the pattern.
+record exists only inside its constructor: the payload cannot be passed around
+as a standalone record, so extract the needed fields in the pattern.
 
 Use a separate record type as the payload (`Card(cardDetails)`) when the
 payload travels on its own, for example into a function that formats it.
@@ -82,7 +82,7 @@ representations agree:
 - a `private` type to its representation;
 - a `string` to an `@unboxed` variant with a catch-all `string` case.
 
-It never converts data. If you need conversion, write a function.
+It never converts data. Conversion needs a function.
 
 ## Polymorphic variants
 

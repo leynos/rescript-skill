@@ -5,7 +5,7 @@ metadata:
   globs: "**/rescript.json, **/*.res, **/*.resi, **/bsconfig.json"
 ---
 
-# ReScript Router
+# ReScript router
 
 Load this first for non-trivial ReScript work, then load only the smallest
 useful follow-on skill. The catalogue targets ReScript 12.3.1 with Bun as the

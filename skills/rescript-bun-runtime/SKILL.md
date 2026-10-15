@@ -5,7 +5,7 @@ metadata:
   globs: "**/*.res, **/rescript.json, **/bunfig.toml, **/package.json"
 ---
 
-# ReScript on the Bun Runtime
+# ReScript on the Bun runtime
 
 Use this when ReScript code calls Bun: servers, scripts, CLIs, file and process
 work. For tests under Bun, load `rescript-bun-testing` instead.
@@ -40,6 +40,8 @@ work. For tests under Bun, load `rescript-bun-testing` instead.
 | files                       | `Bun.file(path)` to read; `Bun.write` to write                                                                     |
 | subprocesses                | `ChildProcess.spawn` (Node compatibility; `Bun.spawn` is unbound) or the `$` shell via a `@taggedTemplate` binding |
 | enforce the boundary        | core in a package without `rescript-bun`, or a contract test                                                       |
+
+_Table 1: Moves for Bun runtime work._
 
 ## The boundary, concretely
 

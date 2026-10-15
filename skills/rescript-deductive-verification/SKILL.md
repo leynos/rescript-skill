@@ -15,7 +15,7 @@ state unrepresentable, use `rescript-types-and-modules` first.
 ## Working stance
 
 - Prove the code that ships. The recommended route verifies the compiler's
-  `.res.mjs` output, with an audit showing the verified unit *is* that
+  `.res.mjs` output, with an audit showing the verified unit _is_ that
   JavaScript. Never substitute an independently written model unless an
   explicit refinement or correspondence argument connects it to production.
 - Prove a small pure core; test the effectful shell. Transition functions,
@@ -45,7 +45,7 @@ Module.res ── bsc ──> Module.res.mjs ─┐
                                                └─ res2ls-correspond: unit == production
 ```
 
-*Figure 1: The compiled-JavaScript verification route.*
+_Figure 1: The compiled-JavaScript verification route._
 
 1. Shape the code: a pure function over `@genType` types, variants with
    `@tag` and a record payload on every constructor.
@@ -74,7 +74,7 @@ lsc check --backend=dafny out/Lease.ts
 | Stack depth of recursion    | none: the prover assumes an unbounded stack                                   | test     |
 | `float` arithmetic          | none: modelled as exact reals                                                 | test     |
 
-*Table 1: Properties the route proves, and those left to tests.*
+_Table 1: Properties the route proves, and those left to tests._
 
 ## Rules that surprise people
 

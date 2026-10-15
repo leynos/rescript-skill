@@ -27,8 +27,8 @@ let start = env => env->ConfigParsing.fromEnv->Result.mapError(e => Config(e))
 Use
 [polymorphic variants](https://rescript-lang.org/docs/manual/polymorphic-variant)
 for errors only when several unrelated modules must contribute cases to one
-open set and you accept weaker exhaustiveness. A closed nominal variant is the
-default.
+open set and weaker exhaustiveness is acceptable. A closed nominal variant is
+the default.
 
 ## Sequencing: `let?` or `flatMap`
 
@@ -80,6 +80,8 @@ function.
 | the same for options                      | `Option.all`, `Option.all2` …                               |
 | keep only successes                       | `Array.filterMap(r => r->Result.mapOr(None, v => Some(v)))` |
 | collect every error, not just the first   | fold manually into `(oks, errors)`                          |
+
+_Table 1: Functions for combining independent results._
 
 `Result.all` stops at the first `Error`. Form validation usually wants every
 error; write the fold explicitly rather than calling `Result.all` and losing

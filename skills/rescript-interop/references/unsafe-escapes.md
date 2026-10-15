@@ -1,6 +1,6 @@
 # Unsafe escapes
 
-ReScript's guarantees end where you tell the compiler something it cannot
+ReScript's guarantees end where code asserts something the compiler cannot
 check. These are the ways to do that, from least to most dangerous.
 
 ## `Nullable.t` and `Null.t`
@@ -14,15 +14,17 @@ one.
 | `Null.t<'a>`     | `null`                 | `Null.toOption`     |
 | `Nullable.t<'a>` | `null` and `undefined` | `Nullable.toOption` |
 
+_Table 1: `Nullable.t` and `Null.t` compared._
+
 Type a binding's input or output with `Nullable.t` when JavaScript may produce
 either, convert once, and use `option` everywhere else. `Nullable.make` and
 `Nullable.fromOption` go the other way.
 
 ## `unknown`
 
-`unknown` is the honest type for "JavaScript gave me something". `JsExn.t` is
-`unknown`. Inspect it with `Type.Classify.classify`, or decode it, before
-treating it as anything else.
+`unknown` is the honest type for a value JavaScript supplied with no promises
+about its shape. `JsExn.t` is `unknown`. Inspect it with
+`Type.Classify.classify`, or decode it, before treating it as anything else.
 
 ## `external` with a concrete type
 

@@ -51,8 +51,8 @@ compiled, analysed, and exercised by `make test`.
   `upgrade-checklist.md`, `api-renames.md`, `release-deltas-12x.md`. Evidence:
   `tests/migration-tool.test.mjs`.
 - `rescript-quality-tools` — the formatter, the Markdown fence gate,
-  warnings and `%todo`, reanalyze as a CI gate with `@live`, `@dead`, and
-  `@throws`, `rescript-tools doc`, and Biome. References:
+  warnings and `%todo`, reanalyze as a continuous integration (CI) gate with
+  `@live`, `@dead`, and `@throws`, `rescript-tools doc`, and Biome. References:
   `formatter-and-fences.md`, `reanalyze-gate.md`, `ci-gates.md`. Examples:
   `ReanalyzeAnnotations.res`, `check-reanalyze.mjs`, `check-codeblocks.mjs`
   (the gate scripts this repository runs).
@@ -104,9 +104,9 @@ examples and the contract suites are the regression evidence.
 
 ## Open questions
 
-- Interaction tests for React components need a DOM under Bun (for example
-  happy-dom). The catalogue covers reducers and static rendering only, pending
-  a concrete need and a binding set worth maintaining.
+- Interaction tests for React components need a Document Object Model (DOM)
+  under Bun (for example happy-dom). The catalogue covers reducers and static
+  rendering only, pending a concrete need and a binding set worth maintaining.
 - Mutation testing (for example Stryker over the generated JavaScript) is not
   covered; mapping surviving mutants back to ReScript source is unproven.
 - The verification bridge has no route for loop invariants, no specified

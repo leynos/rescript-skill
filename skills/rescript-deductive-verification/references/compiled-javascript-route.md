@@ -138,14 +138,14 @@ Proving the example's transition function takes about 3 seconds.
 ## Alternatives considered
 
 - **A ReScript frontend emitting LemmaScript's intermediate representation.**
-  The seam exists: serialized IR drives LemmaScript's back half without
-  TypeScript, giving byte-identical Dafny. The blocker is types.
-  `bsc -dtypedtree` prints only annotations written in the source, so a correct
-  frontend must read binary `.cmt` files from OCaml linked against the exact
-  compiler version, and must re-implement pattern-match compilation. It would
-  also prove the source rather than the shipped JavaScript, missing constant
-  folding and merged arms. Worth revisiting only if the compiled-JavaScript
-  route's syntax limits bind.
+  The seam exists: serialized intermediate representation (IR) drives
+  LemmaScript's back half without TypeScript, giving byte-identical Dafny. The
+  blocker is types. `bsc -dtypedtree` prints only annotations written in the
+  source, so a correct frontend must read binary `.cmt` files from OCaml linked
+  against the exact compiler version, and must re-implement pattern-match
+  compilation. It would also prove the source rather than the shipped
+  JavaScript, missing constant folding and merged arms. Worth revisiting only
+  if the compiled-JavaScript route's syntax limits bind.
 - **An independently written model** in Dafny or Lean. It is quick to start,
   but proves the model. Without a refinement proof or a correspondence audit it
   says nothing about production; in the spike, such a model would have

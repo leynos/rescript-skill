@@ -1,7 +1,7 @@
 # Warnings policy
 
 `bsc -warn-help` (from `node_modules/@rescript/<platform>/bin/bsc.exe`) prints
-the authoritative list for your compiler.
+the authoritative list for the installed compiler.
 
 ## Defaults versus `+A`
 
@@ -21,6 +21,8 @@ Measured with ReScript 12.3.1 and no `warnings` block:
 | 109     | top-level expression not `unit`        | error   | error                       |
 | 110     | `%todo` found                          | warning | error                       |
 
+_Table 1: Default status of selected warnings, and their status under `+A`._
+
 `+A` is a strong posture: deprecated APIs, `%todo`, fragile wildcards, and
 polymorphic comparison all stop the build. It suits libraries and codebases
 that want the compiler to carry the review burden. An application may
@@ -38,7 +40,8 @@ reasonably start from the defaults and promote a chosen set instead.
   `Int.compare`). It cannot be suppressed locally in 12.3.1.
 - **Warning 3**: migrate the call; `rescript-tools migrate` usually can.
 - **Warning 110**: `%todo` is a deliberate tripwire. With `+A` it blocks the
-  build; without it, use `rescript build --warn-error "+110"` in CI.
+  build; without it, use `rescript build --warn-error "+110"` in continuous
+  integration (CI).
 
 ## Local suppression
 
@@ -61,8 +64,8 @@ Prefer subtracting one number with a reason over weakening the whole policy:
 ```
 
 Record why in the project's developer documentation. A growing list of
-subtracted numbers means the policy is not being kept; decide which posture you
-actually want.
+subtracted numbers means the policy is not being kept; decide which posture the
+project actually wants.
 
 ## CI-only strictness
 

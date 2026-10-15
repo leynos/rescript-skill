@@ -2,10 +2,10 @@
 
 ## The trust boundary
 
-`JSON.parseOrThrow` gives you a `JSON.t`, not a `user`. Typing an `external` or
-a `%identity` cast as `JSON.t => user` moves the failure from the edge, where
-the payload is in hand, to some later field access where it is not. Decode at
-the edge and return `result`.
+`JSON.parseOrThrow` returns a `JSON.t`, not a `user`. Typing an `external` or a
+`%identity` cast as `JSON.t => user` moves the failure from the edge, where the
+payload is in hand, to some later field access where it is not. Decode at the
+edge and return `result`.
 
 ## `JSON.t`
 
@@ -87,12 +87,14 @@ Practical notes, all exercised by [SuryUser.res](examples/SuryUser.res):
 
 ## Choosing
 
-| Situation                                      | Choice                        |
-| ---------------------------------------------- | ----------------------------- |
-| one or two small payloads                      | `JSON.Decode` by hand         |
-| many types, or encode and decode both needed   | Sury                          |
-| browser code under a strict CSP                | handwritten or a non-eval lib |
-| data you produced yourself in the same process | no decoding; keep the type    |
+| Situation                                                 | Choice                        |
+| --------------------------------------------------------- | ----------------------------- |
+| one or two small payloads                                 | `JSON.Decode` by hand         |
+| many types, or encode and decode both needed              | Sury                          |
+| browser code under a strict Content Security Policy (CSP) | handwritten or a non-eval lib |
+| data produced earlier in the same process                 | no decoding; keep the type    |
+
+_Table 1: Choosing a JSON decoding approach._
 
 Test a decoder with named examples for each rejection and a round trip for the
 happy path. When the input space is large, hand the round trip to a property

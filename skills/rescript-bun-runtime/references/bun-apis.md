@@ -42,6 +42,8 @@ let start = (~port: int, store: TodoCore.store): Bun.Server.t =>
 | text response        | `Response.make("text", ~options={status: 200})`                    |
 | status of a response | `response->Response.status`                                        |
 
+_Table 1: Bindings for requests and responses._
+
 `Response.makeWithJsonUnsafe` accepts any value (`'a`) and serializes it as
 JavaScript sees it, so variants appear as `{TAG, _0}`. Encode to `JSON.t`
 deliberately and use `makeWithJson`.
@@ -85,7 +87,7 @@ adapter.
 ## Processes and the shell
 
 `rescript-bun` 2.1.0 binds Node's `ChildProcess` (`spawn`, `spawnSync`) but not
-`Bun.spawn`. Bun's `$` shell is a tagged template; bind the part you use:
+`Bun.spawn`. Bun's `$` shell is a tagged template; bind only the part in use:
 
 ```rescript
 type shellResult = {exitCode: int}

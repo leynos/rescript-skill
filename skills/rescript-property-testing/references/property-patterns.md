@@ -130,7 +130,7 @@ A property that cannot fail proves nothing. While writing one, break the
 subject on purpose and watch it fail. For the ring buffer, removing the line
 that advances `start` on overflow produced:
 
-```text
+```plaintext
 Counterexample: [2,[{"TAG":"Push","_0":0},{"TAG":"Push","_0":0},{"TAG":"Push","_0":-1}]]
 ```
 

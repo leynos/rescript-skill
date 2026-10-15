@@ -5,7 +5,7 @@ metadata:
   globs: "**/*.res, **/*.resi, **/*.mjs, **/*.js"
 ---
 
-# ReScript Interop
+# ReScript interop
 
 Use this when ReScript meets JavaScript: binding a library, matching a wire
 shape, or exposing ReScript to JavaScript callers.
@@ -15,15 +15,15 @@ shape, or exposing ReScript to JavaScript callers.
 - An `external` is a promise the compiler cannot check. Keep bindings small,
   concrete, and in one module per library, with ReScript-shaped wrappers beside
   them. Application code calls the wrappers.
-- Bind what you use, with the narrowest honest types. A binding with `'a`
-  in argument or return position is `Obj.magic` with extra steps.
+- Bind only what the code uses, with the narrowest honest types. A binding with
+  `'a` in argument or return position is `Obj.magic` with extra steps.
 - Represent JavaScript classes and handles as abstract types (`type url`),
-  never as records you made up.
+  never as invented records.
 - Convert at the boundary: thrown errors to `result` or `option`, nullable
   returns to `option`, string unions to variants. Nothing JavaScript-shaped
   should leak past the binding module.
-- Read the generated `.res.mjs` when you write a binding. It is the only
-  proof that the call you described is the call that runs.
+- Read the generated `.res.mjs` after writing a binding. It is the only
+  proof that the call described is the call that runs.
 - Types on data from outside the process (JSON, `postMessage`, storage) are
   claims, not checks. Decode untrusted data; see `rescript-stdlib-and-data`.
 
@@ -48,6 +48,8 @@ shape, or exposing ReScript to JavaScript callers.
 | lazy-loaded ReScript code                | `await import(Module.value)` or `module M = await Module`       |
 | TypeScript consumers of ReScript code    | `@genType` with `gentypeconfig` in `rescript.json`              |
 
+_Table 1: Bindings for common JavaScript shapes._
+
 ## Facts worth knowing in 12.x
 
 - A bare `@val external x: ... = "X"` compiles to the identifier `X`, which
@@ -59,9 +61,9 @@ shape, or exposing ReScript to JavaScript callers.
 - `@unboxed` now discriminates `Set`, `Map`, `WeakSet`, and `WeakMap`
   (12.1), plus `ArrayBuffer`, `DataView`, and typed arrays (12.0).
 - `@module("./file.mjs")` is emitted verbatim and resolves from the generated
-  file. With `"in-source": false` that file is under `lib/es6/`, not beside
-  your source, and dependency imports become `pkg/lib/es6/...`, which packages
-  with an `exports` map reject. Build in source.
+  file. With `"in-source": false` that file is under `lib/es6/`, not beside the
+  source, and dependency imports become `pkg/lib/es6/...`, which packages with
+  an `exports` map reject. Build in source.
 - `@meth`, `@bs.send.pipe`, and every `@bs.*` attribute are gone; use the
   unprefixed forms.
 

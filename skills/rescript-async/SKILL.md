@@ -5,7 +5,7 @@ metadata:
   globs: "**/*.res, **/*.resi"
 ---
 
-# ReScript Async
+# Asynchronous ReScript
 
 Use this when promises are involved and the question is about failure, timing,
 ordering, or cancellation, not merely syntax.
@@ -40,13 +40,15 @@ ordering, or cancellation, not merely syntax.
 | fire and forget                         | attach `Promise.catch`, then `Promise.ignore`                |
 | `promise<result<'a, 'e>>` pipelines     | `Result.mapOkAsync`, `Result.flatMapOkAsync`                 |
 
+_Table 1: Default moves for asynchronous code._
+
 ## Rules that surprise people
 
 - In an `async` function the return annotation is the inner type:
   `async (id: string): user => ...` has type `string => promise<user>`.
   Interfaces (`.resi`) and type aliases write `promise<user>`.
-- Promises do not auto-flatten in ReScript's types: `await` a nested promise
-  yourself.
+- Promises do not auto-flatten in ReScript's types: `await` each level of a
+  nested promise explicitly.
 - `await` inside `switch` is caught by `| exception` cases only if the
   `await` is in the scrutinee: `switch await fetchUser(id) { ... }`.
 - `try`/`catch` and `Promise.catch` normalize a raw JavaScript rejection into

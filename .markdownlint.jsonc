@@ -7,5 +7,7 @@
     "tables": false,
     "headings": false
   },
-  "MD029": { "style": "ordered" }
+  "MD029": { "style": "ordered" },
+  // Underscore emphasis, matching the df12 caption form `_Table 1: …_`.
+  "MD049": { "style": "underscore" }
 }

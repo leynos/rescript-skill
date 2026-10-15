@@ -53,8 +53,8 @@ one arity per need instead of reaching for `'a`. The full binding, including
 `clear`, is [BunMock.res](examples/BunMock.res).
 
 `spyOn(object, "method")` replaces a method in place and is harder to type and
-to undo. Prefer injection; bind `spyOn` only for third-party code you cannot
-restructure, and restore it in `afterEach`.
+to undo. Prefer injection; bind `spyOn` only for third-party code that cannot
+be restructured, and restore it in `afterEach`.
 
 ## Controlling time
 

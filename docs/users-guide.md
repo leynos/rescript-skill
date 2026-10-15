@@ -79,24 +79,25 @@ variant the HTTP layer can match on.
 
 ## Choose a skill
 
-- *Types, records, variants, modules, `.resi`* →
+- _Types, records, variants, modules, `.resi`_ →
   `rescript-types-and-modules`.
-- *Failure shape, `result`, exceptions, `let?`, `JsExn`* →
+- _Failure shape, `result`, exceptions, `let?`, `JsExn`_ →
   `rescript-errors-and-results`.
-- *Bindings and runtime representation* → `rescript-interop`.
-- *Promises, `async`/`await`, cancellation* → `rescript-async`.
-- *Standard library, collections, JSON, equality* →
+- _Bindings and runtime representation_ → `rescript-interop`.
+- _Promises, `async`/`await`, cancellation_ → `rescript-async`.
+- _Standard library, collections, JSON, equality_ →
   `rescript-stdlib-and-data`.
-- *`rescript.json`, namespaces, warnings, monorepos, publishing* →
+- _`rescript.json`, namespaces, warnings, monorepos, publishing_ →
   `rescript-build-and-config`.
-- *Coming from ReScript 11* → `rescript-12-migration`.
-- *Example-based tests under Bun* → `rescript-bun-testing`.
-- *Generated-input tests* → `rescript-property-testing`.
-- *Formatter, warnings, reanalyze, CI gates* → `rescript-quality-tools`.
-- *Servers, files, processes, and the Bun boundary* →
+- _Coming from ReScript 11_ → `rescript-12-migration`.
+- _Example-based tests under Bun_ → `rescript-bun-testing`.
+- _Generated-input tests_ → `rescript-property-testing`.
+- _Formatter, warnings, reanalyze, continuous integration (CI) gates_ →
+  `rescript-quality-tools`.
+- _Servers, files, processes, and the Bun boundary_ →
   `rescript-bun-runtime`.
-- *React components and hooks* → `rescript-react`.
-- *Proving a property for every input* →
+- _React components and hooks_ → `rescript-react`.
+- _Proving a property for every input_ →
   `rescript-deductive-verification`.
 
 [docs/skill-catalogue-status.md](skill-catalogue-status.md) records which of
@@ -152,8 +153,8 @@ contracts against the compiled JavaScript; it needs Dafny 4.11 and Z3 on
 
 These are not covered yet, and the catalogue says so rather than guessing:
 
-- React interaction tests that need a DOM under Bun; `rescript-react` covers
-  reducers and static rendering only.
+- React interaction tests that need a Document Object Model (DOM) under Bun;
+  `rescript-react` covers reducers and static rendering only.
 - Mutation testing of ReScript code.
 - Proofs of functions with loops or calls into `@rescript/runtime` helpers,
   and LemmaScript's Lean backend; `rescript-deductive-verification` lists the

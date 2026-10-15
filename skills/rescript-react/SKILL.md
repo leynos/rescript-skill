@@ -27,22 +27,24 @@ JavaScript, `rescript-interop`.
 
 ## Decision surface
 
-| Need                               | Move                                                           |
-| ---------------------------------- | -------------------------------------------------------------- |
-| a component                        | `@react.component let make = (~label: string, ...) => <jsx />` |
-| a props record you control         | `@react.componentWithProps let make = (props: props) => ...`   |
-| an optional prop with a default    | `~title: string="Shopping"`                                    |
-| an optional prop without a default | `~title: option<string>=?`; pass `title=?maybeTitle` in JSX    |
-| several components in one file     | submodules with their own `make`: `<ShoppingList.Summary />`   |
-| text, numbers, lists in JSX        | `React.string`, `React.int`, `React.float`, `React.array`      |
-| render nothing                     | `React.null`                                                   |
-| list items                         | `->Array.map(item => <Row key=item.id ... />)->React.array`    |
-| local state                        | `React.useState(() => initial)`; setter takes `prev => next`   |
-| transitions with rules             | `React.useReducer(reducer, initial)`                           |
-| side effect on mount or change     | `React.useEffect(() => ...; None, [dep])` or a tuple of deps   |
-| DOM attribute named like a keyword | `type_`; `ariaLabel` for `aria-label`                          |
-| form actions (React 19)            | `React.useActionState`, `React.useOptimistic`                  |
-| render in a test without a DOM     | `ReactDOMServer.renderToStaticMarkup(<C />)`                   |
+| Need                                                       | Move                                                           |
+| ---------------------------------------------------------- | -------------------------------------------------------------- |
+| a component                                                | `@react.component let make = (~label: string, ...) => <jsx />` |
+| a props record the code defines                            | `@react.componentWithProps let make = (props: props) => ...`   |
+| an optional prop with a default                            | `~title: string="Shopping"`                                    |
+| an optional prop without a default                         | `~title: option<string>=?`; pass `title=?maybeTitle` in JSX    |
+| several components in one file                             | submodules with their own `make`: `<ShoppingList.Summary />`   |
+| text, numbers, lists in JSX                                | `React.string`, `React.int`, `React.float`, `React.array`      |
+| render nothing                                             | `React.null`                                                   |
+| list items                                                 | `->Array.map(item => <Row key=item.id ... />)->React.array`    |
+| local state                                                | `React.useState(() => initial)`; setter takes `prev => next`   |
+| transitions with rules                                     | `React.useReducer(reducer, initial)`                           |
+| side effect on mount or change                             | `React.useEffect(() => ...; None, [dep])` or a tuple of deps   |
+| Document Object Model (DOM) attribute named like a keyword | `type_`; `ariaLabel` for `aria-label`                          |
+| form actions (React 19)                                    | `React.useActionState`, `React.useOptimistic`                  |
+| render in a test without a DOM                             | `ReactDOMServer.renderToStaticMarkup(<C />)`                   |
+
+_Table 1: Moves for React components and hooks._
 
 ## Rules that surprise people
 

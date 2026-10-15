@@ -17,8 +17,8 @@ reducer is also a natural subject for a model-based property
 ## Render to static markup under Bun
 
 `@rescript/react` binds `ReactDOMServer.renderToStaticMarkup`, which runs
-component functions and hooks' initial state and returns HTML. It needs no DOM,
-so it runs directly under `bun test`:
+component functions and hooks' initial state and returns HTML. It needs no
+Document Object Model (DOM), so it runs directly under `bun test`:
 
 ```rescript
 let render = element => ReactDOMServer.renderToStaticMarkup(element)
@@ -50,6 +50,6 @@ Clicks, typing, and effects need a DOM and React's test act loop. Options:
 - Or run component tests in a browser-based runner and keep Bun for logic
   and static rendering.
 
-Either way, bind the testing library calls you use as narrowly as the
-`bun:test` mocks in `rescript-bun-testing`. Most of the value is usually in
-reducer and static-render tests, which cost nothing to set up.
+Either way, bind the testing library calls in use as narrowly as the `bun:test`
+mocks in `rescript-bun-testing`. Most of the value is usually in reducer and
+static-render tests, which cost nothing to set up.

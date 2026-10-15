@@ -5,7 +5,7 @@ metadata:
   globs: "**/*.res, **/*.resi"
 ---
 
-# ReScript Types and Modules
+# ReScript types and modules
 
 Use this when the question is "what shape should this type or module have?" The
 compiler is the first and cheapest test: design types so that the wrong program
@@ -41,6 +41,8 @@ does not compile.
 | an open set extended by many modules         | polymorphic variant or extensible variant              |
 | one implementation, many key types           | functor over a module type                             |
 | choosing an implementation at runtime        | first-class module or a record of functions            |
+
+_Table 1: Default moves for type and module design._
 
 ## Rules the compiler enforces
 

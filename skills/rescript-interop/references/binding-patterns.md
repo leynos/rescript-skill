@@ -101,8 +101,8 @@ let loadModule = async () => {
 }
 ```
 
-The compiler emits `import()` with the correct generated path, so you never
-write file paths for ReScript modules.
+The compiler emits `import()` with the correct generated path, so code never
+names file paths for ReScript modules.
 
 ## Exporting to JavaScript
 

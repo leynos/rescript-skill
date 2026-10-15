@@ -5,7 +5,7 @@ metadata:
   globs: "**/*.res, **/*.resi"
 ---
 
-# ReScript Standard Library and Data
+# ReScript standard library and data
 
 Use this when the question is which collection, which function, or how to get
 untrusted data into well-typed values.
@@ -40,6 +40,8 @@ untrusted data into well-typed values.
 | strict numeric parsing                        | check the format first; `Int.fromString` is `parseInt` |
 | equality on records                           | a typed `equal` function                               |
 
+_Table 1: Default moves for the standard library and data._
+
 ## Behaviours that bite
 
 - `Int.fromString("80abc")` is `Some(80)` and `Float.fromString("1x")` is
@@ -50,8 +52,8 @@ untrusted data into well-typed values.
   two keys.
 - `Array.sort` sorts in place and returns `unit`; `Array.reverse` likewise.
   Use `toSorted` and `toReversed` for copies.
-- `dict` bindings alias. `Dict.copy` before mutating a dict you did not
-  create.
+- `dict` bindings alias. `Dict.copy` before mutating a dict created
+  elsewhere.
 - Under `+A`, warning 102 rejects `==` on non-primitive types, and in 12.3.1
   `@warning("-102")` cannot silence it locally. Write typed equality.
 - Under `+A`, warning 4 rejects `| _ =>` over `JSON.t`'s constructors;

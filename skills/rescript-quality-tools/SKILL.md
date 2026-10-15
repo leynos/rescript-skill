@@ -5,7 +5,7 @@ metadata:
   globs: "**/rescript.json, **/Makefile, **/biome.json, **/*.res, **/*.resi, **/*.md"
 ---
 
-# ReScript Quality Tools
+# ReScript quality tools
 
 Use this when the question is about the gates around ReScript code: what to
 run, in which order, and how to make each one fail when it should.
@@ -34,6 +34,8 @@ run, in which order, and how to make each one fail when it should.
 | authored JS and JSON  | `biome check` excluding `**/*.res.mjs`  | Biome rules                                   |
 | tests                 | `bun test` with explicit suites         | see `rescript-bun-testing`                    |
 
+_Table 1: The quality gates, their commands, and what fails each._
+
 [check-codeblocks.mjs](references/examples/check-codeblocks.mjs) and
 [check-reanalyze.mjs](references/examples/check-reanalyze.mjs) are the scripts
 this catalogue's own repository runs, tested against fixtures that must fail.
@@ -56,7 +58,7 @@ this catalogue's own repository runs, tested against fixtures that must fail.
 
 ## Red flags
 
-- `reanalyze` in CI with no check of its output.
+- `reanalyze` in continuous integration (CI) with no check of its output.
 - `"suppress": ["src"]` or other broad suppression to make the analyser
   quiet.
 - `@live` on code nothing calls, rather than deleting it.

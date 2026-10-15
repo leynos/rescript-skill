@@ -5,12 +5,14 @@
 The formatter is part of the compiler and has no configuration. Its output is
 the house style.
 
-| Use                        | Command                                     |
-| -------------------------- | ------------------------------------------- |
-| format the project         | `rescript format`                           |
-| check without writing (CI) | `rescript format --check`                   |
-| format named files         | `rescript format src/A.res src/A.resi`      |
-| format standard input      | `rescript format --stdin .res` (or `.resi`) |
+| Use                                                | Command                                     |
+| -------------------------------------------------- | ------------------------------------------- |
+| format the project                                 | `rescript format`                           |
+| check without writing (continuous integration, CI) | `rescript format --check`                   |
+| format named files                                 | `rescript format src/A.res src/A.resi`      |
+| format standard input                              | `rescript format --stdin .res` (or `.resi`) |
+
+_Table 1: `rescript format` commands._
 
 In 12.3.1 a bare `rescript format --check` covers dev sources such as `tests/`;
 passing explicit paths is still useful when the gate should also cover files

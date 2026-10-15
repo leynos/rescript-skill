@@ -177,8 +177,8 @@ Z3 4.12.1. `make prove` re-checks the example's proof.
   named, but genType inlines `result` as an anonymous union in signatures.
 - LemmaScript models `switch` fall-through by appending later case bodies;
   with ReScript's always-returning cases, the extra code is unreachable.
-- Raw IR serialized by `lsc extract` drives resolve and the Dafny emitter to
-  output byte-identical with `lsc`'s own.
+- Raw intermediate representation (IR) serialized by `lsc extract` drives
+  resolve and the Dafny emitter to output byte-identical with `lsc`'s own.
 - The lease example's first version failed its ownership invariant on `Open`:
   `handles + 1 | 0` wraps from 2147483647 to -2147483648, and the compiled
   `step` returned a held lease with -2147483648 handles. With a bound, all
@@ -204,5 +204,6 @@ Z3 4.12.1. `make prove` re-checks the example's proof.
   after a dependency module shadows that module for itself.
 - `ReactDOMServer.renderToStaticMarkup` from `@rescript/react` 0.15.0 renders
   components, `useReducer` initial state, and context providers under Bun
-  without a DOM; `className` renders as `class`, and `React.string` escapes
-  `<b>` as `&lt;b&gt;`. Evidence: `ShoppingList.test.res`.
+  without a Document Object Model (DOM); `className` renders as `class`, and
+  `React.string` escapes `<b>` as `&lt;b&gt;`. Evidence:
+  `ShoppingList.test.res`.

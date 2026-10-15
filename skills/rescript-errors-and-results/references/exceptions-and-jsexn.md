@@ -1,7 +1,7 @@
 # Exceptions and `JsExn`
 
-ReScript has two kinds of thrown value, and the distinction drives how you
-catch, annotate, and expose them.
+ReScript has two kinds of thrown value, and the distinction decides how each is
+caught, annotated, and exposed.
 
 ## ReScript exceptions
 
@@ -27,7 +27,7 @@ let ratioOrNone = (n, d) =>
 
 Unmatched exceptions propagate unchanged, so a narrow handler is safe. A
 `| _ =>` handler is not: it also catches `Assert_failure`, `Not_found`, and
-JavaScript errors you did not anticipate.
+JavaScript errors nobody anticipated.
 
 Built-in exceptions still exist (`Not_found`, `Invalid_argument`, `Failure`,
 `Division_by_zero`, `Assert_failure`). `assert(cond)` is an ordinary function
@@ -67,7 +67,7 @@ let parseJson = (text: string): result<JSON.t, parseError> =>
 `JsExn.message`, `JsExn.name`, `JsExn.stack`, and `JsExn.fileName` return
 `option<string>` for that reason. Use `Type.Classify.classify` when the thrown
 value's runtime type matters. `JsExn.fromException(exn)` extracts the payload
-from a caught `exn` when you are handling exceptions generically.
+from a caught `exn` when handling exceptions generically.
 
 `JsExn.throw(value)` throws an arbitrary value. Reach for it only when a
 JavaScript contract requires throwing a non-`Error`.
@@ -84,11 +84,13 @@ JavaScript contract requires throwing a non-`Error`.
 | specific subclasses                       | `JsError.TypeError.throwWithMessage("...")` |
 | unrecoverable bug with a good stack trace | `JsError.panic("message")`                  |
 
+_Table 1: `JsError` calls for throwing JavaScript errors._
+
 `JsError.panic` prefixes the message with "Panic! " and is meant not to be
 caught. Prefer it to a ReScript exception for "this cannot happen" paths that
 should crash loudly with a native stack trace.
 
-## Old names you will still meet
+## Old names still in circulation
 
 | ReScript 11 and earlier          | ReScript 12                              |
 | -------------------------------- | ---------------------------------------- |
@@ -99,6 +101,8 @@ should crash loudly with a native stack trace.
 | `Error.message`                  | `JsExn.message` / `JsError.message`      |
 | `@raises`                        | `@throws`                                |
 | `Option.getExn`, `JSON.parseExn` | `Option.getOrThrow`, `JSON.parseOrThrow` |
+
+_Table 2: Older exception names and their ReScript 12 replacements._
 
 `rescript-tools migrate-all <project-root>` rewrites most of these
 automatically; see `rescript-12-migration`.

@@ -39,6 +39,8 @@ scattering workarounds.
 | `Set.t`     | mutable    | SameValueZero                           | object members by identity             |
 | `Belt.Map`  | immutable  | sorted by a comparator module           | persistent; Belt vocabulary            |
 
+_Table 1: Collections compared by mutability, keys, and order._
+
 Records and arrays as `Map` keys or `Set` members do not deduplicate by value.
 Key by a canonical string (`pointKey`) or use `Belt.Map` with a comparator.
 [CollectionSemantics.res](examples/CollectionSemantics.res) and its suite
@@ -56,6 +58,8 @@ receiver and return `unit`:
 | `Array.splice`       | `Array.toSpliced`      |
 | `Array.set`, `push`  | `Array.concat`, spread |
 | `Dict.set`, `delete` | `Dict.copy` first      |
+
+_Table 2: Functions that mutate, and the copying alternatives._
 
 A function that takes a collection it did not create should copy before
 mutating, or say in its name and interface that it mutates.

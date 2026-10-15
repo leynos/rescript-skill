@@ -5,7 +5,7 @@ metadata:
   globs: "**/tests/**/*.res, **/*.test.res"
 ---
 
-# ReScript Property Testing
+# ReScript property testing
 
 Use this when one relation should hold across many inputs, or when bugs depend
 on sequences of operations. For named examples and small case tables, use
@@ -14,7 +14,7 @@ on sequences of operations. For named examples and small case tables, use
 ## Working stance
 
 - Start from the relation, not the generator. Name what must hold for every
-  input; if you cannot, write an example test instead.
+  input; where that cannot be named, write an example test instead.
 - Keep named regressions beside the property that generalizes them. A
   property does not replace a readable specification.
 - Bind fast-check narrowly and concretely; `rescript-fast-check` predates
@@ -37,19 +37,23 @@ on sequences of operations. For named examples and small case tables, use
 | model       | any operation sequence agrees with a simple model     | `RingBuffer` versus an array               |
 | invariant   | a property of every output (sorted, bounded, unique)  | —                                          |
 
+_Table 1: Relations a property can check, with examples from the suite._
+
 ## Decision surface
 
-| Need                               | Move                                                       |
-| ---------------------------------- | ---------------------------------------------------------- |
-| integers in ReScript's `int` range | `FastCheck.int()`; fast-check's default range is 32-bit    |
-| a payloadless variant              | `constantFrom([A, B, C])`                                  |
-| a variant with payloads            | `oneof([int()->map(n => Num(n)), ...])`                    |
-| a record                           | `tuple3(...)->map(((a, b, c)) => {a, b, c})`               |
-| dependent fields                   | `chain(x => arbitraryDependingOn(x))`                      |
-| `option<'a>`                       | `nullable(arb)->map(Nullable.toOption)`                    |
-| a stateful component               | generate `array<command>`, fold over model and subject     |
-| deterministic CI                   | fix `numRuns`; replay failures with `seed` and `path`      |
-| structural equality in a predicate | `RescriptBun.Bun.deepEquals` wrapped as `('a, 'a) => bool` |
+| Need                                      | Move                                                       |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| integers in ReScript's `int` range        | `FastCheck.int()`; fast-check's default range is 32-bit    |
+| a payloadless variant                     | `constantFrom([A, B, C])`                                  |
+| a variant with payloads                   | `oneof([int()->map(n => Num(n)), ...])`                    |
+| a record                                  | `tuple3(...)->map(((a, b, c)) => {a, b, c})`               |
+| dependent fields                          | `chain(x => arbitraryDependingOn(x))`                      |
+| `option<'a>`                              | `nullable(arb)->map(Nullable.toOption)`                    |
+| a stateful component                      | generate `array<command>`, fold over model and subject     |
+| deterministic continuous integration (CI) | fix `numRuns`; replay failures with `seed` and `path`      |
+| structural equality in a predicate        | `RescriptBun.Bun.deepEquals` wrapped as `('a, 'a) => bool` |
+
+_Table 2: Moves for property-based testing._
 
 ## Pitfalls seen while building the examples
 

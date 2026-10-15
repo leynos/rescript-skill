@@ -23,6 +23,8 @@ in doubt, open the `.res.mjs`.
 | ReScript exception                     | `{RE_EXN_ID, _1, ..., Error}`, not an `Error`    |
 | function `(a, b) => c`                 | two-argument JavaScript function                 |
 
+_Table 1: How ReScript values are represented in JavaScript._
+
 ## Changing the representation
 
 ### `@as` on constructors
@@ -87,7 +89,7 @@ grow without notice.
 
 The standard library's `JSON.t` is itself an `@unboxed` recursive variant:
 `Null`, `Boolean(bool)`, `String(string)`, `Number(float)`, `Object(dict<t>)`,
-and `Array(array<t>)`. You can pattern match JSON directly; see
+and `Array(array<t>)`. JSON can be pattern matched directly; see
 `rescript-stdlib-and-data` for decoding.
 
 ## Evidence

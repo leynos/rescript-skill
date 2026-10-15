@@ -154,9 +154,9 @@ _Table 1: Alternatives considered and why they were rejected._
   `rescript-bun` major release, or `LetUnwrap` leaving experimental status each
   require re-running `make all` and revising the affected skills.
 - **Unchecked proofs.** Because `make prove` runs only locally, a change can
-  break a proof without failing CI. The developers' guide names the changes
-  that oblige a contributor to run it.
-- **Open questions.** DOM-based React tests, mutation testing, loop invariants
-  and runtime-library externs for verification, and a native ReScript
-  verification frontend are tracked in
+  break a proof without failing continuous integration (CI). The developers'
+  guide names the changes that oblige a contributor to run it.
+- **Open questions.** Document Object Model (DOM) React tests, mutation
+  testing, loop invariants and runtime-library externs for verification, and a
+  native ReScript verification frontend are tracked in
   [the catalogue status](skill-catalogue-status.md).

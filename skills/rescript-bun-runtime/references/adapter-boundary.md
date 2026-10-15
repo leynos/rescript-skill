@@ -2,7 +2,12 @@
 
 ## Shape
 
-```text
+For screen readers: HTTP requests reach `TodoServer`, the Bun adapter, which
+reads the request and writes the response. It passes a command and a store down
+to `TodoCore`, the portable core, which routes, handles, and encodes, and owns
+the store port.
+
+```plaintext
             ┌──────────────────────────┐
 HTTP  ───▶  │ TodoServer (Bun adapter) │  reads Request, writes Response
             └────────────┬─────────────┘
@@ -11,6 +16,8 @@ HTTP  ───▶  │ TodoServer (Bun adapter) │  reads Request, writes Resp
             │ TodoCore (portable)      │  route, handle, encode, the store port
             └──────────────────────────┘
 ```
+
+_Figure 1: The Bun adapter above the portable core._
 
 The core owns:
 
@@ -99,6 +106,8 @@ the core cannot be tested without mutating the process environment. (Validate
 | core    | plain function calls and the memory store   | `TodoCore.route`, `TodoCore.handle` |
 | adapter | a real `Bun.serve` on port 0 and `fetch`    | `TodoServer.start(~port=0, store)`  |
 | wiring  | one end-to-end test of the composed program | start, call, stop                   |
+
+_Table 1: Tests for each side of the adapter boundary._
 
 Stop servers in `Promise.finally`, so a failing assertion does not leave a
 listener behind:

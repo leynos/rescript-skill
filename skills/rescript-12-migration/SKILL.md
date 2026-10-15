@@ -5,7 +5,7 @@ metadata:
   globs: "**/rescript.json, **/bsconfig.json, **/package.json, **/*.res, **/*.resi"
 ---
 
-# ReScript 12 Migration
+# ReScript 12 migration
 
 Use this to move a project from ReScript 11 to 12.3.1, or to clear 12.x
 deprecation warnings. Once a project is clean on 12, route ordinary questions
@@ -47,7 +47,7 @@ to the language skills instead.
 
 Verified against 12.3.1 by `tests/migration-tool.test.mjs`:
 
-| Rewritten automatically                    | Left for you                                                                                        |
+| Rewritten automatically                    | Left by hand                                                                                        |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `Js.log` → `Console.log`                   | Pervasives `lsl`, `land`, and the other bitwise functions (the `Int.Bitwise.*` forms are rewritten) |
 | `raise` → `throw`                          | `Belt.*` calls (not deprecated)                                                                     |
@@ -55,6 +55,8 @@ Verified against 12.3.1 by `tests/migration-tool.test.mjs`:
 | `Option.getExn` → `Option.getOrThrow`      | configuration files                                                                                 |
 | `Js.Exn.Error(e)` → `JsExn(e)`             | removed syntax and `.ml` files                                                                      |
 | `Bool.fromStringExn` → `fromStringOrThrow` |                                                                                                     |
+
+_Table 1: What `rescript-tools migrate` rewrites, and what it leaves._
 
 It refuses to run until the project has built:
 `build artifacts could not be found`.
@@ -72,7 +74,8 @@ It refuses to run until the project has built:
 ## References
 
 - [upgrade-checklist.md](references/upgrade-checklist.md): configuration,
-  dependency, command, and CI changes, with before-and-after examples.
+  dependency, command, and continuous integration (CI) changes, with
+  before-and-after examples.
 - [api-renames.md](references/api-renames.md): standard library, exception,
   attribute, and operator renames, and removed features.
 - [release-deltas-12x.md](references/release-deltas-12x.md): what changed

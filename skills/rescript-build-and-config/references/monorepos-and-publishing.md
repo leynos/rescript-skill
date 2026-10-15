@@ -6,9 +6,11 @@ Rewatch builds a monorepo from a root `rescript.json` whose `dependencies` list
 the local packages. It finds them through `node_modules`, so the package
 manager must link them there.
 
-Layout:
+For screen readers: the tree shows a repository root holding `bunfig.toml`,
+`package.json`, and `rescript.json`, and two packages, `core` and `app`, each
+with its own `package.json` and `rescript.json`; `app` depends on `core`.
 
-```text
+```plaintext
 repo/
 ├── bunfig.toml
 ├── package.json          # "workspaces": ["packages/*"]
@@ -21,6 +23,8 @@ repo/
         ├── package.json  # depends on "@repo/core": "workspace:*"
         └── rescript.json # "dependencies": ["@repo/core"]
 ```
+
+_Figure 1: A Bun workspace monorepo with two ReScript packages._
 
 Bun 1.4's default linker for workspaces is isolated and does not create
 `node_modules/@repo/core` at the root, so Rewatch reports "upward traversal did
@@ -41,6 +45,8 @@ namespaced. This was verified with Bun 1.4.3 and ReScript 12.3.1.
 | --------------------------------------------------------- | ------------------------------------------------------- |
 | `package-specs`, `suffix`, `jsx`, `experimental-features` | `sources`, `dependencies`, `warnings`, `compiler-flags` |
 
+_Table 1: Settings the root and each package's `rescript.json` control._
+
 There is no inheritance for the second column: a warnings policy set at the
 root does not reach the packages. Put shared output settings at the root and
 leave them out of the packages.
@@ -54,8 +60,8 @@ Two defensible policies:
 
 - **Commit production `.res.mjs`** for libraries and anything consumed by
   JavaScript tooling without a ReScript build step. Review generated diffs
-  alongside source changes; gate drift by rebuilding in CI and failing on a
-  diff. Never hand-edit or reformat generated files.
+  alongside source changes; gate drift by rebuilding in continuous integration
+  (CI) and failing on a diff. Never hand-edit or reformat generated files.
 - **Ignore all `.res.mjs`** for applications and repositories, like this
   one, whose only consumer is a build that compiles ReScript first.
 

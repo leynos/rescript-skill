@@ -3,7 +3,7 @@
 The former `@rescript/core` now ships inside the compiler as `Stdlib`, opened
 by default. Its interfaces are installed at
 `node_modules/@rescript/runtime/lib/ocaml/Stdlib_*.resi`; read those when a
-signature matters, because they are exactly what your compiler checks against.
+signature matters, because they are exactly what the compiler checks against.
 
 ## Module set
 
@@ -16,6 +16,8 @@ signature matters, because they are exactly what your compiler checks against.
 | data            | `JSON` (with `Decode`, `Encode`, `Classify`), `Date`, `RegExp`, `Intl`  |
 | binary          | `ArrayBuffer`, `DataView`, `Uint8Array` and the other typed arrays      |
 | platform        | `Console`, global `setTimeout` and friends, `Type.Classify`             |
+
+_Table 1: Standard library modules by area._
 
 ## Names that changed in 12
 
@@ -51,12 +53,14 @@ deprecation warning names the replacement.
 | `Js.Exn.Error(e)`               | `JsExn(e)`                                    |
 | `Js.Re`                         | `RegExp`, with regex literals `/^a+$/`        |
 
+_Table 2: `Js.*` modules and their ReScript 12 replacements._
+
 ## Belt
 
 Belt (`Belt.Array`, `Belt.Map`, `Belt.Set`, `Belt.HashMap`, …) predates the
 standard library. It is still shipped and largely not deprecated, and its
 immutable `Belt.Map`/`Belt.Set` with comparator modules have no direct
-standard-library equivalent. Use them when you need persistent sorted maps.
+standard-library equivalent. Use them where persistent sorted maps are needed.
 Otherwise, prefer the standard library so a module speaks one vocabulary.
 
 ## Literals and syntax worth using

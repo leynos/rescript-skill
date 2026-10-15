@@ -12,8 +12,9 @@ Run cheap, independent checks first and stop at the first failure:
 6. Documentation and spelling gates.
 
 Use one entry point (`make all` or a package script) that runs these
-sequentially; CI calls the same entry point developers do. With Make, invoke
-each gate as a recursive `$(MAKE)` step so that `make -j` cannot reorder them.
+sequentially; continuous integration (CI) calls the same entry point developers
+do. With Make, invoke each gate as a recursive `$(MAKE)` step so that `make -j`
+cannot reorder them.
 
 ## `%todo` and warning 110
 

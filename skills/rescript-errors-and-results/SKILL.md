@@ -5,10 +5,10 @@ metadata:
   globs: "**/*.res, **/*.resi, **/rescript.json"
 ---
 
-# ReScript Errors and Results
+# ReScript errors and results
 
 Use this when the question is "what failure shape belongs at this boundary?",
-not "how do I write a `switch`".
+not how to write a `switch`.
 
 ## Working stance
 
@@ -37,6 +37,8 @@ not "how do I write a `switch`".
 | JavaScript callers need an `Error` instance | `JsError.throwWithMessage` / `JsError.panic`    |
 | an internal invariant is broken             | a ReScript `exception` plus `throw`             |
 | a promise can reject                        | see `rescript-async`                            |
+
+_Table 1: Default moves for failure design._
 
 ## ReScript 12 vocabulary
 

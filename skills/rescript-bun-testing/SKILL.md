@@ -5,7 +5,7 @@ metadata:
   globs: "**/tests/**/*.res, **/*.test.res, **/bunfig.toml, **/rescript.json"
 ---
 
-# ReScript Testing with Bun
+# ReScript testing with Bun
 
 Use this when writing or repairing example-based tests for ReScript code under
 Bun. For generated-input tests, load `rescript-property-testing`.
@@ -38,6 +38,8 @@ Bun. For generated-input tests, load `rescript-property-testing`.
 | a large rendered artefact         | `Expect.toMatchSnapshot`, reviewed like source                        |
 | a thrown JavaScript error         | `expect(() => f())->Expect.toThrow(~expected=String("..."))`          |
 | a ReScript error variant          | `expect(f(x))->Expect.toEqual(Error(Invalid(x)))`                     |
+
+_Table 1: Default moves for Bun test suites._
 
 ## Running suites
 

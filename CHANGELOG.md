@@ -56,6 +56,10 @@ The format is based on [Common Changelog](https://common-changelog.org).
 
 ### Changed
 
+- Apply the df12 documentation style across the catalogue: captions under
+  every table and diagram, sentence-case skill titles, no second-person prose,
+  uncommon acronyms expanded on first use, underscore emphasis, and `plaintext`
+  fences for non-code text.
 - Build in source. With `"in-source": false` the compiler imports
   dependencies from `pkg/lib/es6/`, which Sury's `exports` map rejects.
   `make install-skills` now copies only committed files, so generated
