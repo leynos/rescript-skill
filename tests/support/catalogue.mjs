@@ -103,3 +103,91 @@ export function relativeLinks(markdown) {
 export function resolveLink(document, target) {
   return resolve(dirname(document), decodeURIComponent(target));
 }
+
+/**
+ * Returns the code of a ReScript source with comments and string contents
+ * removed, keeping the code inside template interpolations (`${...}`), so a
+ * name mentioned only in prose or a literal does not count as code.
+ */
+export function rescriptCode(source) {
+  let out = "";
+  const modes = ["code"];
+  const braces = [];
+  for (let i = 0; i < source.length; i++) {
+    const mode = modes.at(-1);
+    const char = source[i];
+    const next = source[i + 1];
+    if (mode === "line") {
+      if (char === "\n") {
+        modes.pop();
+        out += char;
+      }
+    } else if (mode === "block") {
+      if (char === "*" && next === "/") {
+        modes.pop();
+        i++;
+      }
+    } else if (mode === "string") {
+      if (char === "\\") {
+        i++;
+      } else if (char === '"') {
+        modes.pop();
+        out += '""';
+      }
+    } else if (mode === "template") {
+      if (char === "\\") {
+        i++;
+      } else if (char === "`") {
+        modes.pop();
+        out += "``";
+      } else if (char === "$" && next === "{") {
+        modes.push("code");
+        braces.push(0);
+        out += " ";
+        i++;
+      }
+    } else if (char === "/" && next === "/") {
+      modes.push("line");
+      i++;
+    } else if (char === "/" && next === "*") {
+      modes.push("block");
+      i++;
+    } else if (char === '"') {
+      modes.push("string");
+    } else if (char === "`") {
+      modes.push("template");
+    } else if (char === "{" && braces.length > 0) {
+      braces[braces.length - 1]++;
+      out += char;
+    } else if (char === "}" && braces.length > 0 && braces.at(-1) === 0) {
+      braces.pop();
+      modes.pop();
+      out += " ";
+    } else {
+      if (char === "}" && braces.length > 0) {
+        braces[braces.length - 1]--;
+      }
+      out += char;
+    }
+  }
+  return out;
+}
+
+/**
+ * True when a ReScript suite uses `module` in code: a qualified access such
+ * as `Foo.x` or `->Foo.x`, or one through an alias declared as
+ * `module F = Foo`. Comments, strings, and the alias declaration itself do
+ * not count.
+ */
+export function exercisesModule(suite, module) {
+  const aliasDeclaration = new RegExp(
+    `\\bmodule\\s+([A-Z]\\w*)\\s*=\\s*${module}\\b`,
+    "g",
+  );
+  let code = rescriptCode(suite);
+  const aliases = [...code.matchAll(aliasDeclaration)].map((m) => m[1]);
+  code = code.replace(aliasDeclaration, "");
+  return [module, ...aliases].some((name) =>
+    new RegExp(`(?<![\\w.])${name}\\.[A-Za-z_]`).test(code),
+  );
+}

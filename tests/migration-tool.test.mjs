@@ -102,6 +102,8 @@ describe("rescript-tools migrate", () => {
   });
 
   test("leaves deprecated bitwise functions for a manual fix", () => {
+    // Build here too, so this test does not depend on the one above.
+    expect(run(["rescript", "build"]).exitCode).toBe(0);
     const migrated = run([
       "rescript-tools",
       "migrate",

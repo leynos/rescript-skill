@@ -21,12 +21,14 @@ import {
 import { tmpdir } from "node:os";
 import { basename, join, relative } from "node:path";
 import {
+  exercisesModule,
   frontmatter,
   manifest,
   openaiPolicy,
   REPO_ROOT,
   ROUTER,
   relativeLinks,
+  rescriptCode,
   resolveLink,
   SKILLS_ROOT,
   skillNames,
@@ -92,9 +94,10 @@ describe.each(SKILLS)("manifest for %s", (skill) => {
   });
 
   test("uses only keys the Agent Skills schema admits", () => {
-    for (const key of Object.keys(data)) {
-      expect(ALLOWED_KEYS.has(key)).toBe(true);
-    }
+    const disallowed = Object.keys(data).filter(
+      (key) => !ALLOWED_KEYS.has(key),
+    );
+    expect(disallowed).toEqual([]);
   });
 
   test("keeps metadata a mapping of strings with a globs hint", () => {
@@ -200,12 +203,31 @@ describe("executable examples", () => {
   test.each(cases.filter(([rel]) => rel.endsWith(".res")))(
     "%s is exercised by a ReScript suite",
     (_, __, path) => {
-      // A whole-word reference covers qualified use (`Foo.x`) and module
-      // aliases (`module F = Foo`).
-      const module = new RegExp(`\\b${basename(path, ".res")}\\b`);
-      expect(suites.some((suite) => module.test(suite))).toBe(true);
+      const module = basename(path, ".res");
+      expect(suites.some((suite) => exercisesModule(suite, module))).toBe(true);
     },
   );
+
+  test.each([
+    ["a qualified call", "let x = Foo.make()", true],
+    ["a pipe into a qualified function", "let y = 1->Foo.double", true],
+    ["a use through an alias", "module F = Foo\nlet x = F.make()", true],
+    ["a use inside a template interpolation", "let s = `${Foo.name}`", true],
+    ["a comment only", "// Foo.make() is covered elsewhere\nlet x = 1", false],
+    ["a block comment only", "/* Foo.make() */\nlet x = 1", false],
+    ["a string only", 'let s = "Foo.make()"', false],
+    ["an unused alias", "module F = Foo\nlet x = 1", false],
+    ["a longer module name", "let x = FooBar.make()", false],
+    ["a nested module of another", "let x = Bar.Foo.make()", false],
+  ])("the exercise check sees %s", (_, suite, expected) => {
+    expect(exercisesModule(suite, "Foo")).toBe(expected);
+  });
+
+  test("the code reader keeps interpolations and drops literals", () => {
+    expect(rescriptCode('a /* b */ "c" `d${e}f` // g\nh')).toBe(
+      'a  ""  e `` \nh',
+    );
+  });
 });
 
 describe("portable cores", () => {
