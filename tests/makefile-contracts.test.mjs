@@ -3,7 +3,8 @@ Makefile contracts: gate order, suite selection, and the manifest gate.
 
 The `all` target must run its gates sequentially and stop at the first failure
 even under `make -j`, so a parallel run cannot hide a broken gate behind an
-unrelated success. The test target must name every ReScript suite from its
+unrelated success. No target may list two prerequisites, which `make -j` would
+run at once against the shared build and tool caches. The test target must name every ReScript suite from its
 source, so a suite cannot silently drop out of the run. The manifest gate must
 reject unusable manifests, including one that a conformant skill sorted after
 it would otherwise mask in a shell loop.
@@ -70,6 +71,54 @@ describe("gate ordering", () => {
           ? gates.slice(0, gates.indexOf(failOn) + 1)
           : gates;
         expect(readFileSync(log, "utf8").trim().split("\n")).toEqual(expected);
+      }
+    });
+  });
+});
+
+describe("sequential composition", () => {
+  /** Returns each rule's name and prerequisites, skipping special targets. */
+  function rules(text) {
+    return [...text.matchAll(/^([a-z][\w-]*):(?!=)([^#\n]*)/gm)].map(
+      ([, name, deps]) => ({
+        name,
+        deps: deps.trim().split(/\s+/).filter(Boolean),
+      }),
+    );
+  }
+
+  test("no target lists more than one prerequisite", () => {
+    const parallel = rules(makefile).filter(({ deps }) => deps.length > 1);
+    expect(parallel).toEqual([]);
+  });
+
+  test("the rule reader sees a target with two prerequisites", () => {
+    expect(rules("a: b c ## both\nd: e\nX := y\n")).toEqual([
+      { name: "a", deps: ["b", "c"] },
+      { name: "d", deps: ["e"] },
+    ]);
+  });
+
+  test("make -j runs the manifest checks in order and stops on failure", () => {
+    withScratch("rescript-skill-make-", (directory) => {
+      const probe = join(directory, "probe.sh");
+      const log = join(directory, "steps.log");
+      writeFileSync(
+        probe,
+        '#!/bin/bash\nprintf "%s\\n" "$1" >> "$GATE_LOG"\nif [ "$1" = "$FAIL_GATE" ]; then exit 1; fi\n',
+        { mode: 0o755 },
+      );
+      const steps = ["skill-frontmatter-lint", "skill-manifest-validate"];
+      for (const failOn of ["", steps[0]]) {
+        writeFileSync(log, "");
+        const result = make(["-j8", "skill-manifest-check", `MAKE=${probe}`], {
+          GATE_LOG: log,
+          FAIL_GATE: failOn,
+        });
+        expect(result.exitCode === 0).toBe(failOn === "");
+        expect(readFileSync(log, "utf8").trim().split("\n")).toEqual(
+          failOn ? [failOn] : steps,
+        );
       }
     });
   });

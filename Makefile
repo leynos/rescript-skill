@@ -132,7 +132,11 @@ skill-manifest-validate: ## Validate each skill against the Agent Skills schema
 		$(SKILLS_REF) validate "$$skill_dir"; \
 	done
 
-skill-manifest-check: skill-frontmatter-lint skill-manifest-validate ## Verify every skill manifest
+# Sub-makes rather than prerequisites, so `make -j` cannot run both `uv tool
+# run` steps at once against the shared tool cache.
+skill-manifest-check: ## Verify every skill manifest
+	+$(MAKE) skill-frontmatter-lint
+	+$(MAKE) skill-manifest-validate
 
 test: ## Compile, then run the ReScript example suites and repository contracts
 	+$(MAKE) build
