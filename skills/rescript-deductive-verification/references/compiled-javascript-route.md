@@ -15,6 +15,8 @@ TypeScript, but it produces nearly everything needed to build some:
 | `int` versus `float` | `rescript-tools doc Module.res`    |
 | Contracts            | `bsc -only-parse -dparsetree`      |
 
+_Table 1: Where the bridge finds each input._
+
 The bridge combines these into one TypeScript verification unit per module.
 LemmaScript and Dafny prove it, and the correspondence audit shows the unit's
 bodies are the compiled JavaScript.

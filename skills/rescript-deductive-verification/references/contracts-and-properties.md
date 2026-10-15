@@ -62,6 +62,8 @@ The example [VerifiedLease.res](examples/VerifiedLease.res) proves one of each:
 | Error-cause preservation     | release keeps `event.cause`; a refusal after release carries `state.cause`          | release drops or replaces the cause |
 | Release-state safety         | `state.kind === 'released' ==> result.kind === 'error'`                             | a released lease reopens            |
 
+_Table 1: Property classes proved for `step`, with the mutant that breaks each._
+
 The first proof attempt on this module failed, correctly. `Open` computed
 `handles + 1 | 0`, which wraps from 2147483647 to -2147483648, so a held lease
 could reach a negative handle count. The fix was a bound in the production

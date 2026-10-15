@@ -8,7 +8,7 @@ Use this when the router's question list does not resolve to one skill.
 | `bsconfig.json`, `bs-dependencies`, or `bsc-flags`      | `rescript-12-migration`           | `rescript-build-and-config`   |
 | `The module or file X can't be found`                   | `rescript-build-and-config`       | `rescript-bun-testing`        |
 | Two files with the same module name                     | `rescript-build-and-config`       | None                          |
-| Library consumers clash with your `Util` module         | `rescript-build-and-config`       | None                          |
+| Library consumers clash with a local `Util` module      | `rescript-build-and-config`       | None                          |
 | Record field typo compiles against the wrong record     | `rescript-types-and-modules`      | None                          |
 | Callers construct invalid values of a public type       | `rescript-types-and-modules`      | None                          |
 | Variant needs a stable JSON or TypeScript string        | `rescript-interop`                | `rescript-types-and-modules`  |

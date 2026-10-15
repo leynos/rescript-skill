@@ -23,6 +23,8 @@ LemmaScript 0.6.4, and Dafny 4.11:
 | `list`, `Belt`, most standard library calls         | runtime library calls           | Not supported without specified externs                         |
 | `==` on records                                     | `Primitive_object.equal`        | Rejected by warning 102 under `+A`                              |
 
+_Table 1: How common ReScript constructs fare on the compiled-JavaScript route._
+
 The compiler eta-reduces a function that only calls a runtime helper, so even
 `let quot = (a: int, b: int): int => a / b` compiles to
 `let quot = Primitive_int.div` and has no body to verify. Verify the callers

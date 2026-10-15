@@ -33,12 +33,19 @@ state unrepresentable, use `rescript-types-and-modules` first.
 
 ## The route
 
-```text
+For screen readers: the diagram shows `bsc` compiling `Module.res` to
+`Module.res.mjs` and genType emitting `Module.gen.ts`. The bridge combines
+both, with the contracts, into `Module.ts`, which `lsc` turns into Dafny, while
+the audit checks the unit against the production JavaScript.
+
+```plaintext
 Module.res ── bsc ──> Module.res.mjs ─┐
    │ @requires/@ensures               ├─ res2ls-bridge ─> Module.ts ─ lsc ─> Dafny
    └── genType ──> Module.gen.ts ─────┘        │
                                                └─ res2ls-correspond: unit == production
 ```
+
+*Figure 1: The compiled-JavaScript verification route.*
 
 1. Shape the code: a pure function over `@genType` types, variants with
    `@tag` and a record payload on every constructor.
@@ -67,6 +74,8 @@ lsc check --backend=dafny out/Lease.ts
 | Stack depth of recursion    | none: the prover assumes an unbounded stack                                   | test     |
 | `float` arithmetic          | none: modelled as exact reals                                                 | test     |
 
+*Table 1: Properties the route proves, and those left to tests.*
+
 ## Rules that surprise people
 
 - ReScript `int` wraps at 32 bits and the compiler emits `e | 0`. LemmaScript
@@ -86,7 +95,7 @@ lsc check --backend=dafny out/Lease.ts
   never executed, so this is the intended reading.
 - `rescript-tools doc` only works inside a built project. Build first.
 - `lsc check` merges into an existing `.dfy`. Regenerate from a clean output
-  directory unless you have committed proof additions.
+  directory unless proof additions are committed.
 
 ## Red flags
 

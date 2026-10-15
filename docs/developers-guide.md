@@ -20,7 +20,9 @@ Node is not required. Make invokes every JavaScript tool through
 `bun run --bun`.
 
 `make prove` additionally needs Dafny 4.11 and Z3 on `PATH`; Dafny 4.11 expects
-Z3 4.12.1. Neither is needed for `make all`.
+Z3 4.12.1. Neither is needed for `make all`, and continuous integration (CI)
+runs neither, so the proofs are checked only when a contributor runs
+`make prove` locally (see [the proof gate](#the-proof-gate)).
 
 ```bash
 make install
@@ -112,8 +114,24 @@ finding in source: use the value from a suite, annotate it with `@live` or
 
 ### The proof gate
 
-`make prove` is separate from `make all`, because Dafny and Z3 are system
-tools. For each module in `PROOFS` it:
+`make prove` is not part of `make all`, and CI does not run it: Dafny and Z3
+are system tools that the Bun toolchain does not provide. A change that breaks
+a proof therefore passes `make all` and CI. Contributors must run `make prove`
+locally before committing any change to a proved module (`PROOFS` in the
+Makefile), to `res2ls-bridge.mjs` or `res2ls-correspond.mjs`, or to the
+ReScript, TypeScript, or LemmaScript pins.
+
+To install the provers:
+
+- Dafny 4.11 as a .NET tool:
+  `dotnet tool install --global dafny --version 4.11.0`.
+- Z3 4.12.1 from the
+  [Z3 release page](https://github.com/Z3Prover/z3/releases/tag/z3-4.12.1),
+  with its `bin/` directory on `PATH`. Dafny reports a missing Z3 as a
+  resolution error, not as a missing tool.
+
+The target checks for both before doing anything else and stops with a message
+naming the missing one. For each module in `PROOFS` it:
 
 1. builds the project;
 2. installs the pinned LemmaScript from `tools/verification/` with a frozen
@@ -127,8 +145,7 @@ tools. For each module in `PROOFS` it:
 Every step fails the target on error. LemmaScript lives in its own package
 because its transitive graph carries advisories with no patched release
 (`braces` through `ts-morph`); keeping it out of the root lockfile leaves
-`make audit` meaningful. Run `make prove` after changing a proved module or
-bumping ReScript, TypeScript, or LemmaScript.
+`make audit` meaningful.
 
 ### The skill manifest contract
 
