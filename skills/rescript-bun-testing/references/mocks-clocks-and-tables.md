@@ -35,7 +35,7 @@ type state<'arg> = {calls: array<array<'arg>>}
 @get external state: t<'arg, 'ret> => state<'arg> = "mock"
 
 let calls = (mock: t<'arg, 'ret>): array<'arg> =>
-  mock->state->(state => state.calls)->Array.filterMap(args => args[0])
+  mock->state->(state => state.calls)->Array.map(args => args->Array.getUnsafe(0))
 ```
 
 Use it:
@@ -46,6 +46,10 @@ let sent = OverdueNotifier.notifyOverdue(invoices, ~now=() => start, ~send=send-
 expect(send->BunMock.calls)->Expect.toEqual(["invoice a is overdue"])
 expect(send)->Expect.toHaveBeenCalledTimes(1.)
 ```
+
+`calls` reads slot 0 of each recorded argument array with `getUnsafe`. The
+tempting `args[0]` with `filterMap` drops every call whose argument compiles to
+`undefined`, such as `()` or `None`, so `calls` would disagree with `callCount`.
 
 The `%identity` cast is safe because `mock` returns the very function it
 records; the binding states that once, with a comment, in a dev source. Bind

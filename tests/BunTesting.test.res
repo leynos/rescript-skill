@@ -22,6 +22,20 @@ describe("OverdueNotifier with injected collaborators", () => {
     expect(send)->Expect.toHaveBeenCalledTimes(1.)
   })
 
+  test("records calls whose argument compiles to undefined", () => {
+    let tick = BunMock.make(() => ())
+    let callback = tick->BunMock.fn
+    callback()
+    callback()
+    expect(tick->BunMock.calls)->Expect.toEqual([(), ()])
+    let lookup = BunMock.make((_key: option<string>) => ())
+    let find = lookup->BunMock.fn
+    find(None)
+    find(Some("a"))
+    expect(lookup->BunMock.calls)->Expect.toEqual([None, Some("a")])
+    expect(lookup->BunMock.callCount)->Expect.toBe(2)
+  })
+
   test("clear resets the recorded calls", () => {
     let send = BunMock.make(_message => ())
     let _ = OverdueNotifier.notifyOverdue(invoices, ~now=() => start, ~send=send->BunMock.fn)
