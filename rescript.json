@@ -1,0 +1,44 @@
+{
+  "name": "rescript-skill",
+  "namespace": true,
+  "sources": [
+    {
+      "dir": "skills",
+      "subdirs": true,
+      "type": "dev"
+    },
+    {
+      "dir": "tests",
+      "subdirs": true,
+      "type": "dev"
+    }
+  ],
+  "dependencies": [],
+  "dev-dependencies": ["rescript-bun", "@rescript/react", "sury"],
+  "package-specs": {
+    "module": "esmodule",
+    "in-source": true
+  },
+  "suffix": ".res.mjs",
+  "jsx": {
+    "version": 4
+  },
+  "gentypeconfig": {
+    "language": "typescript",
+    "generatedFileExtension": ".gen.ts"
+  },
+  "warnings": {
+    "number": "+A",
+    "error": "+A"
+  },
+  "experimental-features": {
+    "LetUnwrap": true
+  },
+  "compiler-flags": [],
+  "reanalyze": {
+    "analysis": ["dce", "exception"],
+    "suppress": [],
+    "unsuppress": [],
+    "transitive": false
+  }
+}

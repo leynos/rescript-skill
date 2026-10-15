@@ -1,0 +1,17 @@
+# Narrow technical identifiers only; the shared dictionary owns Oxford prose.
+schema = 1
+
+[oxford]
+stems = []
+
+[words]
+accepted = [
+  "Reanalyze", # ReScript's bundled analyser, `rescript-tools reanalyze`.
+  "reanalyze",
+]
+
+[patterns]
+ignore = ['`[^`\n]+`']
+
+[files]
+exclude = ['lib/**', 'coverage/**']

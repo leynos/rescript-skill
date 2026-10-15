@@ -1,0 +1,33 @@
+{
+  "name": "rescript-skill",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Advanced ReScript 12 skill catalogue for coding agents, with executable examples run under Bun.",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leynos/rescript-skill.git"
+  },
+  "packageManager": "bun@1.4.3",
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@happy-dom/global-registrator": "20.14.5",
+    "@rescript/react": "0.15.0",
+    "@rescript/runtime": "12.3.1",
+    "fast-check": "4.10.2",
+    "markdownlint-cli": "0.49.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "rescript": "12.3.1",
+    "rescript-bun": "2.1.0",
+    "sury": "11.0.0",
+    "typescript": "5.9.3",
+    "yaml": "2.9.1"
+  },
+  "overrides": {
+    "js-yaml": "5.4.3",
+    "katex": "0.19.0",
+    "smol-toml": "1.9.0"
+  }
+}

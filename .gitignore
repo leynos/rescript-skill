@@ -1,0 +1,17 @@
+node_modules/
+/lib/
+# Compiler output sits beside its source; it is rebuilt, never committed.
+*.res.mjs
+# genType output and verification units are regenerated from the sources.
+*.gen.ts
+/.verify/
+/coverage/
+*.tgz
+/.uv-cache/
+/.uv-tools/
+/.typos-oxendict-base.json
+/.typos-oxendict-base.toml
+.bsb.lock
+.DS_Store
+.idea/
+.vscode/
