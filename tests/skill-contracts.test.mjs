@@ -63,7 +63,10 @@ function markdownFiles() {
   const roots = [SKILLS_ROOT, join(REPO_ROOT, "docs")];
   const files = roots
     .filter((root) => existsSync(root))
-    .flatMap((root) => walk(root, (name) => name.endsWith(".md")));
+    .flatMap((root) => walk(root, (name) => name.endsWith(".md")))
+    // The shared style guide is imported verbatim and its templates contain
+    // placeholder link targets, so it is not this repository's content to check.
+    .filter((path) => basename(path) !== "documentation-style-guide.md");
   for (const name of ["README.md", "AGENTS.md", "CHANGELOG.md"]) {
     const path = join(REPO_ROOT, name);
     if (existsSync(path)) {
