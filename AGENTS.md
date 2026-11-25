@@ -99,7 +99,20 @@ Claims about compiler or runtime behaviour must be evidenced, not remembered.
   [the repository layout](docs/repository-layout.md) matching the tree. Design
   rationale belongs in [the catalogue design](docs/rescript-skill-design.md),
   not in the guides.
-- `make spelling` regenerates `typos.toml` from the shared dictionary and
-  `typos.local.toml`. Never edit `typos.toml` by hand; add narrow exceptions to
-  `typos.local.toml`.
 - Make atomic commits with imperative subjects and reasons in the body.
+
+<!-- typos-config-builder:agents-md:start -->
+
+## Spelling
+
+- `make spelling` runs the pinned `typos-config-builder gate`, which
+  regenerates `typos.toml` from the shared en-GB-oxendict dictionary and
+  `typos.local.toml`, then checks spelling and the shared phrase corrections.
+- `typos.toml` is generated: never edit it by hand. Put narrow
+  repository-specific exceptions in `typos.local.toml`, as exact or full-line
+  patterns rather than bare accepted words.
+- When `make spelling` changes `typos.toml`, commit the regenerated file. If
+  the change is unrelated to your work, commit it in a separate base pull
+  request and stack your branch on it, so each review diff stays focused.
+
+<!-- typos-config-builder:agents-md:end -->

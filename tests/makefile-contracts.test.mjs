@@ -171,7 +171,6 @@ describe("environment defaults", () => {
   });
 
   test("third-party tools are pinned to immutable versions", () => {
-    expect(makefile).toMatch(/typos-config-builder\.git@[0-9a-f]{40}/);
     expect(makefile).toMatch(/agentskills\.git@[0-9a-f]{40}/);
     expect(makefile).toMatch(/yamllint==\d+\.\d+\.\d+/);
   });

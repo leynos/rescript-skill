@@ -19,7 +19,8 @@ rationale. For why the catalogue takes its shape, read
   formatting.
 - `uv`, for the pinned Python tools run through `uv tool run`: the spelling
   gate (`typos-config-builder`), `yamllint`, and `skills-ref`. uv fetches
-  Python 3.14.7 on first use.
+  Python 3.14.7 on first use. The Makefile pins the builder to the release tag
+  `v0.1.4`; override `TYPOS_CONFIG_BUILDER_VERSION` to try another tag.
 
 Node is not required. Make invokes every JavaScript tool through
 `bun run --bun`.
@@ -144,6 +145,14 @@ leaves `make audit` meaningful.
 a pinned `agentskills` commit. Both run through `uv tool run`, so the first run
 needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
 
+### 4.5. The spelling gate pin
+
+`make spelling` runs the `typos-config-builder gate` pinned by
+`TYPOS_CONFIG_BUILDER_VERSION` to a release tag, not a commit SHA, because the
+concordat `spelling-config-baseline` rule requires a release tag at or above
+v0.1.3. The tag is the one pin in the Makefile that is not a commit or an exact
+version.
+
 ## 5. What the suites cover
 
 - `tests/dom/*.test.res` exercise components through a Document Object Model
@@ -161,10 +170,11 @@ needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
   every `*Core.res` example stays free of runtime bindings.
 - `tests/makefile-contracts.test.mjs` checks that `make -j8 all` runs the
   gates sequentially and stops at the first failure, that `make test` names
-  every suite, that tool pins are immutable, and that the manifest gate rejects
-  unusable manifests, including one masked by a trailing valid skill. It also
-  checks that `make install-skills` copies only committed files and that no
-  `.res.mjs` is tracked.
+  every suite, that the `agentskills` and `yamllint` pins are immutable (the
+  spelling builder is pinned to a release tag), and that the manifest gate
+  rejects unusable manifests, including one masked by a trailing valid skill.
+  It also checks that `make install-skills` copies only committed files and
+  that no `.res.mjs` is tracked.
 - `tests/package-contracts.test.mjs` checks exact pins, the compiler and
   runtime match, and the strict `rescript.json` posture, each with negative
   controls built by mutating the real configuration.
