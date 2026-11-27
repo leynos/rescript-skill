@@ -18,7 +18,10 @@ MDTABLEFIX_RULES = --git --include-untracked --wrap --renumber --breaks --ellips
 # update it by copying the canonical file, never by editing it here.
 UV_GATE ?= python3 scripts/uv_gate.py
 UV ?= uv
-UV_TOOL = $(UV_GATE) tool --python 3.14.7
+# The helper finds uv on PATH, so a caller's UV=/path/to/uv is honoured by
+# putting that uv's directory first on PATH for every recipe.
+export PATH := $(if $(findstring /,$(UV)),$(patsubst %/,%,$(dir $(UV))):)$(PATH)
+UV_TOOL =$(UV_GATE) tool --python 3.14.7
 # The spelling baseline requires a release tag at or above v0.1.3. The builder
 # runs directly, at that tag, because the helper refuses a Git spec that is not
 # a full commit.
