@@ -12,7 +12,7 @@ reject unusable manifests, including one that a conformant skill sorted after
 it would otherwise mask in a shell loop.
 
 The manifest cases call the real `yamllint` and `skills-ref` through
-`uv tool run`, so the first run needs network access to populate the cache.
+`uv_gate`, so the first run needs network access to populate the cache.
 */
 
 import { describe, expect, test } from "bun:test";
@@ -164,12 +164,6 @@ describe("suite selection", () => {
 });
 
 describe("environment defaults", () => {
-  test("uv cache and tool directories are overridable defaults", () => {
-    expect(makefile).toMatch(/^UV_CACHE_DIR \?= \.uv-cache$/m);
-    expect(makefile).toMatch(/^UV_TOOL_DIR \?= \.uv-tools$/m);
-    expect(makefile).toContain("UV_CACHE_DIR=$(UV_CACHE_DIR)");
-  });
-
   test("third-party tools are pinned to immutable versions", () => {
     expect(makefile).toMatch(/agentskills\.git@[0-9a-f]{40}/);
     expect(makefile).toMatch(/yamllint==\d+\.\d+\.\d+/);

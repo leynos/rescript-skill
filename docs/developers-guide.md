@@ -17,10 +17,17 @@ rationale. For why the catalogue takes its shape, read
 - GNU Make, Git, and Bash.
 - `mdtablefix` 0.6.1 or later on `PATH`, for Markdown table and wrap
   formatting.
-- `uv`, for the pinned Python tools run through `uv tool run`: the spelling
-  gate (`typos-config-builder`), `yamllint`, and `skills-ref`. uv fetches
-  Python 3.14.7 on first use. The Makefile pins the builder to the release tag
+- `uv`, for the pinned Python tools: the spelling gate
+  (`typos-config-builder`), `yamllint`, and `skills-ref`. uv fetches Python
+  3.14.7 on first use. The Makefile pins the builder to the release tag
   `v0.1.4`; override `TYPOS_CONFIG_BUILDER_VERSION` to try another tag.
+- Python 3.9 or later on `PATH`, to run the vendored `scripts/uv_gate.py`
+  helper. It runs `yamllint` and `skills-ref` from a cleaned environment and
+  the global uv cache, offline first, with at most one online attempt when a
+  tool is not cached yet. The spelling builder runs directly through
+  `uv tool run`, at its release tag, because the helper accepts only a full
+  commit. The Makefile has no `UV` override: put the `uv` you want first on
+  `PATH`.
 
 Node is not required. Make invokes every JavaScript tool through
 `bun run --bun`.
@@ -142,8 +149,9 @@ leaves `make audit` meaningful.
 
 `skill-manifest-check` runs two pinned tools over each `SKILL_DIRS` entry:
 `yamllint` 1.38.0 over the extracted frontmatter, then `skills-ref validate` at
-a pinned `agentskills` commit. Both run through `uv tool run`, so the first run
-needs network access. Override `SKILL_DIRS` to check one skill or a fixture.
+a pinned `agentskills` commit. Both run through `scripts/uv_gate.py`, so the
+first run needs network access to warm the cache. Override `SKILL_DIRS` to
+check one skill or a fixture.
 
 ### 4.5. The spelling gate pin
 

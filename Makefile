@@ -11,23 +11,27 @@ BIOME = $(BUN) run --bun biome
 MDLINT = $(BUN) run --bun markdownlint --dot
 MDTABLEFIX ?= mdtablefix
 MDTABLEFIX_RULES = --git --include-untracked --wrap --renumber --breaks --ellipsis --fences
-UV ?= uv
-# Defaults, not overrides: a CI provisioner such as astral-sh/setup-uv exports
-# UV_CACHE_DIR and fails its post-job cache save when uv wrote somewhere else.
-UV_CACHE_DIR ?= .uv-cache
-UV_TOOL_DIR ?= .uv-tools
-UV_TOOL = UV_CACHE_DIR=$(UV_CACHE_DIR) UV_TOOL_DIR=$(UV_TOOL_DIR) $(UV) tool run --python 3.14.7
-# The spelling baseline requires a release tag at or above v0.1.3.
+# Every uv call but the spelling builder's goes through the vendored helper,
+# which cleans the environment, uses the global uv cache, runs offline first and
+# goes online at most once. See
+# https://github.com/leynos/shared-actions/tree/main/uv_gate for the contract.
+# `scripts/uv_gate.py` is the shared-actions helper, vendored byte for byte, so
+# update it by copying the canonical file, never by editing it here.
+UV_GATE ?= python3 scripts/uv_gate.py
+# uv is found on PATH, by the helper and by the spelling builder alike; there is
+# no UV override.
+UV_TOOL = $(UV_GATE) tool --python 3.14.7
+# The spelling baseline requires a release tag at or above v0.1.3. The builder
+# runs directly, at that tag, because the helper refuses a Git spec that is not
+# a full commit.
 TYPOS_CONFIG_BUILDER_VERSION ?= v0.1.4
-TYPOS_CONFIG_BUILDER = $(UV_TOOL) --from \
+TYPOS_CONFIG_BUILDER = uv tool run --python 3.14.7 --from \
 	"git+https://github.com/leynos/typos-config-builder.git@$(TYPOS_CONFIG_BUILDER_VERSION)" \
 	typos-config-builder
 # The Agent Skills reference validator, pinned to a commit of the agentskills
 # repository rather than to a release, as in python-skill and rust-skill.
-SKILLS_REF = $(UV_TOOL) --from \
-	"git+https://github.com/agentskills/agentskills.git@69ef37e9424c0a7ea9dd2293b559e43ec8176379\#subdirectory=skills-ref" \
-	skills-ref
-YAMLLINT = $(UV_TOOL) --from yamllint==1.38.0 yamllint
+SKILLS_REF = $(UV_TOOL) --from "git+https://github.com/agentskills/agentskills.git@69ef37e9424c0a7ea9dd2293b559e43ec8176379\#subdirectory=skills-ref" -- skills-ref
+YAMLLINT = $(UV_TOOL) --from yamllint==1.38.0 -- yamllint
 SKILL_YAMLLINT_CONFIG := {extends: default, rules: {line-length: disable}}
 
 # The skill manifest contract. SKILL_DIRS defaults to every shipped skill and

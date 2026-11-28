@@ -19,6 +19,7 @@ files inside `skills/` that every skill follows.
 ├── tests/                   ReScript example suites and repository contracts
 │   └── support/             helpers private to the contract suites
 ├── tools/verification/      pinned LemmaScript toolchain for `make prove`
+├── scripts/                 vendored uv helper for the pinned Python tools
 ├── docs/                    guides, design, layout, status, and research
 └── .github/workflows/       continuous integration
 ```
@@ -39,6 +40,7 @@ _Figure 1: The top-level layout and the shape of one skill._
 | `tests/*.test.mjs`                                                               | Repository contract suites, one invariant family per file.             | Never shipped; each suite carries its own negative controls.           |
 | `tests/support/`                                                                 | Inventory and example-loading helpers.                                 | Private to the suites that import them.                                |
 | `tools/verification/`                                                            | `package.json` and `bun.lock` pinning LemmaScript.                     | Kept apart from the root dependency graph and its audit.               |
+| `scripts/uv_gate.py`                                                             | The uv helper that runs `yamllint` and `skills-ref` offline first.     | Vendored byte for byte from leynos/shared-actions; never edited here.  |
 | `docs/contents.md`                                                               | Index of the documentation set.                                        | Updated whenever a document is added, renamed, or removed.             |
 | `docs/research/verified-facts.md`                                                | Toolchain behaviour established by experiment.                         | Evidence log; entries name how each fact was verified.                 |
 | `rescript.json`                                                                  | Namespace, sources, output, warnings, genType, and reanalyze settings. | Single ReScript project; `tests/package-contracts.test.mjs` guards it. |
@@ -58,16 +60,15 @@ _Table 1: Paths, their responsibilities, and their ownership boundaries._
 
 These paths are produced by tools, ignored by Git, and never shipped:
 
-| Path                       | Produced by                                      |
-| -------------------------- | ------------------------------------------------ |
-| `**/*.res.mjs`             | The ReScript compiler, beside each source.       |
-| `**/*.gen.ts`              | genType, beside each `@genType` source.          |
-| `lib/`                     | The ReScript build's intermediate files.         |
-| `.verify/`                 | `make prove`: verification units and Dafny.      |
-| `coverage/`                | `make coverage`.                                 |
-| `node_modules/`            | `make install`, and `make prove` under `tools/`. |
-| `.uv-cache/`, `.uv-tools/` | The pinned Python tools run through `uv`.        |
-| `.typos-oxendict-base.*`   | `make spelling`.                                 |
+| Path                     | Produced by                                      |
+| ------------------------ | ------------------------------------------------ |
+| `**/*.res.mjs`           | The ReScript compiler, beside each source.       |
+| `**/*.gen.ts`            | genType, beside each `@genType` source.          |
+| `lib/`                   | The ReScript build's intermediate files.         |
+| `.verify/`               | `make prove`: verification units and Dafny.      |
+| `coverage/`              | `make coverage`.                                 |
+| `node_modules/`          | `make install`, and `make prove` under `tools/`. |
+| `.typos-oxendict-base.*` | `make spelling`.                                 |
 
 _Table 2: Generated and local paths._
 
