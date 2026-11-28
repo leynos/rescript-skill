@@ -11,8 +11,9 @@ BIOME = $(BUN) run --bun biome
 MDLINT = $(BUN) run --bun markdownlint --dot
 MDTABLEFIX ?= mdtablefix
 MDTABLEFIX_RULES = --git --include-untracked --wrap --renumber --breaks --ellipsis --fences
-# Every uv call goes through the vendored helper, which cleans the environment,
-# uses the global uv cache, runs offline first and goes online at most once. See
+# Every uv call but the spelling builder's goes through the vendored helper,
+# which cleans the environment, uses the global uv cache, runs offline first and
+# goes online at most once. See
 # https://github.com/leynos/shared-actions/tree/main/uv_gate for the contract.
 # `scripts/uv_gate.py` is the shared-actions helper, vendored byte for byte, so
 # update it by copying the canonical file, never by editing it here.
@@ -21,6 +22,22 @@ UV ?= uv
 # The helper finds uv on PATH, so a caller's UV=/path/to/uv is honoured by
 # putting that uv's directory first on PATH for every recipe.
 export PATH := $(if $(findstring /,$(UV)),$(patsubst %/,%,$(dir $(UV))):)$(PATH)
+# A UV given on the command line or in the environment must be uv itself or an
+# executable file named uv: the helper finds uv on PATH by that name and would
+# otherwise use another.
+ifneq ($(filter command line environment,$(origin UV)),)
+ifneq ($(UV),uv)
+ifeq ($(findstring /,$(UV)),)
+$(error UV=$(UV) must be uv or a path to an executable file named uv)
+endif
+ifeq ($(shell test -f '$(UV)' -a -x '$(UV)' && printf y),)
+$(error UV=$(UV) is not an executable file)
+endif
+ifneq ($(notdir $(UV)),uv)
+$(error UV=$(UV) must be named uv)
+endif
+endif
+endif
 UV_TOOL =$(UV_GATE) tool --python 3.14.7
 # The spelling baseline requires a release tag at or above v0.1.3. The builder
 # runs directly, at that tag, because the helper refuses a Git spec that is not

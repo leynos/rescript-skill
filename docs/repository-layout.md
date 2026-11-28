@@ -58,16 +58,15 @@ _Table 1: Paths, their responsibilities, and their ownership boundaries._
 
 These paths are produced by tools, ignored by Git, and never shipped:
 
-| Path                       | Produced by                                      |
-| -------------------------- | ------------------------------------------------ |
-| `**/*.res.mjs`             | The ReScript compiler, beside each source.       |
-| `**/*.gen.ts`              | genType, beside each `@genType` source.          |
-| `lib/`                     | The ReScript build's intermediate files.         |
-| `.verify/`                 | `make prove`: verification units and Dafny.      |
-| `coverage/`                | `make coverage`.                                 |
-| `node_modules/`            | `make install`, and `make prove` under `tools/`. |
-| `.uv-cache/`, `.uv-tools/` | The pinned Python tools run through `uv`.        |
-| `.typos-oxendict-base.*`   | `make spelling`.                                 |
+| Path                     | Produced by                                      |
+| ------------------------ | ------------------------------------------------ |
+| `**/*.res.mjs`           | The ReScript compiler, beside each source.       |
+| `**/*.gen.ts`            | genType, beside each `@genType` source.          |
+| `lib/`                   | The ReScript build's intermediate files.         |
+| `.verify/`               | `make prove`: verification units and Dafny.      |
+| `coverage/`              | `make coverage`.                                 |
+| `node_modules/`          | `make install`, and `make prove` under `tools/`. |
+| `.typos-oxendict-base.*` | `make spelling`.                                 |
 
 _Table 2: Generated and local paths._
 
