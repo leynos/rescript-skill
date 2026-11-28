@@ -163,26 +163,6 @@ describe("suite selection", () => {
   });
 });
 
-describe("uv override", () => {
-  const refused = (uv) => make(["-n", "help", `UV=${uv}`]);
-
-  test("a UV that the helper could not find by name is refused", () => {
-    const result = refused("/opt/bin/uv-pinned");
-    expect(result.exitCode).not.toBe(0);
-    expect(result.output).toContain("UV=/opt/bin/uv-pinned");
-  });
-
-  test("a UV under .lody, which the helper removes from PATH, is refused", () => {
-    const result = refused("/home/someone/.lody/bin/uv");
-    expect(result.exitCode).not.toBe(0);
-    expect(result.output).toContain(".lody");
-  });
-
-  test("the plain default is accepted", () => {
-    expect(make(["-n", "help"]).exitCode).toBe(0);
-  });
-});
-
 describe("environment defaults", () => {
   test("third-party tools are pinned to immutable versions", () => {
     expect(makefile).toMatch(/agentskills\.git@[0-9a-f]{40}/);

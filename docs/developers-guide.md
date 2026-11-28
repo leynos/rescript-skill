@@ -26,8 +26,8 @@ rationale. For why the catalogue takes its shape, read
   the global uv cache, offline first, with at most one online attempt when a
   tool is not cached yet. The spelling builder runs directly through
   `uv tool run`, at its release tag, because the helper accepts only a full
-  commit. Override `UV` with the path of an executable named `uv`; any other
-  name is refused.
+  commit. The Makefile has no `UV` override: put the `uv` you want first on
+  `PATH`.
 
 Node is not required. Make invokes every JavaScript tool through
 `bun run --bun`.

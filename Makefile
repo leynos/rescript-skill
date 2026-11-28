@@ -18,35 +18,14 @@ MDTABLEFIX_RULES = --git --include-untracked --wrap --renumber --breaks --ellips
 # `scripts/uv_gate.py` is the shared-actions helper, vendored byte for byte, so
 # update it by copying the canonical file, never by editing it here.
 UV_GATE ?= python3 scripts/uv_gate.py
-UV ?= uv
-# The helper finds uv on PATH, so a caller's UV=/path/to/uv is honoured by
-# putting that uv's directory first on PATH for every recipe.
-export PATH := $(if $(findstring /,$(UV)),$(patsubst %/,%,$(dir $(UV))):)$(PATH)
-# A UV given on the command line or in the environment must be uv itself or an
-# executable file named uv: the helper finds uv on PATH by that name and would
-# otherwise use another.
-ifneq ($(filter command line environment,$(origin UV)),)
-ifneq ($(UV),uv)
-ifeq ($(findstring /,$(UV)),)
-$(error UV=$(UV) must be uv or a path to an executable file named uv)
-endif
-ifneq ($(findstring /.lody/,$(UV)),)
-$(error UV=$(UV) is under .lody, which the helper removes from PATH)
-endif
-ifeq ($(shell test -f '$(UV)' -a -x '$(UV)' && printf y),)
-$(error UV=$(UV) is not an executable file)
-endif
-ifneq ($(notdir $(UV)),uv)
-$(error UV=$(UV) must be named uv)
-endif
-endif
-endif
-UV_TOOL =$(UV_GATE) tool --python 3.14.7
+# uv is found on PATH, by the helper and by the spelling builder alike; there is
+# no UV override.
+UV_TOOL = $(UV_GATE) tool --python 3.14.7
 # The spelling baseline requires a release tag at or above v0.1.3. The builder
 # runs directly, at that tag, because the helper refuses a Git spec that is not
 # a full commit.
 TYPOS_CONFIG_BUILDER_VERSION ?= v0.1.4
-TYPOS_CONFIG_BUILDER = $(UV) tool run --python 3.14.7 --from \
+TYPOS_CONFIG_BUILDER = uv tool run --python 3.14.7 --from \
 	"git+https://github.com/leynos/typos-config-builder.git@$(TYPOS_CONFIG_BUILDER_VERSION)" \
 	typos-config-builder
 # The Agent Skills reference validator, pinned to a commit of the agentskills
