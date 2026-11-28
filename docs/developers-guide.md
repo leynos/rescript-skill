@@ -21,12 +21,13 @@ rationale. For why the catalogue takes its shape, read
   (`typos-config-builder`), `yamllint`, and `skills-ref`. uv fetches Python
   3.14.7 on first use. The Makefile pins the builder to the release tag
   `v0.1.4`; override `TYPOS_CONFIG_BUILDER_VERSION` to try another tag.
-- Python 3 on `PATH`, to run the vendored `scripts/uv_gate.py` helper. It runs
-  `yamllint` and `skills-ref` from a cleaned environment and the global uv
-  cache, offline first, with at most one online attempt when a tool is not
-  cached yet. The spelling builder runs directly through `uv tool run`, at its
-  release tag, because the helper accepts only a full commit. Override `UV`
-  with the path of an executable named `uv`; any other name is refused.
+- Python 3.9 or later on `PATH`, to run the vendored `scripts/uv_gate.py`
+  helper. It runs `yamllint` and `skills-ref` from a cleaned environment and
+  the global uv cache, offline first, with at most one online attempt when a
+  tool is not cached yet. The spelling builder runs directly through
+  `uv tool run`, at its release tag, because the helper accepts only a full
+  commit. Override `UV` with the path of an executable named `uv`; any other
+  name is refused.
 
 Node is not required. Make invokes every JavaScript tool through
 `bun run --bun`.

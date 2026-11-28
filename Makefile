@@ -30,6 +30,9 @@ ifneq ($(UV),uv)
 ifeq ($(findstring /,$(UV)),)
 $(error UV=$(UV) must be uv or a path to an executable file named uv)
 endif
+ifneq ($(findstring /.lody/,$(UV)),)
+$(error UV=$(UV) is under .lody, which the helper removes from PATH)
+endif
 ifeq ($(shell test -f '$(UV)' -a -x '$(UV)' && printf y),)
 $(error UV=$(UV) is not an executable file)
 endif
